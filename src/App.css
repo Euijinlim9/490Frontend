@@ -49,10 +49,16 @@ body{
   font-size: 14px;
   border-radius: 18px;
   text-align: center;
+  text-decoration: none; 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-weight: 480;
 }
 
 .nav-btn:hover{
   background-color: rgba(255, 255, 255, 0.1);
+  text-decoration: none; 
 }
 
 .right-btns{
@@ -71,11 +77,13 @@ body{
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #bfbfbf;
+  background: #808080;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 4px;
+  text-decoration: none; 
+  color: inherit; 
 }
 
 .circle-icon{
@@ -101,10 +109,16 @@ body{
   font-size: 10px;
   border-radius: 18px;
   text-align: center;
+  text-decoration: none; 
+  display: inline-flex; 
+  align-items: center;
+  justify-content: center; 
+  font-weight: 480;
 }
 
 .nav-btn-small:hover{
   background-color: rgba(255, 255, 255, 0.1);
+  text-decoration: none; 
 }
 
 .circle:hover{

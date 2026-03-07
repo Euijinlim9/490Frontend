@@ -1,42 +1,36 @@
-import './App.css';
 import React from "react";
-import userIcon from "./images/user.svg";
-import inboxIcon from "./images/inbox.svg";
+import { Routes, Route } from "react-router-dom";
+import "./App.css";
+
+import Header from "./components/Header";
+
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import Coach from "./pages/Coach";
+import Workouts from "./pages/Workouts";
+import Logs from "./pages/Logs";
+import Calendar from "./pages/Calendar";
+import Payments from "./pages/Payments";
+import Messages from "./pages/Messages";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <div className="body">
-      <div className="header">
-        <div className="logo">logo</div>
+      <Header />
 
-        <div className="nav-pill">
-          <button className="nav-btn">Dashboard</button>
-          <button className="nav-btn">Coach</button>
-          <button className="nav-btn">Workouts</button>
-          <button className="nav-btn">Logs</button>
-          <button className="nav-btn">Calendar</button>
-          <button className="nav-btn">Payments</button>
-        </div>
-
-        <div className="right-btns">
-          <div className="icon-btn">
-            <div className="circle">
-              <img src={inboxIcon} alt="Messages icon" className="circle-icon" />
-            </div>
-            <div className="nav-small">
-              <button className="nav-btn-small">Messages</button>
-            </div>
-          </div>
-
-          <div className="icon-btn">
-            <div className="circle">
-              <img src={userIcon} alt="Profile icon" className="circle-icon" />
-            </div>
-            <div className="nav-small">
-              <button className="nav-btn-small">Profile</button>
-            </div>
-          </div>
-        </div>
+      <div className="page-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/coach" element={<Coach />} />
+          <Route path="/workouts" element={<Workouts />} />
+          <Route path="/logs" element={<Logs />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/payments" element={<Payments />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
       </div>
     </div>
   );
