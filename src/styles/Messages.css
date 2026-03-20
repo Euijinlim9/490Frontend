@@ -1,0 +1,16 @@
+.messages-page{
+    display: flex; 
+    height: 100vh; 
+}
+
+.messages-sidebar{
+    width: 320px; 
+    background-color: #737373; 
+}
+
+
+.messages-chat{
+    flex: 1; 
+    background: #959595; 
+}
+
