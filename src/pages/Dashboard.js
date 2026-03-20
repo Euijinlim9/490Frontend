@@ -56,19 +56,18 @@ function Dashboard() {
   ];
 
   const calendarWidget = {
-    monthLabel: "Feb 2021",
-    weekdayLabel: "Mon Day",
-    selectedDay: 17,
-    location: "USA, New York",
+    monthLabel: "March 2026",
+    weekdayLabel: "Monday",
+    selectedDay: 26,
     days: [
       1, 2, 3, 4, 5,
       6, 7, 8, 9, 10,
       11, 12, 13, 14, 15,
       16, 17, 18, 19, 20,
       21, 22, 23, 24, 25,
-      26, 27, 28
+      26, 27, 28, 29, 30,
+      31
     ],
-    highlightedDays: [17, 21],
   };
 
   const caloriesPercent = Math.min(
@@ -89,7 +88,7 @@ function Dashboard() {
 
   const macrosGradient = `conic-gradient(
     #54c4f2 0% ${proteinPercent}%,
-    #d8dce8 ${proteinPercent}% ${proteinPercent + carbsPercent}%,
+    #506a92 ${proteinPercent}% ${proteinPercent + carbsPercent}%,
     #6ca6ff ${proteinPercent + carbsPercent}% 100%
   )`;
 
@@ -345,14 +344,11 @@ function Dashboard() {
                 <h2 className="calendar-day-number">
                   {calendarWidget.selectedDay}
                 </h2>
-                <p className="calendar-location">◉ {calendarWidget.location}</p>
               </div>
 
               <div className="calendar-right">
                 <div className="calendar-days-grid">
                   {calendarWidget.days.map((day) => {
-                    const isHighlighted =
-                      calendarWidget.highlightedDays.includes(day);
                     const isSelected = day === calendarWidget.selectedDay;
 
                     return (
@@ -361,8 +357,6 @@ function Dashboard() {
                         className={`calendar-day ${
                           isSelected
                             ? "selected-day"
-                            : isHighlighted
-                            ? "highlighted-day"
                             : ""
                         }`}
                       >
