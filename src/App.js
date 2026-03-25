@@ -1,9 +1,10 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 
 import Header from "./components/Header";
 
+import Login from "./pages/login";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Coach from "./pages/Coach";
@@ -15,13 +16,18 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 
 function App() {
+  const location = useLocation();
+
+  const hideHeader = location.pathname === "/";
+
   return (
     <div className="body">
-      <Header />
+      {!hideHeader && <Header />}
 
       <div className="page-content">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />
           <Route path="/workouts" element={<Workouts />} />
