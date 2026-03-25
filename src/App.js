@@ -4,6 +4,7 @@ import "./App.css";
 
 import Header from "./components/Header";
 
+import Signup from "./pages/Signup";
 import Login from "./pages/login";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -19,14 +20,16 @@ function App() {
   const location = useLocation();
 
   const hideHeader = location.pathname === "/";
+  const hideHeader2 = location.pathname === "/signup";
 
   return (
     <div className="body">
-      {!hideHeader && <Header />}
+      {!hideHeader && !hideHeader2 && <Header />}
 
       <div className="page-content">
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />
