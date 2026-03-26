@@ -14,6 +14,8 @@ import Payments from "./pages/Payments";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 
+import PaymentHistory from "./pages/PaymentHistory";
+
 function App() {
   return (
     <div className="body">
@@ -28,6 +30,7 @@ function App() {
           <Route path="/logs" element={<Logs />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/payments" element={<Payments />} />
+          <Route path="/payment-history" element={<PaymentHistory />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
