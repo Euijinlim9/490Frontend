@@ -241,3 +241,35 @@
     font-size: 15px;
     padding: 8px 4px;
 }
+
+.new-chat-wrapper {
+  position: relative;
+}
+
+.chat-options-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.chat-option-btn {
+  border: none;
+  background: #f3f3f3;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+
+.chat-option-btn:hover {
+  background: #e7e7e7;
+}

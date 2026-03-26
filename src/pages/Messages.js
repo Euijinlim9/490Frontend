@@ -6,31 +6,41 @@ function Messages() {
   const [selectedConversationId, setSelectedConversationId] = useState(null);
   const [messages, setMessages] = useState({});
   const [inputValue, setInputValue] = useState("");
+  const [showChatOptions, setShowChatOptions] = useState(false); 
+
+  const chatOptions = [ 
+    { id: 1, name: "Coach"}, 
+    { id: 2, name: "Nutrionist" }, 
+  ]; 
 
   const handleStartNewChat = () => {
-    const coachJoeId = 1;
+    setShowChatOptions((prev) => !prev);
+  }; 
 
+  const handleSelectChat = (person) => {
     const existingConversation = conversations.find(
-      (conversation) => conversation.id === coachJoeId
+      (conversation) => conversation.id === person.id 
     );
 
     if (existingConversation) {
       setSelectedConversationId(existingConversation.id);
+      setShowChatOptions(false); 
       return;
     }
 
     const newConversation = {
-      id: coachJoeId,
-      name: "Coach Joe",
+      id: person.id,
+      name: person.name,
       preview: "Start a new conversation",
     };
 
     setConversations((prev) => [...prev, newConversation]);
     setMessages((prev) => ({
       ...prev,
-      [coachJoeId]: [],
+      [person.id]: [],
     }));
-    setSelectedConversationId(coachJoeId);
+    setSelectedConversationId(person.id);
+    setShowChatOptions(false); 
   };
 
   const handleSend = () => {
@@ -82,10 +92,26 @@ function Messages() {
       <aside className="messages-sidebar">
         <div className="sidebar-top">
           <h2 className="messages-sidebar-title">Messages</h2>
-          <button className="new-chat-btn" onClick={handleStartNewChat}>
-            + New Chat
-          </button>
-        </div>
+          <div className="new-chat-wrapper">
+            <button className="new-chat-btn" onClick={handleStartNewChat}>
+              + New Chat
+            </button>
+
+            {showChatOptions && (
+              <div className="chat-options-menu"> 
+               {chatOptions.map((person) => (
+                <button 
+                  key={person.id}
+                  className="chat-option-btn"
+                  onClick={() => handleSelectChat(person)}
+                > 
+                  {person.name}
+                </button>
+               ))}
+              </div> 
+            )}
+          </div>
+        </div> 
 
         <div className="conversation-list">
           {conversations.length === 0 ? (
