@@ -1,0 +1,148 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center;
+    height: 100vh;       
+    padding-bottom: 30px;
+}
+
+.signup-page {
+  display: flex;            
+  justify-content: center;  
+  align-items: flex-start;   
+  gap: 50px;                 
+  padding-top: 100px;
+}
+
+.container-left,
+.container-right {
+  width: 400px;             
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text{
+    font-size:35px;
+    font-weight:700;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #ffffff; 
+}
+
+.inputs{
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.input{
+    display:flex;
+    align-items: center;
+    margin: auto;
+    width: 400px;
+    height:80px;
+    
+}
+
+.input input{
+    height: 50px;
+    width: 100%;        
+    max-width: 400px;
+    background:#2b2b2b;
+    border:none;
+    outline:none;
+    color: #797979;
+    font-size: 19px;
+    border-radius: 10px;
+    padding-left: 15px;
+}
+
+.forgot-pass {
+    width: 100%;
+    max-width: 400px;
+    margin: 5px auto 15px auto;
+    text-align: right; 
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.loginbutton {
+    width: 100%;
+    max-width: 400px;  
+    height: 50px;
+    margin: 0 auto;     
+    display: block;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.google-btn {
+    width: 100%;
+    max-width: 400px;
+    height: 50px;
+    margin: 0 auto;
+    display: block;
+    background-color: rgb(0, 0, 0);
+    color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.signup-link {
+    color: #323232;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.signup-link span {
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    color: #aaa;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #aaa;
+}
+
+.divider::before {
+    margin-right: 10px;
+}
+
+.divider::after {
+    margin-left: 10px;
+}
+
+.loginbutton + .loginbutton{
+    margin-top:15px;
+}

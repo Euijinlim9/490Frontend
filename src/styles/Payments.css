@@ -1,0 +1,239 @@
+.payments-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.payments-topbar {
+  padding: 16px 20px 0 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.history-btn {
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.history-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.payments-page {
+  display: flex;
+  gap: 24px;
+  padding: 30px 20px;
+  color: white;
+  box-sizing: border-box;
+  align-items: stretch;
+  flex: 1;
+}
+
+.saved-cards-panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: rgba(128, 128, 128, 0.45);
+  border: 2px solid white;
+  border-radius: 20px;
+  padding: 20px 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.payment-form-panel {
+  flex: 1;
+  background: rgba(128, 128, 128, 0.45);
+  border: 2px solid white;
+  border-radius: 20px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.panel-title {
+  margin: 0 0 20px 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.no-cards {
+  font-size: 13px;
+  color: #ccc;
+  font-style: italic;
+}
+
+.cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.saved-card {
+  position: relative;
+  background: linear-gradient(135deg, #3b5f8f, #506a92);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  box-sizing: border-box;
+}
+
+.saved-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.selected-card {
+  border-color: white;
+}
+
+.card-chip {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.card-number {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.card-name {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.card-expiry {
+  font-size: 11px;
+}
+
+.card-network {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.card-delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.card-delete-btn:hover {
+  color: #ff7f7f;
+}
+
+.success-msg {
+  background: rgba(126, 216, 126, 0.2);
+  border: 1px solid #7ed87e;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #7ed87e;
+  margin-bottom: 20px;
+}
+
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ccc;
+}
+
+.form-group input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: #888;
+}
+
+.form-group input:focus {
+  border-color: #6ca6ff;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.save-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.save-card-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #6ca6ff;
+}
+
+.pay-btn {
+  padding: 12px;
+  background: #506a92;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.pay-btn:hover {
+  background: #3b5f8f;
+}
