@@ -15,6 +15,7 @@ import Calendar from "./pages/Calendar";
 import Payments from "./pages/Payments";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import GoogleAuthCallback from "./components/GoogleAuthCallback";
 
 import PaymentHistory from "./pages/PaymentHistory";
 
@@ -32,6 +33,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/auth/callback" element={<GoogleAuthCallback />} />
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />

@@ -1,8 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 function Dashboard() {
+  // User data
+  const { user } = useContext(AuthContext);
+
   // temporary sample data
 
   const quickActions = {
@@ -60,13 +65,8 @@ function Dashboard() {
     weekdayLabel: "Monday",
     selectedDay: 26,
     days: [
-      1, 2, 3, 4, 5,
-      6, 7, 8, 9, 10,
-      11, 12, 13, 14, 15,
-      16, 17, 18, 19, 20,
-      21, 22, 23, 24, 25,
-      26, 27, 28, 29, 30,
-      31
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     ],
   };
 
@@ -98,9 +98,10 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-
       <div className="dashboard-layout">
         <div className="dashboard-left">
+          <h1>Welcome {user?.first_name}!</h1>
+
           <section className="dashboard-section">
             <h3 className="section-title">Quick Start</h3>
             <div className="dashboard-card quickstart-card">
@@ -340,7 +341,9 @@ function Dashboard() {
                   <button className="calendar-arrow">›</button>
                 </div>
 
-                <p className="calendar-weekday">{calendarWidget.weekdayLabel}</p>
+                <p className="calendar-weekday">
+                  {calendarWidget.weekdayLabel}
+                </p>
                 <h2 className="calendar-day-number">
                   {calendarWidget.selectedDay}
                 </h2>
@@ -355,9 +358,7 @@ function Dashboard() {
                       <div
                         key={day}
                         className={`calendar-day ${
-                          isSelected
-                            ? "selected-day"
-                            : ""
+                          isSelected ? "selected-day" : ""
                         }`}
                       >
                         {day}
