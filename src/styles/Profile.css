@@ -1,93 +1,95 @@
-.profile-page{
-    display: flex;            
-    justify-content: center;  
-    align-items: flex-start;   
-    gap: 50px;                 
-    padding:50px;
+.profile-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 50px;
+  padding: 50px;
 }
 
-.container-left{
-    width: 400px;             
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 50px;
+.container-left {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
 }
 
-.container-right{
-    width:450px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0 40px;
-    box-sizing: border-box;
+.container-right {
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 40px;
+  box-sizing: border-box;
 }
 
 .container-right h3 {
   width: 100%;
-  margin: 0;  
+  margin: 0;
   padding-left: 0;
   font-weight: 700;
   color: black;
 }
 
-.profile-text{
-    font-size:40px;
-    font-weight:500;
-    margin-bottom: 10px;
-    color: #ffffff; 
+.profile-text {
+  font-size: 40px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #ffffff;
 }
 
 .avatar {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 3px solid #7585a1; 
+  border: 3px solid #7585a1;
   object-fit: cover;
   margin-bottom: 15px;
 }
 
-.profile-name{
-    font-weight:700;
-    font-size: 14px;
-    text-transform: uppercase;
-    margin-bottom:25px;
-    color: #ffffff; 
+.profile-name {
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+  color: #ffffff;
 }
 
-.upload-btn, .signout-btn, .delete-btn{
-    width: 40%;
-    background-color: #44536b;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    padding: 10px 0;
-    margin: 5px 0;
-    font-weight: 600;
-    cursor: pointer;   
+.upload-btn,
+.signout-btn,
+.delete-btn {
+  width: 40%;
+  background-color: #44536b;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  padding: 10px 0;
+  margin: 5px 0;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.signout-btn{
-    background-color: transparent;
+.signout-btn {
+  background-color: transparent;
 
-    font-weight: 400;
-    margin-top: 10px;
+  font-weight: 400;
+  margin-top: 10px;
 }
 
-.delete-btn{
-    background-color:rgb(249, 112, 112);
+.delete-btn {
+  background-color: rgb(249, 112, 112);
 }
 
-.line{
-  width: 450px;        
-  height: 2px;       
-  background-color:white;
-  margin: 25px 0;     
+.line {
+  width: 450px;
+  height: 2px;
+  background-color: white;
+  margin: 25px 0;
 }
 
 .name {
   display: flex;
-  gap: 15px;         
+  gap: 15px;
 }
 
 .input-group {
@@ -104,7 +106,7 @@
   font-weight: 600;
   letter-spacing: 0.5px;
   padding-left: 0;
-  margin-left:0;
+  margin-left: 0;
 }
 
 .name .input-group {
@@ -125,27 +127,64 @@ input[type="text"] {
 input[type="text"]:focus {
   border-color: #7585a1;
 }
+.profile-page input:disabled {
+  background-color: #2b2f34;
+  color: #666 !important;
+  cursor: not-allowed;
+  border: 1px solid #444;
+  opacity: 0.7;
+}
 
 .email {
-  display: flex;       
+  display: flex;
 }
 
 .email-group {
   width: 100%;
 }
 
-
-.goals{
-    display:flex;
+.goals {
+  display: flex;
 }
 
-.goals input{
-    flex: 1;            
-    height: 100px;
-    width:400px;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 3px solid #ccc;
-    background-color:transparent;   
+.goals select {
+  flex: 1;
+  height: 100px;
+  width: 400px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 3px solid #ccc;
+  background-color: transparent;
+}
+
+.goals select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Save btn */
+.save-btn {
+  margin-top: 20px;
+  padding: 12px 32px;
+  background-color: #4a9eff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background-color: #3a8eef;
+}
+
+.profile-message {
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background-color: rgba(74, 158, 255, 0.15);
+  color: #4a9eff;
+  font-size: 14px;
 }

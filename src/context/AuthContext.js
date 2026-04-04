@@ -28,8 +28,7 @@ export const AuthProvider = ({ children }) => {
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
-        } else {
-          // Token is invalid or expired
+        } else if (res.status === 401) {
           localStorage.removeItem("token");
           setUser(null);
         }

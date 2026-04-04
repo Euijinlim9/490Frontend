@@ -4,10 +4,13 @@ import userIcon from "../images/user.svg";
 import inboxIcon from "../images/inbox.svg";
 import homeIcon from "../images/home.svg";
 import { AuthContext } from "../context/AuthContext";
+import { useState } from "react";
 
 function Header() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -55,9 +58,12 @@ function Header() {
             </Link>
           </div>
         </div>
-
-        <div className="icon-btn">
-          <Link to="/profile" className="circle">
+        <div className="icon-btn profile-dropdown-wrapper">
+          <div
+            className="circle"
+            onClick={() => setShowDropdown(!showDropdown)}
+            style={{ cursor: "pointer" }}
+          >
             {user?.profile_pic ? (
               <img
                 src={user.profile_pic}
@@ -73,13 +79,32 @@ function Header() {
             ) : (
               <img src={userIcon} alt="Profile icon" className="circle-icon" />
             )}
-          </Link>
+          </div>
 
           <div className="nav-small">
-            <Link to="/profile" className="nav-btn-small">
+            <span
+              className="nav-btn-small"
+              onClick={() => setShowDropdown(!showDropdown)}
+              style={{ cursor: "pointer" }}
+            >
               {user ? `${user.first_name} ${user.last_name}` : "Profile"}
-            </Link>
+            </span>
           </div>
+
+          {showDropdown && (
+            <div className="profile-dropdown">
+              <Link
+                to="/profile"
+                className="dropdown-item"
+                onClick={() => setShowDropdown(false)}
+              >
+                Profile Settings
+              </Link>
+              <div className="dropdown-item logout-item" onClick={handleLogout}>
+                Sign Out
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
