@@ -1,4 +1,4 @@
-.login-page {
+.signup-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -6,9 +6,9 @@
   padding: 40px 20px;
 }
 
-.login-card {
+.signup-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -17,7 +17,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.login-title {
+.signup-title {
   font-size: 32px;
   font-weight: 700;
   color: #ffffff;
@@ -26,15 +26,56 @@
   letter-spacing: -0.5px;
 }
 
-.login-subtitle {
+.signup-subtitle {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.5);
   text-align: center;
   margin: 0 0 32px 0;
 }
 
+/* Toggle */
+.role-toggle {
+  display: flex;
+  position: relative;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 28px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
+  border-radius: 10px;
+}
+
+.toggle-btn.active {
+  color: #ffffff;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
 /* Error */
-.login-error {
+.signup-error {
   background: rgba(255, 107, 107, 0.12);
   border: 1px solid rgba(255, 107, 107, 0.25);
   color: #ff6b6b;
@@ -46,19 +87,28 @@
 }
 
 /* Form */
-.login-form {
+.signup-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-.login-form-group {
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.login-form-group label {
+.form-group label {
   font-size: 12px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.45);
@@ -66,7 +116,7 @@
   letter-spacing: 0.8px;
 }
 
-.login-form-group input {
+.form-group input {
   padding: 14px 16px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
@@ -77,31 +127,17 @@
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.login-form-group input::placeholder {
+.form-group input::placeholder {
   color: rgba(255, 255, 255, 0.2);
 }
 
-.login-form-group input:focus {
+.form-group input:focus {
   border-color: rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* Forgot password */
-.login-forgot {
-  font-size: 13px;
-  color: #4a9eff;
-  cursor: pointer;
-  text-align: right;
-  margin-top: -8px;
-  transition: color 0.2s ease;
-}
-
-.login-forgot:hover {
-  color: #6db3ff;
-}
-
-/* Button */
-.login-btn {
+/* Buttons */
+.signup-btn {
   width: 100%;
   padding: 16px;
   border: none;
@@ -116,32 +152,50 @@
   letter-spacing: 0.3px;
 }
 
-.login-btn:hover {
+.signup-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(74, 158, 255, 0.3);
 }
 
-.login-btn:active {
+.signup-btn:active {
   transform: translateY(0);
 }
 
+.upload-cert-btn {
+  width: 100%;
+  padding: 14px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.upload-cert-btn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.8);
+}
+
 /* Divider */
-.login-divider {
+.signup-divider {
   display: flex;
   align-items: center;
   margin: 28px 0;
   gap: 16px;
 }
 
-.login-divider::before,
-.login-divider::after {
+.signup-divider::before,
+.signup-divider::after {
   content: "";
   flex: 1;
   height: 1px;
   background: rgba(255, 255, 255, 0.1);
 }
 
-.login-divider span {
+.signup-divider span {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.3);
   text-transform: uppercase;
@@ -150,7 +204,7 @@
 }
 
 /* Google */
-.login-google-btn {
+.google-signup-btn {
   width: 100%;
   padding: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -167,31 +221,31 @@
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.login-google-btn:hover {
+.google-signup-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.25);
 }
 
-.login-google-logo {
+.google-logo {
   width: 20px;
   height: 20px;
 }
 
-/* Sign up link */
-.login-signup-link {
+/* Sign in link */
+.signin-link {
   text-align: center;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.4);
   margin-top: 24px;
 }
 
-.login-signup-link span {
+.signin-link span {
   color: #4a9eff;
   cursor: pointer;
   font-weight: 600;
   transition: color 0.2s ease;
 }
 
-.login-signup-link span:hover {
+.signin-link span:hover {
   color: #6db3ff;
 }

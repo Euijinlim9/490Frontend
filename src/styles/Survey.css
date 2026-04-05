@@ -66,3 +66,9 @@
   background: #3b5f8f;
 }
 
+.survey-message {
+  text-align: center;
+  font-size: 14px;
+  color: #4ade80;
+  margin-bottom: 16px;
+}

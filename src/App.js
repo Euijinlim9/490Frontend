@@ -5,7 +5,7 @@ import "./App.css";
 import Header from "./components/Header";
 
 import Signup from "./pages/Signup";
-import Login from "./pages/login";
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Coach from "./pages/Coach";
@@ -15,6 +15,7 @@ import Calendar from "./pages/Calendar";
 import Payments from "./pages/Payments";
 import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
+import SurveyPage from "./pages/SurveyPage";
 import GoogleAuthCallback from "./components/GoogleAuthCallback";
 
 import PaymentHistory from "./pages/PaymentHistory";
@@ -24,15 +25,18 @@ function App() {
 
   const hideHeader = location.pathname === "/";
   const hideHeader2 = location.pathname === "/signup";
+  const hideHeader3 = location.pathname === "/login";
 
   return (
     <div className="body">
-      {!hideHeader && !hideHeader2 && <Header />}
+      {!hideHeader && !hideHeader2 && !hideHeader3 && <Header />}
 
       <div className="page-content">
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/survey" element={<SurveyPage />} />
           <Route path="/auth/callback" element={<GoogleAuthCallback />} />
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
