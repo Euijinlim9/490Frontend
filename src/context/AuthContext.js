@@ -10,6 +10,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeRole, setActiveRole] = useState(null);
 
   // Fetch user info thorugh the JWT Token
   useEffect(() => {
@@ -28,12 +29,13 @@ export const AuthProvider = ({ children }) => {
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
+          setActiveRole(data.user.role);
         } else if (res.status === 401) {
           localStorage.removeItem("token");
           setUser(null);
         }
       } catch (error) {
-        console.log("Failed to fetch user: ", error);
+        console.log("Auth check failed!", error);
       }
       setLoading(false);
     };
@@ -50,7 +52,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, logout, loading }}>
+    <AuthContext.Provider
+      value={{ user, setUser, logout, loading, activeRole, setActiveRole }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -188,3 +188,64 @@
   color: #4a9eff;
   font-size: 14px;
 }
+
+.profile-badge {
+  background: #4a9eff;
+  color: white;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.profile-page textarea {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 3px solid #ccc;
+  background-color: transparent;
+  color: white;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-page textarea:focus {
+  border-color: #7585a1;
+}
+
+.profile-page input[type="number"] {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 3px solid #ccc;
+  background-color: transparent;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-page input[type="number"]:focus {
+  border-color: #7585a1;
+}
+
+.profile-page select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 3px solid #ccc;
+  background-color: transparent;
+  color: white;
+  outline: none;
+  transition: border-color 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}

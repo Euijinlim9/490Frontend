@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useState } from "react";
 
 function Header() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, activeRole, setActiveRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -100,6 +100,17 @@ function Header() {
               >
                 Profile Settings
               </Link>
+              {user?.role === "coach" && (
+                <div
+                  className="dropdown-item"
+                  onClick={() => {
+                    setActiveRole(activeRole === "coach" ? "client" : "coach");
+                    setShowDropdown(false);
+                  }}
+                >
+                  Switch to {activeRole === "coach" ? "Client" : "Coach"}
+                </div>
+              )}
               <div className="dropdown-item logout-item" onClick={handleLogout}>
                 Sign Out
               </div>

@@ -54,7 +54,15 @@ function Signup() {
         console.log("Registration response:", data);
         console.log("Token received:", data.token);
         localStorage.setItem("token", data.token);
-        setUser(data.user);
+
+        const meRes = await fetch("http://localhost:4000/auth/me", {
+          headers: { Authorization: `Bearer ${data.token}` },
+        });
+        const meData = await meRes.json();
+
+        if (meRes.ok) {
+          setUser(meData.user);
+        }
         setSuccess("Account created successfully! Redirecting...");
         setTimeout(() => {
           navigate("/survey");
@@ -78,8 +86,17 @@ function Signup() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        setUser(data.user);
-        navigate("/survey");
+        const meRes = await fetch("http://localhost:4000/auth/me", {
+          headers: { Authorization: `Bearer ${data.token}` },
+        });
+        const meData = await meRes.json();
+        if (meRes.ok) {
+          setUser(meData.user);
+        }
+        setSuccess("Coach account created! Redirecting...");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
       } else {
         setError(data.message || data.error);
       }
