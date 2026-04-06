@@ -5,6 +5,8 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   const { user, setUser, logout, activeRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -106,6 +108,29 @@ function Profile() {
     navigate("/");
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:4000/auth/delete-account", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        logout();
+        navigate("/");
+      } else {
+        setMessage(data.message || "Failed to delete account");
+      }
+    } catch (err) {
+      setMessage("Something went wrong");
+    }
+  };
+
   if (!user) return <p>Loading ...</p>;
 
   return (
@@ -125,7 +150,34 @@ function Profile() {
         <button className="signout-btn" onClick={handleLogout}>
           Sign out
         </button>
-        <button className="delete-btn">Delete Account</button>
+        <button
+          className="delete-btn"
+          onClick={() => setShowDeleteConfirm(true)}
+        >
+          Delete Account
+        </button>
+        {showDeleteConfirm && (
+          <div className="delete-overlay">
+            <div className="delete-modal">
+              <h3>Delete Account</h3>
+              <p>Are you sure? This action cannot be undone.</p>
+              <div className="delete-confirm-buttons">
+                <button
+                  className="delete-confirm-yes"
+                  onClick={handleDeleteAccount}
+                >
+                  Yes, Delete
+                </button>
+                <button
+                  className="delete-confirm-no"
+                  onClick={() => setShowDeleteConfirm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="container-right">

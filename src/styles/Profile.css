@@ -249,3 +249,48 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+.delete-confirm {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.delete-confirm p {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.delete-confirm-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.delete-confirm-yes {
+  padding: 8px 20px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-confirm-yes:hover {
+  background-color: #e55a5a;
+}
+
+.delete-confirm-no {
+  padding: 8px 20px;
+  background-color: #44536b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-confirm-no:hover {
+  background-color: #556b8a;
+}
