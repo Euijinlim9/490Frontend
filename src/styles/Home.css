@@ -1,0 +1,292 @@
+.home-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+.home-content {
+  flex-grow: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 40px 60px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.home-content h1 {
+  color: white;
+}
+
+/* Header */
+
+.landing-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 20px 0;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.landing-header--scrolled {
+  padding: 12px 0;
+  background: rgba(30, 34, 40, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.landing-header__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.landing-header__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.landing-header__logo-icon {
+  display: flex;
+  align-items: center;
+}
+
+.landing-header__logo-text {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* Nav */
+.landing-header__nav {
+  display: flex;
+  gap: 36px;
+}
+
+.landing-header__link {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  letter-spacing: 0.2px;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.landing-header__link:hover {
+  color: #ffffff;
+}
+
+.landing-header__link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #4a9eff;
+  border-radius: 1px;
+  transition: width 0.25s ease;
+}
+
+.landing-header__link:hover::after {
+  width: 100%;
+}
+
+/* Actions */
+.landing-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-header__signin {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.landing-header__signin:hover {
+  color: #ffffff;
+}
+
+.landing-header__signup {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #4a9eff;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: 0.2px;
+}
+
+.landing-header__signup:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(74, 158, 255, 0.35);
+}
+
+.landing-header__signup:active {
+  transform: translateY(0);
+}
+
+/* Footer */
+
+.landing-footer {
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 64px 0 32px;
+  margin-top: auto;
+}
+
+.landing-footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.landing-footer__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 80px;
+  margin-bottom: 48px;
+}
+
+/* Brand */
+.landing-footer__brand {
+  max-width: 320px;
+}
+
+.landing-footer__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.landing-footer__logo span {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.landing-footer__tagline {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Columns */
+.landing-footer__columns {
+  display: flex;
+  gap: 64px;
+}
+
+.landing-footer__column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.landing-footer__column h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 4px 0;
+}
+
+.landing-footer__column a {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.landing-footer__column a:hover {
+  color: #ffffff;
+}
+
+/* Bottom */
+.landing-footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.landing-footer__bottom p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.25);
+  margin: 0;
+}
+
+.landing-footer__legal {
+  display: flex;
+  gap: 24px;
+}
+
+.landing-footer__legal a {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.25);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.landing-footer__legal a:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 768px) {
+  .landing-header__nav {
+    display: none;
+  }
+
+  .landing-header__inner {
+    padding: 0 20px;
+  }
+
+  .landing-footer__top {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .landing-footer__columns {
+    gap: 40px;
+  }
+
+  .landing-footer__bottom {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .landing-footer__inner {
+    padding: 0 20px;
+  }
+}

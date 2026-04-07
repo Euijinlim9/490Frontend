@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import Survey from "../components/Survey"; 
+import HomeHeader from "../components/HomeHeader";
+import HomeFooter from "../components/HomeFooter";
 
+// Landing Page
 function Home() {
-  const [showSurvey, setShowSurvey] = useState(true); 
+  const [showSurvey, setShowSurvey] = useState(true);
   return (
     <div>
-      <Survey
-        show={showSurvey}
-        onClose={() => setShowSurvey(false)}
-        />
-    <h1 className="page-title">Home</h1>
-  </div>
+      <HomeHeader />
+      <div className="home-content">
+        <h1>Home</h1>
+      </div>
+      <HomeFooter />
+    </div>
   );
 }
 
