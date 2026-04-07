@@ -37,9 +37,9 @@ function Survey({ show, onClose }){
 
                     <select name="goal" value={form.goal} onChange={handleChange}>
                         <option value="">Select Your Goal</option>
-                        <option value="none">Lose Weight</option>
-                        <option value="vegetarian">Gain Weight</option>
-                        <option value="gluten-free">Maintain</option> 
+                        <option value="lose">Lose Weight</option>
+                        <option value="gain">Gain Weight</option>
+                        <option value="maintain">Maintain</option> 
                     </select>
 
                     <select name="typeWorkout" value={form.typeWorkout} onChange={handleChange}>
