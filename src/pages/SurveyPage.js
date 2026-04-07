@@ -1,18 +1,19 @@
-import Survey from "../components/Survey";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
-import React from "react";
+import CoachSurvey from "../components/CoachSurvey";
+import ClientSurvey from "../components/ClientSurvey";
+import { AuthContext } from "../context/AuthContext";
 
 const SurveyPage = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-  return (
-    <Survey
-      show={true}
-      onClose={() => {
-        navigate("/dashboard");
-      }}
-    />
+  if (!user) return null;
+
+  return user?.role === "coach" ? (
+    <CoachSurvey show={true} onClose={() => navigate("/dashboard")} />
+  ) : (
+    <ClientSurvey show={true} onClose={() => navigate("/dashboard")} />
   );
 };
 
