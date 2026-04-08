@@ -1,0 +1,176 @@
+.logs-page{
+    dislay: flex; 
+    justify-content: center; 
+    align-items: flex-start; 
+    gap: 50px; 
+    padding: 50px; 
+}
+
+.logs-layout{
+    display: flex;
+}
+
+.logs-sidebar{
+    width: 250px; 
+}
+
+.logs-main{
+    flex: 1; 
+    padding: 30px; 
+    display: flex; 
+    flex-direction: column;
+    gap: 20px; 
+}
+
+.logs-header{
+    display: flex; 
+    padding: 20px;
+    gap: 8px; 
+    flex-direction: column;
+
+}
+
+.logs-title{
+    font-size: 28px; 
+    font-weight: 600px; 
+
+}
+
+.logs-subtitle{
+    font-size: 14px;
+    color: #b0b8c1;
+}
+
+.logs-grid{
+    display: flex; 
+    padding: 10px 0;  
+    gap: 20px; 
+    align-items: stretch;
+    max-width: 1100px; 
+    width: 100%;
+}
+
+.log-card{
+    flex: 1; 
+}
+
+.log-card-header{
+    diaply: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+}
+
+.log-card-title{
+    font-size: 18px; 
+    font-weight: 600; 
+    color: white; 
+}
+
+.log-card-subtitle{
+    font-size: 13px;
+    color: #9aa3ab
+}
+
+.log-form{
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+}
+
+.form-group{
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px;
+}
+
+.form-row{
+    display: flex; 
+    gap: 10px; 
+}
+
+.log-input{}
+.log-select{}
+.log-textarea{
+    width: 100%; 
+    padding: 10px; 
+    border-radius: 10px; 
+    border: 1px solid #3a3f45; 
+    background: #1f2328; 
+    color: white; 
+    font-size: 14px; 
+}
+.log-input::placeholder, 
+.log-textarea::placeholder{
+    color: #7d8790; 
+}
+.log-input:focus, 
+.log-select:focus, 
+.log-textarea:focus{
+    outline: none; 
+    border: 1px solid #4a90e2; 
+}
+
+.log-textarea{
+    mid-height: 80px; 
+    resize: none; 
+}
+
+.radio-group{
+    display: flex; 
+    gap: 10px; 
+}
+
+.radio-option{
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+    font-size: 13px; 
+    color: #c0c7cf; 
+}
+
+.log-button{
+    margin-top: 10px; 
+    padding: 12px; 
+    border: none; 
+    border-raidus: 10px; 
+    background: #4a90e2; 
+    color: white; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 0.2s ease; 
+}
+
+.log-button:hover{
+    background: #357abd; 
+}
+
+.recent-section{
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px;
+}
+
+.recent-list{
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px;
+}
+
+.recent-item{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px; 
+    border-radius: 10px; 
+    background: #1f2328; 
+}
+
+.recent-left{
+    font-size: 14px; 
+    color: white; 
+}
+
+.recent-right{
+    font-size: 13px; 
+    color: #9aa3ab; 
+}
