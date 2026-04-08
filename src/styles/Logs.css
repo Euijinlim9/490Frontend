@@ -1,33 +1,27 @@
 .logs-page{
-    dislay: flex; 
-    justify-content: center; 
+    display: flex; 
+    justify-content: flex-start; 
     align-items: flex-start; 
-    gap: 50px; 
-    padding: 50px; 
+    padding: 40px 30px; 
 }
 
 .logs-layout{
     display: flex;
+    align-items: flex; 
+    gap: 40px; 
+    width: 100%; 
 }
 
 .logs-sidebar{
-    width: 250px; 
+    width: 150px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px; 
+    flex-shrink: 0;  
 }
 
 .logs-main{
-    flex: 1; 
-    padding: 30px; 
-    display: flex; 
-    flex-direction: column;
-    gap: 20px; 
-}
-
-.logs-header{
-    display: flex; 
-    padding: 20px;
-    gap: 8px; 
-    flex-direction: column;
-
+    flex: 1;
 }
 
 .logs-title{
@@ -43,19 +37,24 @@
 
 .logs-grid{
     display: flex; 
-    padding: 10px 0;  
-    gap: 20px; 
-    align-items: stretch;
-    max-width: 1100px; 
-    width: 100%;
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px; 
+    align-items: start; 
 }
 
 .log-card{
-    flex: 1; 
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    border-radius: 20px; 
+    padding: 28px; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 18px; 
+    box-sizing: border-box; 
 }
 
 .log-card-header{
-    diaply: flex; 
+    disply: flex; 
     flex-direction: column; 
     gap: 5px; 
 }
@@ -91,13 +90,8 @@
 .log-input{}
 .log-select{}
 .log-textarea{
-    width: 100%; 
-    padding: 10px; 
-    border-radius: 10px; 
-    border: 1px solid #3a3f45; 
-    background: #1f2328; 
-    color: white; 
-    font-size: 14px; 
+    background: #5c6672; 
+    border: 1px solid rgba(255, 255, 255, 0.18);  
 }
 .log-input::placeholder, 
 .log-textarea::placeholder{
@@ -111,8 +105,10 @@
 }
 
 .log-textarea{
-    mid-height: 80px; 
+    background: #5c6672; 
+    border: 1px solid rgba(255, 255, 255, 0.18);  
     resize: none; 
+    min-height: 80px;
 }
 
 .radio-group{
@@ -132,7 +128,7 @@
     margin-top: 10px; 
     padding: 12px; 
     border: none; 
-    border-raidus: 10px; 
+    border-radius: 10px; 
     background: #4a90e2; 
     color: white; 
     font-weight: 600; 
@@ -173,4 +169,27 @@
 .recent-right{
     font-size: 13px; 
     color: #9aa3ab; 
+}
+
+.side-button{
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center; 
+}
+
+.log-select{
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+
+  background: #5c6672; 
+  color: white; 
+  border: 1px solid rgba(255, 255, 255, 0.18); 
 }
