@@ -43,6 +43,35 @@ function Logs() {
                     />
                 </div>
 
+                <div className="form-row">
+                <div className="form-group">
+                  <label>Grams of Protein</label>
+                    <input 
+                      className="log-input"
+                      type="number"
+                      placeholder="Enter Grams of Protein"
+                    />
+                  </div>
+
+                <div className="form-group">
+                  <label>Grams of Carbs</label>
+                    <input 
+                      className="log-input"
+                      type="number"
+                      placeholder="Enter Grams of Carbs"
+                    />
+                  </div>
+                  </div>
+
+                <div className="form-group">
+                  <label>Grams of Fats</label>
+                    <input 
+                      className="log-input"
+                      type="number"
+                      placeholder="Enter Grams of Fats"
+                    />
+                  </div>
+
                 <div className="form-group"> 
                   <label>Time of Meal</label>
                   <div className="radio-group">
@@ -59,14 +88,6 @@ function Logs() {
                       <input type="radio" name="mealTime" /> Snack
                     </label>
                   </div>
-                </div>
-
-                <div className="form-group">
-                  <label>Additional Notes</label>
-                  <textarea 
-                    className="log-textarea"
-                    placeholder="Add Notes"
-                  />
                 </div>
 
                 <button className="log-button">Log Meal</button>

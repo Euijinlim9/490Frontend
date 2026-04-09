@@ -1,14 +1,10 @@
-import React from "react";
+import React, { useContext, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 function Dashboard() {
-  // User data
   const { user } = useContext(AuthContext);
-
-  // temporary sample data
 
   const quickActions = {
     workoutPath: "/workouts",
@@ -25,63 +21,58 @@ function Dashboard() {
       "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
   };
 
+  const [wellness, setWellness] = useState({
+    sleepHours: 0,
+    waterCurrent: 0,
+    waterGoal: 0,
+    heartRate: 0,
+  });
+
+  const [editingCard, setEditingCard] = useState(null);
+  const [wellnessInputs, setWellnessInputs] = useState({
+    sleepHours: "",
+    waterCurrent: "",
+    waterGoal: "",
+    heartRate: "",
+  });
+
+  const [weightData, setWeightData] = useState([]);
+  const [weightInput, setWeightInput] = useState("");
+
+  const macros = {
+    dateLabel: "Today",
+    totalCalories: 0,
+    protein: 0,
+    carbs: 0,
+    fats: 0,
+  };
+
   const stats = {
     calories: {
-      current: 896,
+      current: 0,
       goal: 1750,
     },
     activity: {
-      current: 12,
+      current: 0,
       goal: 120,
     },
   };
 
-  const wellness = {
-    sleepHours: 6,
-    waterCurrent: 20,
-    waterGoal: 72,
-    heartRate: 60,
-  };
-
-  const macros = {
-    dateLabel: "Mar 5th",
-    totalCalories: 896,
-    protein: 30,
-    carbs: 21,
-    fats: 23,
-  };
-
-  const weightData = [
-    { label: "Mar 1", value: 176 },
-    { label: "Mar 7", value: 173.5 },
-    { label: "Mar 14", value: 174.2 },
-    { label: "Mar 21", value: 170 },
-    { label: "Mar 28", value: 170 },
-    { label: "Apr 4", value: 169.8 },
-  ];
-
-  const calendarWidget = {
-    monthLabel: "March 2026",
-    weekdayLabel: "Monday",
-    selectedDay: 26,
-    days: [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-      22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-    ],
-  };
-
   const caloriesPercent = Math.min(
-    (stats.calories.current / stats.calories.goal) * 100,
+    stats.calories.goal
+      ? (stats.calories.current / stats.calories.goal) * 100
+      : 0,
     100
   );
 
   const activityPercent = Math.min(
-    (stats.activity.current / stats.activity.goal) * 100,
+    stats.activity.goal
+      ? (stats.activity.current / stats.activity.goal) * 100
+      : 0,
     100
   );
 
   const macroTotal = macros.protein + macros.carbs + macros.fats;
-
   const proteinPercent = macroTotal ? (macros.protein / macroTotal) * 100 : 0;
   const carbsPercent = macroTotal ? (macros.carbs / macroTotal) * 100 : 0;
   const fatsPercent = macroTotal ? (macros.fats / macroTotal) * 100 : 0;
@@ -92,30 +83,95 @@ function Dashboard() {
     #6ca6ff ${proteinPercent + carbsPercent}% 100%
   )`;
 
-  const minWeight = Math.min(...weightData.map((point) => point.value));
-  const maxWeight = Math.max(...weightData.map((point) => point.value));
-  const range = maxWeight - minWeight || 1;
+  const chartData = useMemo(() => {
+    return weightData;
+  }, [weightData]);
 
-  return (
+  const minWeight = chartData.length
+    ? Math.min(...chartData.map((p) => p.value))
+    : 0;
+
+  const maxWeight = chartData.length
+    ? Math.max(...chartData.map((p) => p.value))
+    : 0;
+
+  const paddedMin = chartData.length ? Math.floor(minWeight - 3) : 0;
+  const paddedMax = chartData.length ? Math.ceil(maxWeight + 3) : 10;
+  const range = paddedMax - paddedMin || 1;
+
+  const yAxisTicks = chartData.length
+    ? Array.from({ length: 6 }, (_, i) =>
+        Math.round(paddedMax - (i * range) / 5)
+      )
+    : [0, 0, 0, 0, 0, 0];
+
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+const year = currentMonth.getFullYear();
+const month = currentMonth.getMonth();
+
+const today = new Date();
+
+const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+const handlePrevMonth = () => {
+  setCurrentMonth(new Date(year, month - 1, 1));
+};
+
+const handleNextMonth = () => {
+  setCurrentMonth(new Date(year, month + 1, 1));
+};
+
+  const handleAddWeight = (e) => {
+    e.preventDefault();
+    if (!weightInput.trim()) return;
+
+    const newEntry = {
+      label: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+      value: Number(weightInput),
+    };
+
+    if (!newEntry.value) return;
+
+    setWeightData((prev) => [...prev, newEntry]);
+    setWeightInput("");
+  };
+
+  const startEditing = (field) => {
+  setEditingCard(field);
+  setWellnessInputs((prev) => ({
+    ...prev,
+    [field]: wellness[field],
+  }));
+};
+
+  const handleWellnessInputChange = (e) => {
+    const { name, value } = e.target;
+    setWellnessInputs((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const saveWellnessField = (field) => {
+    setWellness((prev) => ({
+      ...prev,
+      [field]: Number(wellnessInputs[field]) || 0,
+    }));
+    setEditingCard(null);
+  };
+
+   return (
     <div className="dashboard-page">
       <div className="dashboard-layout">
         <div className="dashboard-left">
-          <h1>Welcome {user?.first_name}!</h1>
+          <div className="welcome">Welcome {user?.first_name}!</div>
 
           <section className="dashboard-section">
-            <h3 className="section-title">Quick Start</h3>
-            <div className="dashboard-card quickstart-card">
-              <Link to={quickActions.workoutPath} className="dash-btn">
-                Start a workout
-              </Link>
-              <Link to={quickActions.mealPath} className="dash-btn">
-                Log a meal
-              </Link>
-            </div>
-          </section>
-
-          <section className="dashboard-section">
-            <h3 className="section-title">Today's Workout</h3>
+            <div className="section-title">Today's Workout</div>
             <div className="dashboard-card workout-card">
               <div className="workout-image">
                 <img src={todaysWorkout.image} alt={todaysWorkout.title} />
@@ -124,7 +180,7 @@ function Dashboard() {
               <div className="workout-info">
                 <div className="workout-header-row">
                   <div>
-                    <h4 className="workout-title">{todaysWorkout.title}</h4>
+                    <div className="workout-title">{todaysWorkout.title}</div>
                   </div>
                   <span className="workout-level">{todaysWorkout.level}</span>
                 </div>
@@ -143,6 +199,17 @@ function Dashboard() {
                   </span>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section className="dashboard-section">
+            <div className="dashboard-card quickstart-card">
+              <Link to={quickActions.workoutPath} className="dash-btn">
+                Start a workout
+              </Link>
+              <Link to={quickActions.mealPath} className="dash-btn">
+                Log a meal
+              </Link>
             </div>
           </section>
 
@@ -186,33 +253,97 @@ function Dashboard() {
           <section className="dashboard-section">
             <div className="health-row">
               <div className="health-card">
-                <h4 className="health-title">Sleep</h4>
-                <div className="health-icon">☾</div>
-                <p className="health-value">
-                  {wellness.sleepHours} <span>hours</span>
-                </p>
-              </div>
+              <h4 className="health-title">Sleep</h4>
+              <div className="health-icon">☾</div>
+
+  {editingCard === "sleepHours" ? (
+    <input
+      type="number"
+      name="sleepHours"
+      value={wellnessInputs.sleepHours}
+      onChange={handleWellnessInputChange}
+      onBlur={() => saveWellnessField("sleepHours")}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          saveWellnessField("sleepHours");
+        }
+      }}
+      className="wellness-inline-input"
+      autoFocus
+    />
+  ) : (
+    <p
+      className="health-value clickable-value"
+      onClick={() => startEditing("sleepHours")}
+    >
+      {wellness.sleepHours} <span>hours</span>
+    </p>
+  )}
+</div>
+                
 
               <div className="health-card">
-                <h4 className="health-title">Water</h4>
-                <div className="health-icon">💧</div>
-                <p className="health-value">
-                  {wellness.waterCurrent}
-                  <span>/{wellness.waterGoal}</span>
-                </p>
-                <p className="health-subtext">ounces</p>
-              </div>
+  <h4 className="health-title">Water</h4>
+  <div className="health-icon">💧</div>
+
+  {editingCard === "waterCurrent" ? (
+    <input
+      type="number"
+      name="waterCurrent"
+      value={wellnessInputs.waterCurrent}
+      onChange={handleWellnessInputChange}
+      onBlur={() => saveWellnessField("waterCurrent")}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          saveWellnessField("waterCurrent");
+        }
+      }}
+      className="wellness-inline-input"
+      autoFocus
+    />
+  ) : (
+    <>
+      <p
+        className="health-value clickable-value"
+        onClick={() => startEditing("waterCurrent")}
+      >
+        {wellness.waterCurrent} <span>ounces</span>
+      </p>
+    </>
+  )}
+</div>
 
               <div className="health-card">
-                <h4 className="health-title">Heart Rate</h4>
-                <div className="health-icon">♡</div>
-                <p className="health-value">
-                  {wellness.heartRate} <span>bpm</span>
-                </p>
+  <h4 className="health-title">Heart Rate</h4>
+  <div className="health-icon">♡</div>
+
+  {editingCard === "heartRate" ? (
+    <input
+      type="number"
+      name="heartRate"
+      value={wellnessInputs.heartRate}
+      onChange={handleWellnessInputChange}
+      onBlur={() => saveWellnessField("heartRate")}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          saveWellnessField("heartRate");
+        }
+      }}
+      className="wellness-inline-input"
+      autoFocus
+    />
+  ) : (
+    <p
+      className="health-value clickable-value"
+      onClick={() => startEditing("heartRate")}
+    >
+      {wellness.heartRate} <span>bpm</span>
+    </p>
+  )}
               </div>
             </div>
-          </section>
-        </div>
+          </section> 
+        </div> 
 
         <div className="dashboard-right">
           <div className="analytics-row">
@@ -265,110 +396,91 @@ function Dashboard() {
                 <h4>Weight (lbs)</h4>
               </div>
 
+              <form onSubmit={handleAddWeight} className="dashboard-form">
+                <input
+                  type="number"
+                  step="0.1"
+                  placeholder="Enter weight"
+                  value={weightInput}
+                  onChange={(e) => setWeightInput(e.target.value)}
+                />
+                <button type="submit" className="dash-btn">
+                  Add Weight
+                </button>
+              </form>
+
               <div className="weight-chart">
                 <div className="y-axis-labels">
-                  {[180, 175, 170, 165, 160, 155].map((tick) => (
+                  {yAxisTicks.map((tick) => (
                     <span key={tick}>{tick}</span>
                   ))}
                 </div>
 
                 <div className="chart-area">
-                  {[180, 175, 170, 165, 160, 155].map((tick) => (
+                  {yAxisTicks.map((tick) => (
                     <div key={tick} className="chart-grid-line"></div>
                   ))}
 
                   <svg
                     className="weight-line-svg"
-                    viewBox="0 0 260 150"
+                    viewBox="0 0 300 170"
                     preserveAspectRatio="none"
                   >
-                    <polyline
-                      fill="none"
-                      stroke="#3b5f8f"
-                      strokeWidth="3"
-                      points={weightData
-                        .map((point, index) => {
+                    {chartData.length > 0 && (
+                      <>
+                        <polyline
+                          fill="none"
+                          stroke="#3b5f8f"
+                          strokeWidth="3"
+                          points={chartData
+                            .map((point, index) => {
+                              const x =
+                                chartData.length === 1
+                                  ? 150
+                                  : (index / (chartData.length - 1)) * 260 + 20;
+
+                              const y =
+                                15 + ((paddedMax - point.value) / range) * 120;
+
+                              return `${x},${y}`;
+                            })
+                            .join(" ")}
+                        />
+
+                        {chartData.map((point, index) => {
                           const x =
-                            weightData.length === 1
-                              ? 130
-                              : (index / (weightData.length - 1)) * 240 + 10;
+                            chartData.length === 1
+                              ? 150
+                              : (index / (chartData.length - 1)) * 260 + 20;
 
                           const y =
-                            10 + ((maxWeight - point.value) / range) * 110;
+                            15 + ((paddedMax - point.value) / range) * 120;
 
-                          return `${x},${y}`;
-                        })
-                        .join(" ")}
-                    />
-                    {weightData.map((point, index) => {
-                      const x =
-                        weightData.length === 1
-                          ? 130
-                          : (index / (weightData.length - 1)) * 240 + 10;
-
-                      const y = 10 + ((maxWeight - point.value) / range) * 110;
-
-                      return (
-                        <circle
-                          key={point.label}
-                          cx={x}
-                          cy={y}
-                          r="5"
-                          fill="#355a8c"
-                          stroke="white"
-                          strokeWidth="2"
-                        />
-                      );
-                    })}
+                          return (
+                            <circle
+                              key={`${point.label}-${index}`}
+                              cx={x}
+                              cy={y}
+                              r="5"
+                              fill="#355a8c"
+                              stroke="white"
+                              strokeWidth="2"
+                            />
+                          );
+                        })}
+                      </>
+                    )}
                   </svg>
 
                   <div className="x-axis-labels">
-                    {weightData.map((point) => (
-                      <span key={point.label}>{point.label}</span>
+                    {chartData.map((point, index) => (
+                      <span key={`${point.label}-${index}`}>{point.label}</span>
                     ))}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <section className="calendar-section">
-            <div className="calendar-widget">
-              <div className="calendar-left">
-                <div className="calendar-top-row">
-                  <button className="calendar-arrow">‹</button>
-                  <span>{calendarWidget.monthLabel}</span>
-                  <button className="calendar-arrow">›</button>
-                </div>
-
-                <p className="calendar-weekday">
-                  {calendarWidget.weekdayLabel}
-                </p>
-                <h2 className="calendar-day-number">
-                  {calendarWidget.selectedDay}
-                </h2>
-              </div>
-
-              <div className="calendar-right">
-                <div className="calendar-days-grid">
-                  {calendarWidget.days.map((day) => {
-                    const isSelected = day === calendarWidget.selectedDay;
-
-                    return (
-                      <div
-                        key={day}
-                        className={`calendar-day ${
-                          isSelected ? "selected-day" : ""
-                        }`}
-                      >
-                        {day}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </section>
         </div>
       </div>
     </div>
