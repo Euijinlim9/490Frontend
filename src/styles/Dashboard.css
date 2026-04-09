@@ -337,11 +337,15 @@
 }
 
 .protein-dot {
-  background: #54c4f2;
+  background: #31748f;
+}
+
+.fiber-dot {
+  background: #1c3357;
 }
 
 .carbs-dot {
-  background: #506a92;
+  background: #364863;
 }
 
 .fats-dot {

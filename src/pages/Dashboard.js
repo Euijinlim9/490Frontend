@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
@@ -48,47 +48,80 @@ function Dashboard() {
   const [weightInput, setWeightInput] = useState("");
   const [weightData, setWeightData] = useState([]);
 
-  const macros = {
-    dateLabel: "Today",
-    totalCalories: 0,
-    protein: 0,
-    carbs: 0,
-    fats: 0,
+  const[mealTotals, setMealTotals] = useState({
+    totalCalories: 0, 
+    protein: 0, 
     fiber: 0, 
-  };
+    carbs: 0, 
+    fats: 0,
+  }); 
 
-  const stats = {
-    calories: {
-      current: 0,
-      goal: 1750,
-    },
-    activity: {
-      current: 0,
-      goal: 120,
-    },
-  };
+  useEffect(() => {
+    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
+    const today = new Date().toLocaleDateString(); 
 
+    const todaysMeals = savedMeals.filter((meal) => meal.date === today); 
+
+    const totals = todaysMeals.reduce(
+      (acc, meal) => {
+        acc.totalCalories += Number(meal.calories) || 0; 
+        acc.protein += Number(meal.protein) || 0; 
+        acc.carbs += Number(meal.carbs) || 0; 
+        acc.fats += Number(meal.fats) || 0; 
+        acc.fiber += Number(meal.fiber) || 0; 
+        return acc; 
+      },
+      {
+        totalCalories: 0,
+        protein: 0, 
+        fiber: 0, 
+        carbs: 0, 
+        fats: 0,  
+      }
+    ); 
+
+    setMealTotals(totals); 
+  }, []); 
+
+  const calorieGoal = 1750; 
   const caloriesPercent = Math.min(
-    stats.calories.goal
-      ? (stats.calories.current / stats.calories.goal) * 100
-      : 0,
+    calorieGoal ? (mealTotals.totalCalories / calorieGoal) * 100 : 0,
     100
   );
+
+  const [activityCurrent, setActivityCurrent] = useState(0); 
+
+  useEffect(() => {
+    const savedWorkouts = JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
+    const today = new Date().toLocaleDateString(); 
+
+    const todaysWorkouts = savedWorkouts.filter((workout) => {
+      if (!workout.date) return false;
+      
+      const workoutDate = new Date(workout.date).toLocaleDateString(); 
+      return workoutDate === today; 
+    }); 
+
+    const totalMinutes = todaysWorkouts.reduce((acc, workout) => {
+        acc += Number(workout.duration) || 0; 
+        return acc; 
+      }, 0); 
+
+      setActivityCurrent(totalMinutes); 
+    }, []); 
+
+  const activityGoal = 120; 
 
   const activityPercent = Math.min(
-    stats.activity.goal
-      ? (stats.activity.current / stats.activity.goal) * 100
-      : 0,
+    activityGoal ? (activityCurrent / activityGoal) * 100 : 0,
     100
   );
 
-  const macroTotal = macros.protein + macros.carbs + macros.fats;
-  const proteinPercent = macroTotal ? (macros.protein / macroTotal) * 100 : 0;
-  const carbsPercent = macroTotal ? (macros.carbs / macroTotal) * 100 : 0;
-  const fatsPercent = macroTotal ? (macros.fats / macroTotal) * 100 : 0;
-  const fiberPercent = macroTotal ? (macros.fiber / macroTotal) * 100 : 0;
-
-
+  const macroTotal = mealTotals.protein + mealTotals.fiber + mealTotals.carbs + mealTotals.fats;
+  const proteinPercent = macroTotal ? (mealTotals.protein / macroTotal) * 100 : 0;
+  const carbsPercent = macroTotal ? (mealTotals.carbs / macroTotal) * 100 : 0;
+  const fatsPercent = macroTotal ? (mealTotals.fats / macroTotal) * 100 : 0;
+  const fiberPercent = macroTotal ? (mealTotals.fiber / macroTotal) * 100 : 0;
 
   const macrosGradient = `conic-gradient(
     #54c4f2 0% ${proteinPercent}%,
@@ -194,8 +227,8 @@ function Dashboard() {
                 <div className="stat-header">
                   <span className="stat-title">Calories</span>
                   <span className="stat-number">
-                    {stats.calories.current.toLocaleString()}/
-                    {stats.calories.goal.toLocaleString()}
+                    {mealTotals.totalCalories.toLocaleString()}/
+                    {calorieGoal.toLocaleString()}
                   </span>
                 </div>
 
@@ -211,7 +244,7 @@ function Dashboard() {
                 <div className="stat-header">
                   <span className="stat-title">Activity Minutes</span>
                   <span className="stat-number">
-                    {stats.activity.current}/{stats.activity.goal}
+                    {activityCurrent}/{activityGoal}
                   </span>
                 </div>
 
@@ -325,7 +358,7 @@ function Dashboard() {
             <div className="widget-card macros-card">
               <div className="widget-header">
                 <h4>Macros</h4>
-                <span>{macros.dateLabel}</span>
+                <span>Today</span>
               </div>
 
               <div className="macro-donut-wrap">
@@ -334,7 +367,7 @@ function Dashboard() {
                   style={{ background: macrosGradient }}
                 >
                   <div className="macro-donut-inner">
-                    <span>{macros.totalCalories}</span>
+                    <span>{mealTotals.totalCalories}</span>
                   </div>
                 </div>
               </div>
@@ -343,7 +376,7 @@ function Dashboard() {
                 <div className="macro-item">
                   <span className="macro-dot protein-dot"></span>
                   <div>
-                    <strong>{macros.protein}g</strong>
+                    <strong>{mealTotals.protein}g</strong>
                     <p>Protein</p>
                   </div>
                 </div>
@@ -351,7 +384,7 @@ function Dashboard() {
                 <div className="macro-item">
                   <span className="macro-dot fiber-dot"></span>
                   <div>
-                    <strong>{macros.fiber}g</strong>
+                    <strong>{mealTotals.fiber}g</strong>
                     <p>Fiber</p>
                   </div>
                 </div>
@@ -359,7 +392,7 @@ function Dashboard() {
                 <div className="macro-item">
                   <span className="macro-dot carbs-dot"></span>
                   <div>
-                    <strong>{macros.carbs}g</strong>
+                    <strong>{mealTotals.carbs}g</strong>
                     <p>Carbs</p>
                   </div>
                 </div>
@@ -367,7 +400,7 @@ function Dashboard() {
                 <div className="macro-item">
                   <span className="macro-dot fats-dot"></span>
                   <div>
-                    <strong>{macros.fats}g</strong>
+                    <strong>{mealTotals.fats}g</strong>
                     <p>Fats</p>
                   </div>
                 </div>
@@ -412,7 +445,7 @@ function Dashboard() {
                       tick={{ fill: "#cfd6de", fontSize: 12 }}
                       axisLine={false}
                       tickLine={false}
-                    />s
+                    />
                     <Line 
                       type="monotone"
                       dataKey="value"
