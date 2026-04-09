@@ -20,7 +20,7 @@ function Logs() {
               <div className="log-card-header">
                 <div className="log-card-title">Track Your meals</div>
                 <div className="log-card-subtitle">
-                  Log your meals, including calorieintake and time.
+                  Log your meals, including calorie intake and time.
                 </div>
               </div> 
 
@@ -54,13 +54,23 @@ function Logs() {
                   </div>
 
                 <div className="form-group">
+                  <label>Grams of Fiber</label>
+                    <input 
+                      className="log-input"
+                      type="number"
+                      placeholder="Enter Grams of Fiber"
+                    />
+                  </div>
+                  </div>
+
+                  <div className="form-row">
+                <div className="form-group">
                   <label>Grams of Carbs</label>
                     <input 
                       className="log-input"
                       type="number"
                       placeholder="Enter Grams of Carbs"
                     />
-                  </div>
                   </div>
 
                 <div className="form-group">
@@ -70,6 +80,7 @@ function Logs() {
                       type="number"
                       placeholder="Enter Grams of Fats"
                     />
+                  </div>
                   </div>
 
                 <div className="form-group"> 

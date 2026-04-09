@@ -2,6 +2,14 @@ import React, { useContext, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
 function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -29,6 +37,7 @@ function Dashboard() {
   });
 
   const [editingCard, setEditingCard] = useState(null);
+
   const [wellnessInputs, setWellnessInputs] = useState({
     sleepHours: "",
     waterCurrent: "",
@@ -36,8 +45,8 @@ function Dashboard() {
     heartRate: "",
   });
 
-  const [weightData, setWeightData] = useState([]);
   const [weightInput, setWeightInput] = useState("");
+  const [weightData, setWeightData] = useState([]);
 
   const macros = {
     dateLabel: "Today",
@@ -45,6 +54,7 @@ function Dashboard() {
     protein: 0,
     carbs: 0,
     fats: 0,
+    fiber: 0, 
   };
 
   const stats = {
@@ -76,6 +86,9 @@ function Dashboard() {
   const proteinPercent = macroTotal ? (macros.protein / macroTotal) * 100 : 0;
   const carbsPercent = macroTotal ? (macros.carbs / macroTotal) * 100 : 0;
   const fatsPercent = macroTotal ? (macros.fats / macroTotal) * 100 : 0;
+  const fiberPercent = macroTotal ? (macros.fiber / macroTotal) * 100 : 0;
+
+
 
   const macrosGradient = `conic-gradient(
     #54c4f2 0% ${proteinPercent}%,
@@ -87,66 +100,28 @@ function Dashboard() {
     return weightData;
   }, [weightData]);
 
-  const minWeight = chartData.length
-    ? Math.min(...chartData.map((p) => p.value))
-    : 0;
-
-  const maxWeight = chartData.length
-    ? Math.max(...chartData.map((p) => p.value))
-    : 0;
-
-  const paddedMin = chartData.length ? Math.floor(minWeight - 3) : 0;
-  const paddedMax = chartData.length ? Math.ceil(maxWeight + 3) : 10;
-  const range = paddedMax - paddedMin || 1;
-
-  const yAxisTicks = chartData.length
-    ? Array.from({ length: 6 }, (_, i) =>
-        Math.round(paddedMax - (i * range) / 5)
-      )
-    : [0, 0, 0, 0, 0, 0];
-
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-
-const year = currentMonth.getFullYear();
-const month = currentMonth.getMonth();
-
-const today = new Date();
-
-const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-const handlePrevMonth = () => {
-  setCurrentMonth(new Date(year, month - 1, 1));
-};
-
-const handleNextMonth = () => {
-  setCurrentMonth(new Date(year, month + 1, 1));
-};
-
   const handleAddWeight = (e) => {
     e.preventDefault();
     if (!weightInput.trim()) return;
 
     const newEntry = {
-      label: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      }),
+      label: new Date().toISOString(),
       value: Number(weightInput),
     };
 
-    if (!newEntry.value) return;
+    if (Number.isNaN(newEntry.value)) return;
 
     setWeightData((prev) => [...prev, newEntry]);
     setWeightInput("");
   };
 
   const startEditing = (field) => {
-  setEditingCard(field);
-  setWellnessInputs((prev) => ({
-    ...prev,
-    [field]: wellness[field],
-  }));
-};
+    setEditingCard(field);
+    setWellnessInputs((prev) => ({
+      ...prev,
+      [field]: wellness[field],
+    }));
+  };
 
   const handleWellnessInputChange = (e) => {
     const { name, value } = e.target;
@@ -374,6 +349,14 @@ const handleNextMonth = () => {
                 </div>
 
                 <div className="macro-item">
+                  <span className="macro-dot fiber-dot"></span>
+                  <div>
+                    <strong>{macros.fiber}g</strong>
+                    <p>Fiber</p>
+                  </div>
+                </div>
+
+                <div className="macro-item">
                   <span className="macro-dot carbs-dot"></span>
                   <div>
                     <strong>{macros.carbs}g</strong>
@@ -409,82 +392,46 @@ const handleNextMonth = () => {
                 </button>
               </form>
 
-              <div className="weight-chart">
-                <div className="y-axis-labels">
-                  {yAxisTicks.map((tick) => (
-                    <span key={tick}>{tick}</span>
-                  ))}
-                </div>
-
-                <div className="chart-area">
-                  {yAxisTicks.map((tick) => (
-                    <div key={tick} className="chart-grid-line"></div>
-                  ))}
-
-                  <svg
-                    className="weight-line-svg"
-                    viewBox="0 0 300 170"
-                    preserveAspectRatio="none"
+              <div className="weight-chart-recharts">
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 10, right: 10, left: -10, bottom: 10 }}
                   >
-                    {chartData.length > 0 && (
-                      <>
-                        <polyline
-                          fill="none"
-                          stroke="#3b5f8f"
-                          strokeWidth="3"
-                          points={chartData
-                            .map((point, index) => {
-                              const x =
-                                chartData.length === 1
-                                  ? 150
-                                  : (index / (chartData.length - 1)) * 260 + 20;
-
-                              const y =
-                                15 + ((paddedMax - point.value) / range) * 120;
-
-                              return `${x},${y}`;
-                            })
-                            .join(" ")}
-                        />
-
-                        {chartData.map((point, index) => {
-                          const x =
-                            chartData.length === 1
-                              ? 150
-                              : (index / (chartData.length - 1)) * 260 + 20;
-
-                          const y =
-                            15 + ((paddedMax - point.value) / range) * 120;
-
-                          return (
-                            <circle
-                              key={`${point.label}-${index}`}
-                              cx={x}
-                              cy={y}
-                              r="5"
-                              fill="#355a8c"
-                              stroke="white"
-                              strokeWidth="2"
-                            />
-                          );
-                        })}
-                      </>
-                    )}
-                  </svg>
-
-                  <div className="x-axis-labels">
-                    {chartData.map((point, index) => (
-                      <span key={`${point.label}-${index}`}>{point.label}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                    <CartesianGrid stroke="rgba(255, 255, 255, 0.12)" vertical={false}/>
+                    <XAxis
+                      dataKey="label"
+                      tick={{ fill: "#cfd6de", fontSize: 12 }}
+                      tickFormatter={(value) => {
+                        const date = new Date(value); 
+                        return `${date.getMonth() + 1}/${date.getDate()}`;  
+                      }} 
+                    />
+                    <YAxis
+                      domain={["dataMine -2", "dataMax +2"]}
+                      tick={{ fill: "#cfd6de", fontSize: 12 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />s
+                    <Line 
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#3b66a8"
+                      strokeWidth={3}
+                      dot={{ r: 6, fill: "#3b66a8", stroke: "white", strokeWidth: 2 }}
+                    /> 
+                  </LineChart>
+                </ResponsiveContainer>
+              </div> 
+            </div> 
+          </div> 
+        </div> 
+      </div> 
     </div>
   );
 }
 
 export default Dashboard;
+
+//ENTRIES DO NOT STAY IN CHRONOLOGICAL ORDER
+//MACROS ENTERED IN LOG NEED TO SHOW IN CHART ON DASH 
