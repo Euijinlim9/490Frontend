@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Survey.css";
 
 function ClientSurvey({ show, onClose }){
@@ -10,7 +10,17 @@ function ClientSurvey({ show, onClose }){
         coachHelp: "", 
         nutritionistHelp: "", 
         workoutDay: "",
+        currentWeight: "", 
     }); 
+
+    const[weightInput, setWeightInput] = useState(""); 
+    const[weightData, setWeightData] = useState([]); 
+
+    useEffect(() => {
+      const savedWeightData =
+        JSON.parse(localStorage.getItem("weightData")) || [];
+      setWeightData(savedWeightData);
+}, []);
 
     const handleChange = (e) => {
         setForm({
@@ -23,7 +33,20 @@ function ClientSurvey({ show, onClose }){
         e.preventDefault();
 
         console.log("Survey submitted!", form); 
-        //backend 
+
+        if (form.currentWeight){
+            const newEntry = {
+                label: new Date().toISOString(), 
+                value: Number(form.currentWeight), 
+            }; 
+
+            const existing = JSON.parse(localStorage.getItem("weightData")) || []; 
+
+            localStorage.setItem(
+                "weightData", 
+                JSON.stringify([...existing, newEntry])
+            ); 
+        }
         onClose(); 
     }; 
 
@@ -89,6 +112,15 @@ function ClientSurvey({ show, onClose }){
                         <option value="5">5 days</option>
                         <option value="6">6 days</option>
                     </select> 
+
+                    <input
+                      type="number"
+                      name="currentWeight"
+                      value={form.currentWeight}
+                      onChange={handleChange}
+                      placeholder="Enter Current Weight (lbs)"
+                    />
+
 
                     <button type="submit" className="submit-btn">Submit</button>
                 </form>

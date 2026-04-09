@@ -19,6 +19,8 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import SurveyPage from "./pages/SurveyPage";
 import GoogleAuthCallback from "./components/GoogleAuthCallback";
+import RecentMeals from "./pages/RecentMeals";
+import RecentWorkouts from "./pages/RecentWorkouts";
 
 import ActiveWorkout from "./pages/ActiveWorkout";
 
@@ -55,6 +57,8 @@ function App() {
           <Route path="/payment-history" element={<PaymentHistory />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/recent-meals" element={<RecentMeals />} />
+          <Route path="/recent-workouts" element={<RecentWorkouts />} />
         </Routes>
       </div>
     </div>
