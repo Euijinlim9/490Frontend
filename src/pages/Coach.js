@@ -3,15 +3,7 @@ import { Link } from "react-router-dom";
 import "../styles/Coach.css";
 import userimg from "../images/user.svg";
 
-function Coach() {
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("");
-
-  const handleSearch = () => {
-    console.log({ query, filter });
-  };
-
-  const coachData=[
+export const coachData=[
     {
       id: 1,
       firstName: "Joe",
@@ -38,21 +30,37 @@ function Coach() {
   },
 ];
 
+function Coach() {
+  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("");
+
+  const handleSearch = () => {
+    setSearchQuery(query);
+  };
+
+
   const filteredCoaches = coachData.filter((coach) => {
-    if (!query) return true;
+    if (!searchQuery) return true;
+    
+    const firstName = `${coach.firstName}`.toLowerCase();
+    const lastName = `${coach.lastName}`.toLowerCase();
+    const specialty = coach.specialty.toLowerCase();
+    const search = searchQuery.toLowerCase();
 
     if (filter === "name") {
       return `${coach.firstName} ${coach.lastName}`
         .toLowerCase()
-        .includes(query.toLowerCase());
+        .includes(searchQuery.toLowerCase());
     }
 
     if (filter === "specialty") {
       return coach.specialty
         .toLowerCase()
-        .includes(query.toLowerCase());
+        .includes(searchQuery.toLowerCase());
     }
-    return true;
+
+    return firstName.includes(search) || lastName.includes(search) || specialty.includes(search);
   });
 
   return (
@@ -74,7 +82,7 @@ function Coach() {
     </div>
     <div className="coach-container">
       {filteredCoaches.map((coach)=> (
-        <Link to={`/coach/${coach.id}`} className="coach-card">
+        <Link key={coach.id} to={`/coach/${coach.id}`} className="coach-card">
           <img src={userimg} alt={coach.firstName} className="avatar"/>
           <h3>{coach.firstName} {coach.lastName}</h3>
           <p>{coach.bio}</p>

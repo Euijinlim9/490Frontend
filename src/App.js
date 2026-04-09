@@ -17,6 +17,7 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import SurveyPage from "./pages/SurveyPage";
 import GoogleAuthCallback from "./components/GoogleAuthCallback";
+import CoachDetails from "./pages/CoachDetail";
 
 import PaymentHistory from "./pages/PaymentHistory";
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />
+          <Route path="/coach/:id" element={<CoachDetails />} />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/logs" element={<Logs />} />
           <Route path="/calendar" element={<Calendar />} />
