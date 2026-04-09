@@ -272,7 +272,6 @@ function Logs() {
                     <option value="cardio">Cardio</option>
                     <option value="weight-training">Weight training</option>
                     <option value="low-impact">Low Impact</option>
-                    <option value="mixed">Mixed</option>
                   </select> 
                 </div>
 
