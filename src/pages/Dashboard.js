@@ -48,6 +48,11 @@ function Dashboard() {
   const [weightInput, setWeightInput] = useState("");
   const [weightData, setWeightData] = useState([]);
 
+  useEffect(() => {
+    const savedWeightData = JSON.parse(localStorage.getItem("weightData")) || []; 
+    setWeightData(savedWeightData); 
+  }, []); 
+
   const[mealTotals, setMealTotals] = useState({
     totalCalories: 0, 
     protein: 0, 
@@ -139,14 +144,17 @@ function Dashboard() {
 
     const newEntry = {
       label: new Date().toISOString(),
-      value: Number(weightInput),
-    };
+      value: Number(weightInput), 
+    }; 
 
-    if (Number.isNaN(newEntry.value)) return;
+    if (Number.isNaN(newEntry.value)) return; 
 
-    setWeightData((prev) => [...prev, newEntry]);
-    setWeightInput("");
-  };
+    const updatedWeightData = [...weightData, newEntry];
+
+    setWeightData(updatedWeightData);
+    localStorage.setItem("weightData", JSON.stringify(updatedWeightData)); 
+    setWeightInput(""); 
+  }; 
 
   const startEditing = (field) => {
     setEditingCard(field);
@@ -420,18 +428,18 @@ function Dashboard() {
                   value={weightInput}
                   onChange={(e) => setWeightInput(e.target.value)}
                 />
-                <button type="submit" className="dash-btn">
+                <button type="submit" className="weight-btn">
                   Add Weight
                 </button>
               </form>
-
+            
               <div className="weight-chart-recharts">
                 <ResponsiveContainer width="100%" height={220}>
                   <LineChart
                     data={chartData}
-                    margin={{ top: 10, right: 10, left: -10, bottom: 10 }}
+                    margin={{ top: 15, right: 10, left: -10, bottom: 15 }}
                   >
-                    <CartesianGrid stroke="rgba(255, 255, 255, 0.12)" vertical={false}/>
+                    <CartesianGrid stroke="rgb(255, 255, 255)" vertical={false}/>
                     <XAxis
                       dataKey="label"
                       tick={{ fill: "#cfd6de", fontSize: 12 }}
@@ -441,7 +449,7 @@ function Dashboard() {
                       }} 
                     />
                     <YAxis
-                      domain={["dataMine -2", "dataMax +2"]}
+                      domain={["dataMin -2", "dataMax +2"]}
                       tick={{ fill: "#cfd6de", fontSize: 12 }}
                       axisLine={false}
                       tickLine={false}
@@ -460,11 +468,9 @@ function Dashboard() {
           </div> 
         </div> 
       </div> 
-    </div>
+    </div> 
   );
 }
 
-export default Dashboard;
 
-//ENTRIES DO NOT STAY IN CHRONOLOGICAL ORDER
-//MACROS ENTERED IN LOG NEED TO SHOW IN CHART ON DASH 
+export default Dashboard;
