@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/Survey.css";
 
-function Survey({ show, onClose }){
+function CoachSurvey({ show, onClose }){
     const [ form, setForm ] = useState({
         specialities: "", 
         workoutType: "", 
@@ -96,4 +96,4 @@ function Survey({ show, onClose }){
     );
 }
 
-export default Survey;
+export default CoachSurvey;

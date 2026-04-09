@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import userIcon from "../images/user.svg";
 import inboxIcon from "../images/inbox.svg";
-import homeIcon from "../images/home.svg";
 import { AuthContext } from "../context/AuthContext";
 import { useState } from "react";
+import "../styles/Header.css";
 
 function Header() {
   const { user, logout, activeRole, setActiveRole } = useContext(AuthContext);
@@ -19,11 +19,14 @@ function Header() {
 
   return (
     <div className="header">
-      <div className="logo">logo</div>
-      <Link to="/" className="circle">
-        <img src={homeIcon} alt="Home icon" className="home-icon" />
+      <Link to="/" className="logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect x="2" y="10" width="24" height="8" rx="4" fill="#4a9eff" />
+          <rect x="6" y="4" width="4" height="20" rx="2" fill="#4a9eff" />
+          <rect x="18" y="4" width="4" height="20" rx="2" fill="#4a9eff" />
+        </svg>
+        <span>FitnessFR</span>
       </Link>
-      {/* logo can become home button but we need one still */}
 
       <div className="nav-pill">
         <Link to="/dashboard" className="nav-btn">
