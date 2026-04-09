@@ -12,6 +12,7 @@ function ActiveWorkout() {
   const [timer, setTimer] = useState(0);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
+  const [workoutLogged, setWorkoutLogged] = useState(false);
 
   const exercises = activeWorkout?.exercises || [];
   const current = exercises[currentIndex];
@@ -48,6 +49,31 @@ function ActiveWorkout() {
       }
     }
   }, [phase, running, timer, currentSet, totalSets, goNextExercise]);
+
+  useEffect(() => {
+    if (!done || workoutLogged || !activeWorkout) return; 
+
+    const workoutLog = {
+      workoutType: activeWorkout.name, 
+      duration: exercises.reduce(
+        (total, ex) => total + ((Number(ex.breakTime) || 0) * (Number(ex.sets) || 1)), 
+        0
+      ) / 60, 
+      sets: exercises.reduce((total, ex) => total + (Number(ex.sets) || 0), 0), 
+      reps: exercises.reduce((total, ex) => total + (Number(ex.sets) || 0) * (Number(ex.reps) || 0), 
+    0 ), 
+    date: new Date().toLocaleDateString(),
+    }; 
+
+    const existingWorkouts = JSON.parse(localStorage.getItem("loggedWorkouts")) || []; 
+
+    localStorage.setItem(
+      "loggedWorkouts", 
+      JSON.stringify([...existingWorkouts, workoutLog])
+    ); 
+
+    setWorkoutLogged(true); 
+  }, [done, workoutLogged, activeWorkout, exercises]); 
 
   const handleDoneSet = () => {
     if (currentSet < totalSets) {

@@ -131,9 +131,11 @@
     border-radius: 10px; 
     background: #4a90e2; 
     color: white; 
-    font-weight: 600; 
     cursor: pointer; 
     transition: 0.2s ease; 
+    text-align: center;
+    font-size: 14px;
+    text-decoration: none;
 }
 
 .log-button:hover{
