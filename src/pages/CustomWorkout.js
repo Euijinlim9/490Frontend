@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/CustomWorkout.css";
 import { WorkoutContext } from "../context/WorkoutContext";
 
-const COMMON_EXERCISES = [
+/*const COMMON_EXERCISES = 
   {
     name: "Push Ups",
     muscle: "Chest",
@@ -293,14 +293,15 @@ const COMMON_EXERCISES = [
     thumbnail: "https://img.youtube.com/vi/ph3pddpKzzw/hqdefault.jpg",
   },
 ];
+*/
 
 const emptyForm = () => ({
   name: "",
-  youtubeUrl: "",
+  // youtubeUrl: "",  //our current database doesnt have a row for it ill add it when i can but probably not until after mock demo [ jack 4/9 ]
   sets: "",
   reps: "",
   breakTime: "",
-  weight: "",
+  // weight: "",  // same with this ^^^
 });
 
 function CustomWorkout() {
@@ -313,6 +314,29 @@ function CustomWorkout() {
   const [addedExercises, setAddedExercises] = useState([]);
   const [nameError, setNameError] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+  const [exercises, setExercises] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+
+
+  // fetches exercises
+  useEffect(() => {
+    const fetchExercises = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/workout/custom");
+
+        const data = await res.json();
+
+        setExercises(data.data);
+        setTotalPages(data.totalPages);
+        setCurrentPage(data.currentPage);
+      } catch(err){
+        console.error(err);
+      }
+    };
+
+    fetchExercises();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -331,12 +355,16 @@ function CustomWorkout() {
     setAddedExercises((prev) => [
       ...prev,
       {
+        exercise_id: exercise.exercise_id,
         name: exercise.name,
-        youtubeUrl: exercise.youtubeUrl,
-        sets: exercise.sets,
-        reps: exercise.reps,
-        breakTime: exercise.breakTime,
-        weight: "",
+        category: exercise.category,
+        equipment: exercise.equipment,
+        instructions: exercise.instructions,
+        //youtubeUrl: exercise.youtubeUrl,
+        //sets: exercise.sets,
+        //reps: exercise.reps,
+        //breakTime: exercise.breakTime,
+        //weight: "",
       },
     ]);
   };
@@ -351,19 +379,57 @@ function CustomWorkout() {
     );
   };
 
-  const handleFinish = () => {
+
+  // changed to post and save workout to db
+  const handleFinish = async () => {
     if (!workoutName) {
       setNameError(true);
       return;
     }
     if (addedExercises.length === 0) return;
-    addWorkout({ name: workoutName, isPublic, exercises: addedExercises });
-    setWorkoutName("");
-    setAddedExercises([]);
-    setIsPublic(false);
-    setNameError(false);
-    setShowSaved(true);
-    setTimeout(() => setShowSaved(false), 2500);
+    
+    const formattedExercises = addedExercises.map((ex) => ({
+      exercise_id: ex.exercise_id,
+      sets: ex.sets,
+      reps: ex.reps,
+    }));
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:4000/api/workout/custom", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify({
+          title: workoutName,
+          description: "",
+          estimated_minutes: 60,
+          exercises: formattedExercises,
+        }),
+      }); 
+
+      const data = await res.json();
+      console.log(data) // should say "Workout created successfully" along with data
+      
+
+      //reset everything
+      setWorkoutName("");
+      setAddedExercises([]);
+      setIsPublic(false);
+      setNameError(false);
+      setShowSaved(true);
+      setTimeout(() => setShowSaved(false), 2500);
+    } catch(err) {
+      console.error(err);
+    }
+    //addWorkout({ name: workoutName, isPublic, exercises: addedExercises });
+    
+
+   
   };
 
   return (
@@ -406,7 +472,7 @@ function CustomWorkout() {
                 <div className="cw-added-info">
                   <span className="cw-added-name">{ex.name}</span>
                   {ex.youtubeUrl && (
-                    <a href={ex.youtubeUrl} target="_blank" rel="noreferrer" className="cw-yt-link">Watch on YouTube</a>
+                    <a href="https://www.youtube.com/" target="_blank" rel="noreferrer" className="cw-yt-link">Watch on YouTube</a>
                   )}
                   <div className="cw-added-edit-row">
                     <div className="cw-added-edit-group">
@@ -420,10 +486,6 @@ function CustomWorkout() {
                     <div className="cw-added-edit-group">
                       <label>Rest (s)</label>
                       <input type="number" min="0" value={ex.breakTime} onChange={(e) => handleEditExercise(i, "breakTime", e.target.value)} />
-                    </div>
-                    <div className="cw-added-edit-group">
-                      <label>Weight (lbs)</label>
-                      <input type="number" min="0" value={ex.weight || ""} onChange={(e) => handleEditExercise(i, "weight", e.target.value)} />
                     </div>
                   </div>
                 </div>
@@ -440,17 +502,17 @@ function CustomWorkout() {
         <div className="cw-right">
           <h3 className="cw-section-title">Common Exercises</h3>
           <div className="cw-cards-grid">
-            {COMMON_EXERCISES.map((ex, i) => {
+            {exercises.map((ex, i) => {
               const added = addedExercises.some((a) => a.name === ex.name);
               return (
                 <div key={i} className={`cw-exercise-card ${added ? "cw-card-added" : ""}`}>
-                  <a href={ex.youtubeUrl} target="_blank" rel="noreferrer">
-                    <img src={ex.thumbnail} alt={ex.name} className="cw-card-thumbnail" />
+                  <a href= "#">
+                    <img src="/placeholder.png" alt={ex.name} className="cw-card-thumbnail" />
                   </a>
                   <div className="cw-card-info">
                     <span className="cw-card-name">{ex.name}</span>
-                    <span className="cw-card-muscle">{ex.muscle}</span>
-                    <span className="cw-card-meta">{ex.sets} sets · {ex.reps} reps · {ex.breakTime}s rest</span>
+                    <span className="cw-card-muscle">{ex.pirmary_muscle}</span>
+                    <span className="cw-card-meta"> Category: {ex.category} · Equipment: {ex.equipment} </span>
                   </div>
                   <button className="cw-card-add-btn" onClick={() => handleAddCommon(ex)} disabled={added}>
                     {added ? "Added" : "+ Add"}
