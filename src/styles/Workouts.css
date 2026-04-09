@@ -1,0 +1,42 @@
+.workouts-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 30px 20px;
+  color: white;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.workout-toggle-row {
+  display: flex;
+  gap: 24px;
+  padding: 40px;
+  justify-content: center;
+}
+
+.workout-toggle-btn {
+  width: 280px;
+  padding: 24px 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.workout-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.active-toggle {
+  background: #506a92;
+  border-color: white;
+}
+
+.active-toggle:hover {
+  background: #3b5f8f;
+}

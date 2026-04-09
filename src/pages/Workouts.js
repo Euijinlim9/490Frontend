@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../styles/Workouts.css";
 
 function Workouts() {
-  return <h1 className="page-title">Workouts</h1>;
+  const navigate = useNavigate();
+
+  return (
+    <div className="workouts-page">
+      <div className="workout-toggle-row">
+        <button
+          className="workout-toggle-btn"
+          onClick={() => navigate("/workouts/premade")}
+        >
+          Premade Workouts
+        </button>
+        <button
+          className="workout-toggle-btn"
+          onClick={() => navigate("/workouts/custom")}
+        >
+          Custom
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default Workouts;
