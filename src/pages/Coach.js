@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { Link } from "react-router-dom";
 import "../styles/Coach.css";
 import userimg from "../images/user.svg";
 
@@ -73,12 +74,12 @@ function Coach() {
     </div>
     <div className="coach-container">
       {filteredCoaches.map((coach)=> (
-        <div key={coach.id} className="coach-card">
+        <Link to={`/coach/${coach.id}`} className="coach-card">
           <img src={userimg} alt={coach.firstName} className="avatar"/>
           <h3>{coach.firstName} {coach.lastName}</h3>
           <p>{coach.bio}</p>
           <p>{coach.username}</p>
-          </div>
+          </Link>
       )
       )}
     </div>
