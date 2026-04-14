@@ -1,9 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import userIcon from "../images/user.svg";
-import inboxIcon from "../images/inbox.svg";
 import { AuthContext } from "../context/AuthContext";
-import { useState } from "react";
 import "../styles/Header.css";
 
 function Header() {
@@ -52,7 +49,22 @@ function Header() {
       <div className="right-btns">
         <div className="icon-btn">
           <Link to="/messages" className="circle">
-            <img src={inboxIcon} alt="Messages icon" className="circle-icon" />
+            <svg viewBox="0 0 24 24" className="circle-icon">
+              <path
+                d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <path
+                d="M5 8l7 5 7-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </Link>
 
           <div className="nav-small">
@@ -61,6 +73,7 @@ function Header() {
             </Link>
           </div>
         </div>
+
         <div className="icon-btn profile-dropdown-wrapper">
           <div
             className="circle"
@@ -80,7 +93,23 @@ function Header() {
                 }}
               />
             ) : (
-              <img src={userIcon} alt="Profile icon" className="circle-icon" />
+              <svg viewBox="0 0 24 24" className="circle-icon">
+                <circle
+                  cx="12"
+                  cy="8"
+                  r="4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <path
+                  d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
             )}
           </div>
 
@@ -103,6 +132,7 @@ function Header() {
               >
                 Profile Settings
               </Link>
+
               {user?.role === "coach" && (
                 <div
                   className="dropdown-item"
@@ -114,6 +144,7 @@ function Header() {
                   Switch to {activeRole === "coach" ? "Client" : "Coach"}
                 </div>
               )}
+
               <div className="dropdown-item logout-item" onClick={handleLogout}>
                 Sign Out
               </div>

@@ -11,6 +11,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import sleepIcon from "../images/sleep.svg";
+import waterIcon from "../images/water.svg";
+
 function Dashboard() {
   const { user } = useContext(AuthContext);
 
@@ -196,7 +199,7 @@ function Dashboard() {
     <div className="dashboard-page">
       <div className="dashboard-layout">
         <div className="dashboard-left">
-          <div className="welcome">Welcome {user?.first_name}!</div>
+          <div className="welcome">Welcome back, {user?.first_name}!</div>
 
           <section className="dashboard-section">
             <div className="section-title">Today's Workout</div>
@@ -214,7 +217,7 @@ function Dashboard() {
                 </div>
 
                 <div className="workout-meta">
-                  <span>{todaysWorkout.duration} Minutes</span>
+                  <span>{todaysWorkout.duration} min</span>
                   <span>{todaysWorkout.caloriesBurn} kcal</span>
                 </div>
 
@@ -282,7 +285,9 @@ function Dashboard() {
             <div className="health-row">
               <div className="health-card">
                 <h4 className="health-title">Sleep</h4>
-                <div className="health-icon">☾</div>
+                <div className="health-icon">
+                  <img src={sleepIcon} alt="sleep" />
+                </div>
 
                 {editingCard === "sleepHours" ? (
                   <input
@@ -311,7 +316,9 @@ function Dashboard() {
 
               <div className="health-card">
                 <h4 className="health-title">Water</h4>
-                <div className="health-icon">💧</div>
+                <div className="health-icon">
+                  <img src={waterIcon} alt="water" />
+                </div>
 
                 {editingCard === "waterCurrent" ? (
                   <input
