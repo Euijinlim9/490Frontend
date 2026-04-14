@@ -53,8 +53,15 @@
     box-sizing: border-box; 
 }
 
+.right-side{
+    flex: 1;
+    display: flex; 
+    flex-direction: column; 
+    gap: 14px;
+}
+
 .log-card-header{
-    disply: flex; 
+    display: flex; 
     flex-direction: column; 
     gap: 5px; 
 }

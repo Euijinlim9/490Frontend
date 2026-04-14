@@ -15,9 +15,23 @@ function Logs() {
     mealTime: "",
   });
 
+  const [wellnessForm, setWellnessForm] = useState({
+    hoursSlept: "",
+    waterLog: "",
+    heartRate: "",
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMealForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleWellnessChange = (e) => {
+    const { name, value } = e.target;
+    setWellnessForm((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -55,17 +69,56 @@ function Logs() {
     navigate("/dashboard");
   };
 
+  const handleWellnessSubmit = (e) => {
+    e.preventDefault();
+
+    const newWellness = {
+      hoursSlept: Number(wellnessForm.hoursSlept) || 0,
+      waterLog: Number(wellnessForm.waterLog) || 0,
+      heartRate: Number(wellnessForm.heartRate) || 0,
+      date: new Date().toLocaleDateString(),
+    };
+
+    const existingWellness =
+      JSON.parse(localStorage.getItem("loggedWellness")) || [];
+    const updatedWellness = [...existingWellness, newWellness];
+
+    localStorage.setItem("loggedWellness", JSON.stringify(updatedWellness));
+
+    setWellnessForm({
+      hoursSlept: "",
+      waterLog: "",
+      heartRate: "",
+    });
+
+    navigate("/dashboard");
+  };
+
   return (
     <div className="logs-page">
       <div className="logs-layout">
         <div className="logs-sidebar">
-          <Link to="/dashboard" className="side-button">Dashboard</Link>
-          <Link to="/logs" className="side-button">Logs</Link>
-          <Link to="/calendar" className="side-button">Calendar</Link>
-          <Link to="/workouts" className="side-button">Workouts</Link>
-          <Link to="/payments" className="side-button">Payments</Link>
-          <Link to="/recent-meals" className="side-button">Recent Meals</Link>
-          <Link to="/recent-workouts" className="side-button">Recent Workouts</Link>
+          <Link to="/dashboard" className="side-button">
+            Dashboard
+          </Link>
+          <Link to="/logs" className="side-button">
+            Logs
+          </Link>
+          <Link to="/calendar" className="side-button">
+            Calendar
+          </Link>
+          <Link to="/workouts" className="side-button">
+            Workouts
+          </Link>
+          <Link to="/payments" className="side-button">
+            Payments
+          </Link>
+          <Link to="/recent-meals" className="side-button">
+            Recent Meals
+          </Link>
+          <Link to="/recent-workouts" className="side-button">
+            Recent Workouts
+          </Link>
         </div>
 
         <div className="logs-main">
@@ -204,22 +257,65 @@ function Logs() {
                   </div>
                 </div>
 
-                <button type="submit" className="log-button">Log Meal</button>
+                <button type="submit" className="log-button">
+                  Log Meal
+                </button>
               </form>
             </div>
 
-            <div className="log-card">
-              <div className="log-card-header">
-                <div className="log-card-title">Log Your Workouts</div>
-                <div className="log-card-subtitle">
-                  Start and complete a workout from the workouts page to have it logged automatically.
+            <div className="right-side">
+              <div className="log-card">
+                <div className="log-card-header">
+                  <div className="log-card-title">Log Your Workouts</div>
+                  <div className="log-card-subtitle">
+                    Start and complete a workout from the workouts page to have
+                    it logged automatically.
+                  </div>
+                </div>
+
+                <div className="log-form">
+                  <Link to="/workouts" className="log-button">
+                    Go to Workouts
+                  </Link>
                 </div>
               </div>
 
-              <div className="log-form">
-                <Link to="/workouts" className="log-button">
-                  Go to Workouts
-                </Link>
+              <div className="log-card">
+                <div className="log-card-header">
+                  <div className="log-card-title">Log Your Wellness</div>
+                  <div className="log-card-subtitle">
+                    Log hours slept, water intake, and average heart rate here.
+                  </div>
+                </div>
+
+                <form className="log-form" onSubmit={handleWellnessSubmit}>
+                  <div className="form-group">
+                    <label>Number of Hours Slept</label>
+                    <input
+                      className="log-input"
+                      type="number"
+                      name="hoursSlept"
+                      value={wellnessForm.hoursSlept}
+                      onChange={handleWellnessChange}
+                      placeholder="Enter Hours Slept"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Ounces of Water Consumed</label>
+                    <input
+                      className="log-input"
+                      type="number"
+                      name="waterLog"
+                      value={wellnessForm.waterLog}
+                      onChange={handleWellnessChange}
+                      placeholder="Enter Ounces of Water Consumed"
+                    />
+                  </div>
+                  <button type="submit" className="log-button">
+                    Log Wellness
+                  </button>
+                </form>
               </div>
             </div>
           </div>
