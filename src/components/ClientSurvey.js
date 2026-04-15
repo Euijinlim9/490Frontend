@@ -11,9 +11,11 @@ function ClientSurvey({ show, onClose }){
         nutritionistHelp: "", 
         workoutDay: "",
         currentWeight: "", 
+        dob: "",
+        heightFT: "",
+        heightIn: "",
     }); 
 
-    const[weightInput, setWeightInput] = useState(""); 
     const[weightData, setWeightData] = useState([]); 
 
     useEffect(() => {
@@ -29,8 +31,45 @@ function ClientSurvey({ show, onClose }){
         });
     }; 
 
+    const getMaxDOB = () => {
+        const today = new Date(); 
+        today.setFullYear(today.getFullYear() - 18); 
+        return today.toISOString().split("T")[0]; 
+    }; 
+
+    const is18 = (dob) => {
+        const birthDate = new Date(dob); 
+        const today = new Date(); 
+
+        let age = today.getFullYear() - birthDate.getFullYear(); 
+        const monthDiff = today.getMonth() - birthDate.getMonth(); 
+
+        if (
+          monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) { 
+            age--; 
+        }
+
+        return age >= 18; 
+    }; 
+
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!form.dob){
+           alert("Please enter date of birth."); 
+           return; 
+        }
+
+        if(!is18(form.dob)){
+          alert("You must be at least 18 years old."); 
+          return; 
+        }
+
+        if (!form.heightFT || !form.heightIn){
+            alert("Please select your height."); 
+            return; 
+        }
 
         console.log("Survey submitted!", form); 
 
@@ -55,7 +94,7 @@ function ClientSurvey({ show, onClose }){
     return(
         <div className="survey-overlay">
             <div className="survey-box"> 
-                <h2>Initial Survey</h2>
+                <h2>Initial Intake Form</h2>
                 <form onSubmit={handleSubmit} className="survey-form"> 
 
                     <select name="goal" value={form.goal} onChange={handleChange}>
@@ -121,7 +160,41 @@ function ClientSurvey({ show, onClose }){
                       placeholder="Enter Current Weight (lbs)"
                     />
 
+                <div className="dob-height-row">
+                    <input
+                      type="date"
+                      name="dob"
+                      value={form.dob}
+                      onChange={handleChange}
+                      max={getMaxDOB()}
+                      className="dob-input"
+                    />
 
+                    <div className="height-group"> 
+                      <select name="heightFT" value={form.heightFT} onChange={handleChange}>
+                        <option value="">ft</option>
+                        <option value="4">4ft</option>
+                        <option value="5">5ft</option>
+                        <option value="6">6ft</option>
+                      </select>
+
+                      <select name="heightIn" value={form.heightIn} onChange={handleChange}>
+                        <option value="">in</option>
+                        <option value="0">0 in</option>
+                        <option value="1">1 in</option>
+                        <option value="2">2 in</option>
+                        <option value="3">3 in</option>
+                        <option value="4">4 in</option>
+                        <option value="5">5 in</option>
+                        <option value="6">6 in</option>
+                        <option value="7">7 in</option>
+                        <option value="8">8 in</option>
+                        <option value="9">9 in</option>
+                        <option value="10">10 in</option>
+                        <option value="11">11 in</option>
+                      </select> 
+                    </div>
+                    </div> 
                     <button type="submit" className="submit-btn">Submit</button>
                 </form>
             </div>

@@ -1,69 +1,106 @@
 .survey-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(20, 24, 30, 0.75);
-  z-index: 999;
+  inset: 0; 
+  background: rgba(8, 12, 18, 0.65); 
+  backdrop-filter: blur(8px); 
+  -webkit-backdrop-filter: blue(8px);
+  z-index: 999; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 32px; 
 }
 
 .survey-box {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, #2b2f34, #5a6b7d);
+  max-width: 920px; 
+  max-height: 90vh; 
+  overflow-y: auto; 
+  background: #1c2430; 
+  border: 1px solid rgba(255, 255, 255, 0.08); 
+  border-radius: 28px; 
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45); 
   padding: 40px;
-  color: white;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  color: white; 
 }
 
 .survey-box h2 {
-  margin-bottom: 25px;
-  font-size: 42px;
+  margin: 0 0 28px 0; 
+  font-size: 32px; 
+  font-weight: 700; 
+  text-align: center; 
+  letter-spacing: -0.5px; 
 }
 
 .survey-form {
   width: 100%;
-  max-width: 800px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
 }
 
-.survey-form select {
+.survey-form select,
+.survey-form input {
   width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 14px 16px;
+  background: #2a3442;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
 }
 
-.survey-form select:hover {
-  background: #7f93a7;
+.survey-form select:hover, 
+.survey-form input:hover{
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.09); 
 }
 
-.survey-form select option {
-  color: black;
+.survey-form select:focus, 
+.survey-form input:focus{
+  border-color: #6ae8ff;
+  background: rgba(255, 255. 255, 0.1); 
+}
+
+.survey-form input::placeholder{
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.survey-form select option{
+  color: black; 
+}
+
+.height-group{
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 14px; 
+  width: 100%;
+}
+
+.height-group select{ 
+  min-width: 0; 
+  width: 100%;
 }
 
 .submit-btn {
-  padding: 12px;
-  background: #506a92;
+  grid-column: 1 / -1;
+  margin-top: 10px;
+  padding: 15px;
+  background: linear-gradient(135deg, #5d7cff, #4f8cff);
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   color: white;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 .submit-btn:hover {
-  background: #3b5f8f;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(79, 140, 255, 0.28); 
 }
 
 .survey-message {
@@ -72,3 +109,17 @@
   color: #4ade80;
   margin-bottom: 16px;
 }
+
+.dob-height-row {
+  grid-column: 1 / -1; 
+  display: grid;
+  grid-template-columns: 0.72fr 0.72fr;
+  gap: 14px;
+  width: 100%; 
+}
+
+.dob-input{
+  min-width: 0; 
+  width: 100%;  
+}
+
