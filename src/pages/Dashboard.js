@@ -120,6 +120,33 @@ function Dashboard() {
     setActivityCurrent(totalMinutes);
   }, []);
 
+  useEffect(() => {
+    const savedWellness =
+      JSON.parse(localStorage.getItem("loggedWellness")) || [];
+
+    const today = new Date().toLocaleDateString();
+
+    const todaysWellness = savedWellness.filter(
+      (entry) => entry.date === today
+    );
+
+    const waterTotal = todaysWellness.reduce((acc, entry) => {
+      return acc + (Number(entry.waterLog) || 0);
+    }, 0);
+
+    const latestEntry =
+      todaysWellness.length > 0
+        ? todaysWellness[todaysWellness.length - 1]
+        : null;
+
+    setWellness({
+      sleepHours: latestEntry ? Number(latestEntry.hoursSlept) || 0 : 0,
+      waterCurrent: waterTotal,
+      waterGoal: 0,
+      heartRate: latestEntry ? Number(latestEntry.heartRate) || 0 : 0,
+  });
+}, []);
+
   const activityGoal = 120;
 
   const activityPercent = Math.min(
