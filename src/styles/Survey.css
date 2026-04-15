@@ -51,6 +51,8 @@
 
 .survey-form select,
 .survey-form input {
+.survey-form select,
+.survey-form input {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -80,8 +82,8 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
-.survey-form select option {
-  color: black;
+.survey-form select option{
+  color: black; 
 }
 
 .dob-height-row {
@@ -119,6 +121,7 @@
   margin-top: 4px;
   background: linear-gradient(135deg, #5d7cff, #4f8cff);
   border: none;
+  border-radius: 14px;
   border-radius: 14px;
   color: white;
   font-size: 16px;
