@@ -21,10 +21,9 @@ import SurveyPage from "./pages/SurveyPage";
 import GoogleAuthCallback from "./components/GoogleAuthCallback";
 import RecentMeals from "./pages/RecentMeals";
 import RecentWorkouts from "./pages/RecentWorkouts";
-
 import ActiveWorkout from "./pages/ActiveWorkout";
-
 import PaymentHistory from "./pages/PaymentHistory";
+import ClientSurvey from "./components/ClientSurvey";
 
 function App() {
   const location = useLocation();
@@ -59,6 +58,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
+          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
         </Routes>
       </div>
     </div>

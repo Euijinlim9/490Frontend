@@ -11,6 +11,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+import sleepIcon from "../images/sleep.svg";
+import waterIcon from "../images/water.svg";
+
 function Dashboard() {
   const { user } = useContext(AuthContext);
 
@@ -49,89 +52,128 @@ function Dashboard() {
   const [weightData, setWeightData] = useState([]);
 
   useEffect(() => {
-    const savedWeightData = JSON.parse(localStorage.getItem("weightData")) || []; 
-    setWeightData(savedWeightData); 
-  }, []); 
+    const savedWeightData =
+      JSON.parse(localStorage.getItem("weightData")) || [];
+    setWeightData(savedWeightData);
+  }, []);
 
-  const[mealTotals, setMealTotals] = useState({
-    totalCalories: 0, 
-    protein: 0, 
-    fiber: 0, 
-    carbs: 0, 
+  const [mealTotals, setMealTotals] = useState({
+    totalCalories: 0,
+    protein: 0,
+    fiber: 0,
+    carbs: 0,
     fats: 0,
-  }); 
+  });
 
   useEffect(() => {
     const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
-    const today = new Date().toLocaleDateString(); 
+    const today = new Date().toLocaleDateString();
 
-    const todaysMeals = savedMeals.filter((meal) => meal.date === today); 
+    const todaysMeals = savedMeals.filter((meal) => meal.date === today);
 
     const totals = todaysMeals.reduce(
       (acc, meal) => {
-        acc.totalCalories += Number(meal.calories) || 0; 
-        acc.protein += Number(meal.protein) || 0; 
-        acc.carbs += Number(meal.carbs) || 0; 
-        acc.fats += Number(meal.fats) || 0; 
-        acc.fiber += Number(meal.fiber) || 0; 
-        return acc; 
+        acc.totalCalories += Number(meal.calories) || 0;
+        acc.protein += Number(meal.protein) || 0;
+        acc.carbs += Number(meal.carbs) || 0;
+        acc.fats += Number(meal.fats) || 0;
+        acc.fiber += Number(meal.fiber) || 0;
+        return acc;
       },
       {
         totalCalories: 0,
-        protein: 0, 
-        fiber: 0, 
-        carbs: 0, 
-        fats: 0,  
+        protein: 0,
+        fiber: 0,
+        carbs: 0,
+        fats: 0,
       }
-    ); 
+    );
 
-    setMealTotals(totals); 
-  }, []); 
+    setMealTotals(totals);
+  }, []);
 
-  const calorieGoal = 1750; 
+  const calorieGoal = 1750;
   const caloriesPercent = Math.min(
     calorieGoal ? (mealTotals.totalCalories / calorieGoal) * 100 : 0,
     100
   );
 
-  const [activityCurrent, setActivityCurrent] = useState(0); 
+  const [activityCurrent, setActivityCurrent] = useState(0);
 
   useEffect(() => {
-    const savedWorkouts = JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
-    const today = new Date().toLocaleDateString(); 
+    const savedWorkouts =
+      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
+    const today = new Date().toLocaleDateString();
 
     const todaysWorkouts = savedWorkouts.filter((workout) => {
       if (!workout.date) return false;
-      
-      const workoutDate = new Date(workout.date).toLocaleDateString(); 
-      return workoutDate === today; 
-    }); 
+
+      const workoutDate = new Date(workout.date).toLocaleDateString();
+      return workoutDate === today;
+    });
 
     const totalMinutes = todaysWorkouts.reduce((acc, workout) => {
-        acc += Number(workout.duration) || 0; 
-        return acc; 
-      }, 0); 
+      acc += Number(workout.duration) || 0;
+      return acc;
+    }, 0);
 
-      setActivityCurrent(totalMinutes); 
-    }, []); 
+    setActivityCurrent(totalMinutes);
+  }, []);
 
-  const activityGoal = 120; 
+  useEffect(() => {
+    const savedWellness =
+      JSON.parse(localStorage.getItem("loggedWellness")) || [];
+
+    const today = new Date().toLocaleDateString();
+
+    const todaysWellness = savedWellness.filter(
+      (entry) => entry.date === today
+    );
+
+    const waterTotal = todaysWellness.reduce((acc, entry) => {
+      return acc + (Number(entry.waterLog) || 0);
+    }, 0);
+
+    const latestEntry =
+      todaysWellness.length > 0
+        ? todaysWellness[todaysWellness.length - 1]
+        : null;
+
+    setWellness({
+      sleepHours: latestEntry ? Number(latestEntry.hoursSlept) || 0 : 0,
+      waterCurrent: waterTotal,
+      waterGoal: 0,
+      heartRate: latestEntry ? Number(latestEntry.heartRate) || 0 : 0,
+  });
+}, []);
+
+  const activityGoal = 120;
 
   const activityPercent = Math.min(
     activityGoal ? (activityCurrent / activityGoal) * 100 : 0,
     100
   );
 
-  const macroTotal = mealTotals.protein + mealTotals.fiber + mealTotals.carbs + mealTotals.fats;
-  const proteinPercent = macroTotal ? (mealTotals.protein / macroTotal) * 100 : 0;
+  const macroTotal =
+    mealTotals.protein +
+    mealTotals.fiber +
+    mealTotals.carbs +
+    mealTotals.fats;
+
+  const proteinPercent = macroTotal
+    ? (mealTotals.protein / macroTotal) * 100
+    : 0;
+  const fiberPercent = macroTotal ? (mealTotals.fiber / macroTotal) * 100 : 0;
   const carbsPercent = macroTotal ? (mealTotals.carbs / macroTotal) * 100 : 0;
   const fatsPercent = macroTotal ? (mealTotals.fats / macroTotal) * 100 : 0;
-  const fiberPercent = macroTotal ? (mealTotals.fiber / macroTotal) * 100 : 0;
 
   const macrosGradient = `conic-gradient(
     #54c4f2 0% ${proteinPercent}%,
-    #506a92 ${proteinPercent}% ${proteinPercent + carbsPercent}%,
-    #6ca6ff ${proteinPercent + carbsPercent}% 100%
+    #8b5cf6 ${proteinPercent}% ${proteinPercent + fiberPercent}%,
+    #506a92 ${proteinPercent + fiberPercent}% ${
+    proteinPercent + fiberPercent + carbsPercent
+  }%,
+    #6ca6ff ${proteinPercent + fiberPercent + carbsPercent}% 100%
   )`;
 
   const chartData = useMemo(() => {
@@ -144,17 +186,17 @@ function Dashboard() {
 
     const newEntry = {
       label: new Date().toISOString(),
-      value: Number(weightInput), 
-    }; 
+      value: Number(weightInput),
+    };
 
-    if (Number.isNaN(newEntry.value)) return; 
+    if (Number.isNaN(newEntry.value)) return;
 
     const updatedWeightData = [...weightData, newEntry];
 
     setWeightData(updatedWeightData);
-    localStorage.setItem("weightData", JSON.stringify(updatedWeightData)); 
-    setWeightInput(""); 
-  }; 
+    localStorage.setItem("weightData", JSON.stringify(updatedWeightData));
+    setWeightInput("");
+  };
 
   const startEditing = (field) => {
     setEditingCard(field);
@@ -180,11 +222,11 @@ function Dashboard() {
     setEditingCard(null);
   };
 
-   return (
+  return (
     <div className="dashboard-page">
       <div className="dashboard-layout">
         <div className="dashboard-left">
-          <div className="welcome">Welcome {user?.first_name}!</div>
+          <div className="welcome">Welcome back, {user?.first_name}!</div>
 
           <section className="dashboard-section">
             <div className="section-title">Today's Workout</div>
@@ -202,7 +244,7 @@ function Dashboard() {
                 </div>
 
                 <div className="workout-meta">
-                  <span>{todaysWorkout.duration} Minutes</span>
+                  <span>{todaysWorkout.duration} min</span>
                   <span>{todaysWorkout.caloriesBurn} kcal</span>
                 </div>
 
@@ -269,97 +311,69 @@ function Dashboard() {
           <section className="dashboard-section">
             <div className="health-row">
               <div className="health-card">
-              <h4 className="health-title">Sleep</h4>
-              <div className="health-icon">☾</div>
+                <h4 className="health-title">Sleep</h4>
+                <div className="health-icon">
+                  <img src={sleepIcon} alt="sleep" />
+                </div>
 
-  {editingCard === "sleepHours" ? (
-    <input
-      type="number"
-      name="sleepHours"
-      value={wellnessInputs.sleepHours}
-      onChange={handleWellnessInputChange}
-      onBlur={() => saveWellnessField("sleepHours")}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          saveWellnessField("sleepHours");
-        }
-      }}
-      className="wellness-inline-input"
-      autoFocus
-    />
-  ) : (
-    <p
-      className="health-value clickable-value"
-      onClick={() => startEditing("sleepHours")}
-    >
-      {wellness.sleepHours} <span>hours</span>
-    </p>
-  )}
-</div>
-                
-
-              <div className="health-card">
-  <h4 className="health-title">Water</h4>
-  <div className="health-icon">💧</div>
-
-  {editingCard === "waterCurrent" ? (
-    <input
-      type="number"
-      name="waterCurrent"
-      value={wellnessInputs.waterCurrent}
-      onChange={handleWellnessInputChange}
-      onBlur={() => saveWellnessField("waterCurrent")}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          saveWellnessField("waterCurrent");
-        }
-      }}
-      className="wellness-inline-input"
-      autoFocus
-    />
-  ) : (
-    <>
-      <p
-        className="health-value clickable-value"
-        onClick={() => startEditing("waterCurrent")}
-      >
-        {wellness.waterCurrent} <span>ounces</span>
-      </p>
-    </>
-  )}
-</div>
+                {editingCard === "sleepHours" ? (
+                  <input
+                    type="number"
+                    name="sleepHours"
+                    value={wellnessInputs.sleepHours}
+                    onChange={handleWellnessInputChange}
+                    onBlur={() => saveWellnessField("sleepHours")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        saveWellnessField("sleepHours");
+                      }
+                    }}
+                    className="wellness-inline-input"
+                    autoFocus
+                  />
+                ) : (
+                  <p
+                    className="health-value clickable-value"
+                    onClick={() => startEditing("sleepHours")}
+                  >
+                    {wellness.sleepHours} <span>hours</span>
+                  </p>
+                )}
+              </div>
 
               <div className="health-card">
-  <h4 className="health-title">Heart Rate</h4>
-  <div className="health-icon">♡</div>
+                <h4 className="health-title">Water</h4>
+                <div className="health-icon">
+                  <img src={waterIcon} alt="water" />
+                </div>
 
-  {editingCard === "heartRate" ? (
-    <input
-      type="number"
-      name="heartRate"
-      value={wellnessInputs.heartRate}
-      onChange={handleWellnessInputChange}
-      onBlur={() => saveWellnessField("heartRate")}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          saveWellnessField("heartRate");
-        }
-      }}
-      className="wellness-inline-input"
-      autoFocus
-    />
-  ) : (
-    <p
-      className="health-value clickable-value"
-      onClick={() => startEditing("heartRate")}
-    >
-      {wellness.heartRate} <span>bpm</span>
-    </p>
-  )}
+                {editingCard === "waterCurrent" ? (
+                  <input
+                    type="number"
+                    name="waterCurrent"
+                    value={wellnessInputs.waterCurrent}
+                    onChange={handleWellnessInputChange}
+                    onBlur={() => saveWellnessField("waterCurrent")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        saveWellnessField("waterCurrent");
+                      }
+                    }}
+                    className="wellness-inline-input"
+                    autoFocus
+                  />
+                ) : (
+                  <p
+                    className="health-value clickable-value"
+                    onClick={() => startEditing("waterCurrent")}
+                  >
+                    {wellness.waterCurrent} <span>ounces</span>
+                  </p>
+                )}
               </div>
             </div>
-          </section> 
-        </div> 
+          </section>
+        </div>
 
         <div className="dashboard-right">
           <div className="analytics-row">
@@ -432,45 +446,52 @@ function Dashboard() {
                   Add Weight
                 </button>
               </form>
-            
+
               <div className="weight-chart-recharts">
                 <ResponsiveContainer width="100%" height={220}>
                   <LineChart
                     data={chartData}
                     margin={{ top: 15, right: 10, left: -10, bottom: 15 }}
                   >
-                    <CartesianGrid stroke="rgb(255, 255, 255)" vertical={false}/>
+                    <CartesianGrid
+                      stroke="rgb(255, 255, 255)"
+                      vertical={false}
+                    />
                     <XAxis
                       dataKey="label"
                       tick={{ fill: "#cfd6de", fontSize: 12 }}
                       tickFormatter={(value) => {
-                        const date = new Date(value); 
-                        return `${date.getMonth() + 1}/${date.getDate()}`;  
-                      }} 
+                        const date = new Date(value);
+                        return `${date.getMonth() + 1}/${date.getDate()}`;
+                      }}
                     />
                     <YAxis
-                      domain={["dataMin -2", "dataMax +2"]}
+                      domain={["dataMin - 2", "dataMax + 2"]}
                       tick={{ fill: "#cfd6de", fontSize: 12 }}
                       axisLine={false}
                       tickLine={false}
                     />
-                    <Line 
+                    <Line
                       type="monotone"
                       dataKey="value"
                       stroke="#3b66a8"
                       strokeWidth={3}
-                      dot={{ r: 6, fill: "#3b66a8", stroke: "white", strokeWidth: 2 }}
-                    /> 
+                      dot={{
+                        r: 6,
+                        fill: "#3b66a8",
+                        stroke: "white",
+                        strokeWidth: 2,
+                      }}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
-              </div> 
-            </div> 
-          </div> 
-        </div> 
-      </div> 
-    </div> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
-
 
 export default Dashboard;
