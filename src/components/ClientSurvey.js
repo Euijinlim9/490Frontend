@@ -4,13 +4,16 @@ import "../styles/Survey.css";
 function ClientSurvey({ show, onClose }){
     const [ form, setForm ] = useState({
         goal: "", 
-        typeWorkout: "", 
-        dietPreference: "", 
+        weeklyChange: "", 
         currentActivity: "",
-        coachHelp: "", 
-        nutritionistHelp: "", 
-        workoutDay: "",
+        goalActivity: "",
+        coachHelp: "",
+        typeWorkout: "", 
+        nutritionistHelp: "",
+        dietPreference: "", 
+        gender: "",   
         currentWeight: "", 
+        goalWeight: "", 
         dob: "",
         heightFT: "",
         heightIn: "",
@@ -96,12 +99,47 @@ function ClientSurvey({ show, onClose }){
             <div className="survey-box"> 
                 <h2>Initial Intake Form</h2>
                 <form onSubmit={handleSubmit} className="survey-form"> 
+                    <div className="survey-section-title">Goals</div>
 
                     <select name="goal" value={form.goal} onChange={handleChange}>
                         <option value="">Select Your Goal</option>
                         <option value="lose">Lose Weight</option>
                         <option value="gain">Gain Weight</option>
                         <option value="maintain">Maintain</option> 
+                    </select>
+
+                    <select name="weeklyChange" value={form.goal} onChange={handleChange}>
+                        <option value="">Select Amount of Weight a Week</option>
+                        <option value="lose">0.5 lb/week</option>
+                        <option value="gain">1 lb/week</option>
+                        <option value="maintain">1.5 lb/week</option> 
+                    </select>
+
+                    <select name="currentActivity" value={form.currentActivity} onChange={handleChange}>
+                        <option value="">Select Current Activity Level</option>
+                        <option value="beginner">Light(1-3x days/week)</option>
+                        <option value="moderate">Moderate(3-5x days/week)</option>
+                        <option value="active">Active(6-7x days/week)</option>
+                        <option value="none">No Activity</option>
+                    </select>
+
+                    <select name="workoutDay" value={form.workoutDay} onChange={handleChange}>
+                        <option value="">Select Goal Activity Level</option>
+                        <option value="1">1 days</option>
+                        <option value="2">2 days</option>
+                        <option value="3">3 days</option>
+                        <option value="4">4 days</option>
+                        <option value="5">5 days</option>
+                        <option value="6">6 days</option>
+                        <option value="7">7 days</option>
+                    </select>
+
+                    <div className="survey-section-title">Preferences</div>
+
+                    <select name="coachHelp" value={form.coachHelp} onChange={handleChange}>
+                        <option value="">Select Coaching Option</option>
+                        <option value="workout-plans">Workout Plans</option>
+                        <option value="no-help">No Coach</option>
                     </select>
 
                     <select name="typeWorkout" value={form.typeWorkout} onChange={handleChange}>
@@ -112,28 +150,6 @@ function ClientSurvey({ show, onClose }){
                         <option value="mixed">Mixed</option>
                     </select>
 
-                    <select name="dietPreference" value={form.dietPreference} onChange={handleChange}>
-                        <option value="">Select Diet Preferences</option>
-                        <option value="none">none</option>
-                        <option value="vegetarian">Vegetarian</option>
-                        <option value="gluten-free">Gluten Free</option>
-                        <option value="vegan">Vegan</option>
-                    </select>
-
-                    <select name="currentActivity" value={form.currentActivity} onChange={handleChange}>
-                        <option value="">Select Activity Level</option>
-                        <option value="beginner">Beginner</option>
-                        <option value="moderate">Moderate</option>
-                        <option value="active">Active</option>
-                        <option value="none">No Activity</option>
-                    </select>
-
-                    <select name="coachHelp" value={form.coachHelp} onChange={handleChange}>
-                        <option value="">Select Coaching Option</option>
-                        <option value="workout-plans">Workout Plans</option>
-                        <option value="no-help">No Coach</option>
-                    </select>
-
                     <select name="nutritionistHelp" value={form.nutritionistHelp} onChange={handleChange}>
                         <option value="">Select Nutritionist Option</option>
                         <option value="meal-plans">Meal Plans</option>
@@ -142,14 +158,20 @@ function ClientSurvey({ show, onClose }){
                         <option value="no-help">No Nutritionist</option>
                     </select> 
 
-                    <select name="workoutDay" value={form.workoutDay} onChange={handleChange}>
-                        <option value="">Select Days</option>
-                        <option value="1">1 days</option>
-                        <option value="2">2 days</option>
-                        <option value="3">3 days</option>
-                        <option value="4">4 days</option>
-                        <option value="5">5 days</option>
-                        <option value="6">6 days</option>
+                    <select name="dietPreference" value={form.dietPreference} onChange={handleChange}>
+                        <option value="">Select Diet Preferences</option>
+                        <option value="none">None</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="gluten-free">Gluten Free</option>
+                        <option value="vegan">Vegan</option>
+                    </select>
+
+                    <div className="survey-section-title">Personal Stats</div>
+
+                    <select name="gender" value={form.workoutDay} onChange={handleChange}>
+                        <option value="">Select Gender</option>
+                        <option value="1">Female</option>
+                        <option value="2">Male</option>
                     </select> 
 
                     <input
@@ -160,15 +182,23 @@ function ClientSurvey({ show, onClose }){
                       placeholder="Enter Current Weight (lbs)"
                     />
 
-                <div className="dob-height-row">
                     <input
-                      type="date"
-                      name="dob"
-                      value={form.dob}
+                      type="number"
+                      name="goalWeight"
+                      value={form.goalWeight}
                       onChange={handleChange}
-                      max={getMaxDOB()}
-                      className="dob-input"
+                      placeholder="Enter Goal Weight (lbs)"
                     />
+
+                    <div className="dob-height-row">
+                      <input
+                        type="date"
+                        name="dob"
+                        value={form.dob}
+                        onChange={handleChange}
+                        max={getMaxDOB()}
+                        className="dob-input"
+                       />
 
                     <div className="height-group"> 
                       <select name="heightFT" value={form.heightFT} onChange={handleChange}>
