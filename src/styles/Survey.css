@@ -51,8 +51,6 @@
 
 .survey-form select,
 .survey-form input {
-.survey-form select,
-.survey-form input {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -82,14 +80,14 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
-.survey-form select option{
-  color: black; 
+.survey-form select option {
+  color: black;
 }
 
 .dob-height-row {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 0.74fr 0.74fr;
+  grid-template-columns: 0.78fr 0.78fr;
   gap: 12px;
   width: 100%;
   align-items: center;
@@ -121,7 +119,6 @@
   margin-top: 4px;
   background: linear-gradient(135deg, #5d7cff, #4f8cff);
   border: none;
-  border-radius: 14px;
   border-radius: 14px;
   color: white;
   font-size: 16px;

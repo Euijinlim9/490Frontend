@@ -56,28 +56,6 @@ function ClientSurvey({ show, onClose }){
         return age >= 18; 
     }; 
 
-    const getMaxDOB = () => {
-        const today = new Date(); 
-        today.setFullYear(today.getFullYear() - 18); 
-        return today.toISOString().split("T")[0]; 
-    }; 
-
-    const is18 = (dob) => {
-        const birthDate = new Date(dob); 
-        const today = new Date(); 
-
-        let age = today.getFullYear() - birthDate.getFullYear(); 
-        const monthDiff = today.getMonth() - birthDate.getMonth(); 
-
-        if (
-          monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
-        ) { 
-            age--; 
-        }
-
-        return age >= 18; 
-    }; 
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -134,7 +112,6 @@ function ClientSurvey({ show, onClose }){
     return(
         <div className="survey-overlay">
             <div className="survey-box"> 
-                <h2>Initial Intake Form</h2>
                 <h2>Initial Intake Form</h2>
                 <form onSubmit={handleSubmit} className="survey-form"> 
                     <div className="survey-section-title">Goals</div>
