@@ -51,12 +51,6 @@ function Dashboard() {
   const [weightInput, setWeightInput] = useState("");
   const [weightData, setWeightData] = useState([]);
 
-  useEffect(() => {
-    const savedWeightData =
-      JSON.parse(localStorage.getItem("weightData")) || [];
-    setWeightData(savedWeightData);
-  }, []);
-
   const [mealTotals, setMealTotals] = useState({
     totalCalories: 0,
     protein: 0,
@@ -64,6 +58,16 @@ function Dashboard() {
     carbs: 0,
     fats: 0,
   });
+
+  const [calorieGoal, setCalorieGoal] = useState(1750);
+  const [activityGoal, setActivityGoal] = useState(120);
+  const [activityCurrent, setActivityCurrent] = useState(0);
+
+  useEffect(() => {
+    const savedWeightData =
+      JSON.parse(localStorage.getItem("weightData")) || [];
+    setWeightData(savedWeightData);
+  }, []);
 
   useEffect(() => {
     const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
@@ -92,13 +96,29 @@ function Dashboard() {
     setMealTotals(totals);
   }, []);
 
-  const calorieGoal = 1750;
+  useEffect(() => {
+    const savedSurvey =
+      JSON.parse(localStorage.getItem("clientSurveyData")) || {};
+    const savedDashboard =
+      JSON.parse(localStorage.getItem("dashboardData")) || {};
+
+    if (savedSurvey.calorieTarget) {
+      setCalorieGoal(Number(savedSurvey.calorieTarget));
+    } else if (savedDashboard.calorieTarget) {
+      setCalorieGoal(Number(savedDashboard.calorieTarget));
+    }
+
+    if (savedSurvey.goalActivity) {
+      setActivityGoal(Number(savedSurvey.goalActivity));
+    } else if (savedDashboard.goalActivity) {
+      setActivityGoal(Number(savedDashboard.goalActivity));
+    }
+  }, []);
+
   const caloriesPercent = Math.min(
     calorieGoal ? (mealTotals.totalCalories / calorieGoal) * 100 : 0,
     100
   );
-
-  const [activityCurrent, setActivityCurrent] = useState(0);
 
   useEffect(() => {
     const savedWorkouts =
@@ -144,10 +164,8 @@ function Dashboard() {
       waterCurrent: waterTotal,
       waterGoal: 0,
       heartRate: latestEntry ? Number(latestEntry.heartRate) || 0 : 0,
-  });
-}, []);
-
-  const activityGoal = 120;
+    });
+  }, []);
 
   const activityPercent = Math.min(
     activityGoal ? (activityCurrent / activityGoal) * 100 : 0,
@@ -232,7 +250,7 @@ function Dashboard() {
             <div className="section-title">Today's Workout</div>
             <div className="dashboard-card workout-card">
               <div className="workout-image">
-                <img src={todaysWorkout.image} alt={todaysWorkout.title} />
+                
               </div>
 
               <div className="workout-info">

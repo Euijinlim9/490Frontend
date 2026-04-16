@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"; 
+import "../styles/RecentMeals.css"; 
 
 function RecentMeals(){
     const [meals, setMeals] = useState([]); 
@@ -10,16 +11,16 @@ function RecentMeals(){
 
     return(
         <div>
-            <h2>Recent Meals</h2>
+            <div className="page-title">Recent Meals</div>
 
             {meals.length === 0 ? (
-                <p>No meals have been logged yet.</p>
+                <div className="details">No meals have been logged yet.</div>
             ) : ( 
                 meals.map((meal, index) => (
                     <div key={index}>
-                        <p><strong>{meal.mealName}</strong></p>
-                        <p>{meal.calories} calories</p>
-                        <p>{meal.protein}g protein | {meal.fiber}g fiber | {meal.carbs}g carbs | {meal.fats}g fats</p>
+                        <div className="food-name">{meal.mealName}</div>
+                        <div className="details">{meal.calories} Calories</div>
+                        <div className="details">{meal.protein}g Protein | {meal.fiber}g Fiber | {meal.carbs}g Carbs | {meal.fats}g Fats</div>
                         <hr />
                     </div>
                 ))

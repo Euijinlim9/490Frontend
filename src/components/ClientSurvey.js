@@ -17,15 +17,9 @@ function ClientSurvey({ show, onClose }){
         dob: "",
         heightFT: "",
         heightIn: "",
+        workoutDay: "", 
+        activityMins: "", 
     }); 
-
-    const[weightData, setWeightData] = useState([]); 
-
-    useEffect(() => {
-      const savedWeightData =
-        JSON.parse(localStorage.getItem("weightData")) || [];
-      setWeightData(savedWeightData);
-}, []);
 
     const handleChange = (e) => {
         setForm({
@@ -40,20 +34,73 @@ function ClientSurvey({ show, onClose }){
         return today.toISOString().split("T")[0]; 
     }; 
 
-    const is18 = (dob) => {
+    const calculateAge = (dob) => {
         const birthDate = new Date(dob); 
         const today = new Date(); 
 
-        let age = today.getFullYear() - birthDate.getFullYear(); 
+        let age = today.getFullYear() - birthDate.getFullYear();
         const monthDiff = today.getMonth() - birthDate.getMonth(); 
 
         if (
-          monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
-        ) { 
+            monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
             age--; 
         }
+        return age; 
+    }; 
 
-        return age >= 18; 
+    const is18 = (dob) => {
+        return calculateAge(dob) >= 18; 
+    }; 
+
+    const convertHeightToCm = (feet, inches) => {
+        const totalInches = Number(feet) * 12 + Number(inches); 
+        return totalInches * 2.54; 
+    }; 
+
+    const getActivityFactor = (activityLevel) => {
+        switch(activityLevel){
+            case "sedentary":
+                return 1.2;
+            case "light":
+                return 1.375; 
+            case "moderate": 
+                return 1.55; 
+            case "very": 
+                return 1.725; 
+            case "extra": 
+                return 1.9; 
+            default:
+                return 1.2;
+        }
+    }; 
+
+    const calculateBMR = (gender, weightKg, heightCm, age) => {
+        if(gender === "male"){
+          return 10 * weightKg + 6.25 * heightCm - 5 * age + 5; 
+        } else if (gender === "female"){
+          return 10 * weightKg + 6.25 * heightCm - 5 * age - 161; 
+        }
+        return 0; 
+        };
+
+    const calculateCalorieTarget = (tdee, goal, weeklyChange) => {
+        const changeMap = {
+            "0.5": 250, 
+            "1": 500, 
+            "1.5": 750,
+        };
+
+        const adjustment = changeMap[weeklyChange] || 0; 
+
+        if (goal === "lose"){
+            return tdee - adjustment; 
+        }
+
+        if(goal === "gain"){
+            return tdee + adjustment;
+        }
+        return tdee; 
     }; 
 
     const handleSubmit = (e) => {
@@ -74,40 +121,71 @@ function ClientSurvey({ show, onClose }){
             return; 
         }
 
-        if (!form.dob){
-           alert("Please enter date of birth."); 
-           return; 
+        if (!form.gender){
+            alert("Please select your gender.");
+            return;
         }
 
-        if(!is18(form.dob)){
-          alert("You must be at least 18 years old."); 
-          return; 
+        if (!form.currentWeight){
+            alert("Please enter your current weight.");
+            return;
         }
 
-        if (!form.heightFT || !form.heightIn){
-            alert("Please select your height."); 
+        if (!form.currentActivity){
+            alert("Please select your current activity level.");
             return; 
         }
 
-        console.log("Survey submitted!", form); 
+        const age = calculateAge(form.dob);
+        const heightCm = convertHeightToCm(form.heightFT, form.heightIn); 
 
-        if (form.currentWeight){
-            const newEntry = {
-                label: new Date().toISOString(), 
-                value: Number(form.currentWeight), 
-            }; 
+        const weightKg = Number(form.currentWeight) * 0.453592; 
 
-            const existing = JSON.parse(localStorage.getItem("weightData")) || []; 
+        const activityFactor = getActivityFactor(form.currentActivity); 
+        const bmr = calculateBMR(form.gender, weightKg, heightCm, age); 
+        const tdee = bmr * activityFactor; 
+        const calorieTarget = calculateCalorieTarget(
+            tdee, form.goal, form.weeklyChange
+        ); 
 
-            localStorage.setItem(
-                "weightData", 
-                JSON.stringify([...existing, newEntry])
-            ); 
-        }
+        const surveyData = {
+            ...form, 
+            age, 
+            heightCm, 
+            weightKg,
+            activityFactor, 
+            bmr: Math.round(bmr),
+            tdee: Math.round(tdee), 
+            calorieTarget: Math.round(calorieTarget), 
+            submittedAt: new Date().toISOString(),
+        }; 
+
+        localStorage.setItem("clientSurveyData", JSON.stringify(surveyData)); 
+
+        const newWeightEntry = {
+            label: new Date().toISOString(), 
+            value: Number(form.currentWeight), 
+        }; 
+
+        const existingWeightData = 
+          JSON.parse(localStorage.getItem("weightData")) || []; 
+
+        localStorage.setItem("weightData", JSON.stringify([...existingWeightData, newWeightEntry])
+    ); 
+
+        localStorage.setItem(
+            "dashboardData", 
+            JSON.stringify({
+                goalActivity: form.activityMins, 
+                calorieTarget: Math.round(calorieTarget)
+            })
+        ); 
+
+        console.log("Survey submitted!", surveyData); 
         onClose(); 
     }; 
 
-    if (!show) return null;
+    if(!show) return null; 
 
     return(
         <div className="survey-overlay">
@@ -123,19 +201,20 @@ function ClientSurvey({ show, onClose }){
                         <option value="maintain">Maintain</option> 
                     </select>
 
-                    <select name="weeklyChange" value={form.goal} onChange={handleChange}>
-                        <option value="">Select Amount of Weight a Week</option>
-                        <option value="lose">0.5 lb/week</option>
-                        <option value="gain">1 lb/week</option>
-                        <option value="maintain">1.5 lb/week</option> 
+                    <select name="weeklyChange" value={form.weeklyChange} onChange={handleChange}>
+                        <option value="">Select Weight/Week</option>
+                        <option value="0.5">0.5 lb/week</option>
+                        <option value="1">1 lb/week</option>
+                        <option value="1.5">1.5 lb/week</option> 
                     </select>
 
                     <select name="currentActivity" value={form.currentActivity} onChange={handleChange}>
                         <option value="">Select Current Activity Level</option>
-                        <option value="beginner">Light(1-3x days/week)</option>
-                        <option value="moderate">Moderate(3-5x days/week)</option>
-                        <option value="active">Active(6-7x days/week)</option>
-                        <option value="none">No Activity</option>
+                        <option value="sedentary">Sedentary</option>
+                        <option value="light">Lightly Active</option>
+                        <option value="moderate">Moderately Active</option>
+                        <option value="very">Very Active</option>
+                        <option value="extra">Extra Active</option>
                     </select>
 
                     <select name="workoutDay" value={form.workoutDay} onChange={handleChange}>
@@ -183,10 +262,10 @@ function ClientSurvey({ show, onClose }){
 
                     <div className="survey-section-title">Personal Stats</div>
 
-                    <select name="gender" value={form.workoutDay} onChange={handleChange}>
+                    <select name="gender" value={form.gender} onChange={handleChange}>
                         <option value="">Select Gender</option>
-                        <option value="1">Female</option>
-                        <option value="2">Male</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
                     </select> 
 
                     <input
@@ -203,6 +282,14 @@ function ClientSurvey({ show, onClose }){
                       value={form.goalWeight}
                       onChange={handleChange}
                       placeholder="Enter Goal Weight (lbs)"
+                    />
+
+                    <input
+                      type="number"
+                      name="activityMins"
+                      value={form.activityMins}
+                      onChange={handleChange}
+                      placeholder="Enter Goal Activity Minutes Per Day"
                     />
 
                     <div className="dob-height-row">
