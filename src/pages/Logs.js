@@ -15,9 +15,23 @@ function Logs() {
     mealTime: "",
   });
 
+  const [wellnessForm, setWellnessForm] = useState({
+    hoursSlept: "",
+    waterLog: "",
+    heartRate: "",
+  });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMealForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleWellnessChange = (e) => {
+    const { name, value } = e.target;
+    setWellnessForm((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -55,18 +69,112 @@ function Logs() {
     navigate("/dashboard");
   };
 
+  const handleWellnessSubmit = (e) => {
+    e.preventDefault();
+
+    const newWellness = {
+      hoursSlept: Number(wellnessForm.hoursSlept) || 0,
+      waterLog: Number(wellnessForm.waterLog) || 0,
+      heartRate: Number(wellnessForm.heartRate) || 0,
+      date: new Date().toLocaleDateString(),
+    };
+
+    const existingWellness =
+      JSON.parse(localStorage.getItem("loggedWellness")) || [];
+    const updatedWellness = [...existingWellness, newWellness];
+
+    localStorage.setItem("loggedWellness", JSON.stringify(updatedWellness));
+
+    setWellnessForm({
+      hoursSlept: "",
+      waterLog: "",
+      heartRate: "",
+    });
+
+    navigate("/dashboard");
+  };
+
   return (
     <div className="logs-page">
       <div className="logs-layout">
         <div className="logs-sidebar">
-          <Link to="/dashboard" className="side-button">Dashboard</Link>
-          <Link to="/logs" className="side-button">Logs</Link>
-          <Link to="/calendar" className="side-button">Calendar</Link>
-          <Link to="/workouts" className="side-button">Workouts</Link>
-          <Link to="/payments" className="side-button">Payments</Link>
-          <Link to="/recent-meals" className="side-button">Recent Meals</Link>
-          <Link to="/recent-workouts" className="side-button">Recent Workouts</Link>
-        </div>
+
+  <Link to="/dashboard" className="side-button">
+    <span className="logs-icon">
+      <svg viewBox="0 0 24 24" className="icon">
+        <rect x="3" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
+        <rect x="14" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
+        <rect x="3" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
+        <rect x="14" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
+        </svg>
+    </span> 
+    <span>Dashboard</span>
+  </Link>
+
+  <Link to="/logs" className="side-button">
+    <span className="logs-icon">
+      <svg viewBox="0 0 24 24" className="icon">
+        <rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/>
+        <line x1="8" y1="8" x2="16" y2="8" stroke="currentColor" strokeWidth="2"/>
+        <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth="2"/>
+  <     line x1="8" y1="16" x2="13" y2="16" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    </span>   
+    <span>Logs</span>
+  </Link>
+
+  <Link to="/calendar" className="side-button">
+    <span className="logs-icon">
+      <svg viewBox="0 0 24 24" className="icon">
+        <rect x="3" y="4" width="18" height="18" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
+        <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    </span>
+    <span>Calendar</span>
+  </Link>
+
+  <Link to="/workouts" className="side-button">
+    <span className="logs-icon">
+      <svg viewBox="0 0 24 24" className="icon">
+        <line x1="5" y1="9" x2="5" y2="15" stroke="currentColor" strokeWidth="2"/>
+        <line x1="19" y1="9" x2="19" y2="15" stroke="currentColor" strokeWidth="2"/>
+        <line x1="9" y1="12" x2="15" y2="12" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    </span>
+    <span>Workouts</span>
+  </Link>
+
+  <Link to="/payments" className="side-button">
+    <span className="logs-icon">
+      <svg viewBox="0 0 24 24" className="icon">
+        <rect x="3" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
+        <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    </span>
+    <span>Payments</span>
+  </Link>
+
+  <Link to="/recent-meals" className="side-button">
+    <span className="logs-icon">
+      <svg viewBox="0 0 24 24" className="icon">
+        <line x1="6" y1="3" x2="6" y2="21" stroke="currentColor" strokeWidth="2"/>
+        <line x1="10" y1="3" x2="10" y2="21" stroke="currentColor" strokeWidth="2"/>
+        <line x1="14" y1="3" x2="14" y2="21" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    </span>
+    <span>Past Meals</span>
+  </Link>
+
+  <Link to="/recent-workouts" className="side-button">
+    <span className="logs-icon">
+      <svg viewBox="0 0 24 24" className="icon">
+        <polyline points="4,14 8,10 12,13 18,7" fill="none" stroke="currentColor" strokeWidth="2"/>
+      </svg>
+    </span>
+    <span>Past Workouts</span>
+  </Link>
+
+</div>
 
         <div className="logs-main">
           <div className="logs-grid">
@@ -204,22 +312,65 @@ function Logs() {
                   </div>
                 </div>
 
-                <button type="submit" className="log-button">Log Meal</button>
+                <button type="submit" className="log-button">
+                  Log Meal
+                </button>
               </form>
             </div>
 
-            <div className="log-card">
-              <div className="log-card-header">
-                <div className="log-card-title">Log Your Workouts</div>
-                <div className="log-card-subtitle">
-                  Start and complete a workout from the workouts page to have it logged automatically.
+            <div className="right-side">
+              <div className="log-card">
+                <div className="log-card-header">
+                  <div className="log-card-title">Log Your Workouts</div>
+                  <div className="log-card-subtitle">
+                    Start and complete a workout from the workouts page to have
+                    it logged automatically.
+                  </div>
+                </div>
+
+                <div className="log-form">
+                  <Link to="/workouts" className="log-button">
+                    Go to Workouts
+                  </Link>
                 </div>
               </div>
 
-              <div className="log-form">
-                <Link to="/workouts" className="log-button">
-                  Go to Workouts
-                </Link>
+              <div className="log-card">
+                <div className="log-card-header">
+                  <div className="log-card-title">Log Your Wellness</div>
+                  <div className="log-card-subtitle">
+                    Log hours slept, water intake, and average heart rate here.
+                  </div>
+                </div>
+
+                <form className="log-form" onSubmit={handleWellnessSubmit}>
+                  <div className="form-group">
+                    <label>Number of Hours Slept</label>
+                    <input
+                      className="log-input"
+                      type="number"
+                      name="hoursSlept"
+                      value={wellnessForm.hoursSlept}
+                      onChange={handleWellnessChange}
+                      placeholder="Enter Hours Slept"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Ounces of Water Consumed</label>
+                    <input
+                      className="log-input"
+                      type="number"
+                      name="waterLog"
+                      value={wellnessForm.waterLog}
+                      onChange={handleWellnessChange}
+                      placeholder="Enter Ounces of Water Consumed"
+                    />
+                  </div>
+                  <button type="submit" className="log-button">
+                    Log Wellness
+                  </button>
+                </form>
               </div>
             </div>
           </div>

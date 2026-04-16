@@ -1,31 +1,50 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
+import "../styles/RecentWorkouts.css";
 
-function RecentWorkouts(){
-    const [workouts, setWorkouts] = useState([]); 
+function RecentWorkouts() {
+  const [workouts, setWorkouts] = useState([]);
 
-    useEffect(() => {
-        const savedWorkouts = JSON.parse(localStorage.getItem("loggedWorkouts")) || []; 
-        setWorkouts([...savedWorkouts].reverse()); 
-    }, []); 
+  useEffect(() => {
+    const savedWorkouts =
+      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
+    setWorkouts([...savedWorkouts].reverse());
+  }, []);
 
-    return(
-        <div>
-            <h2>Recent Workouts</h2>
+  return (
+    <div className="recent-workouts-page">
+      <div className="recent-workouts-title">Recent Workouts</div>
 
-            {workouts.length === 0 ? (
-                <p>No workouts have been logged yet.</p>
-            ) : ( 
-                workouts.map((workout, index) => (
-                    <div key={index}>
-                        <p><strong>{workout.workoutType}</strong></p>
-                        <p>{workout.duration} minutes</p>
-                        <p>{workout.sets} sets | {workout.reps} reps</p>
-                        <hr />
-                    </div>
-                ))
-            )}
-        </div>
-    ); 
+      <div className="recent-workouts-container">
+        {workouts.length === 0 ? (
+          <div className="recent-workouts-empty">
+            No workouts have been logged yet.
+          </div>
+        ) : (
+          workouts.map((workout, index) => (
+            <div className="recent-workout-card" key={index}>
+              <div className="recent-workout-content">
+                <div className="recent-workout-name">{workout.workoutType}</div>
+
+                <div className="recent-workout-minutes">
+                  {workout.duration} Calories
+                </div>
+
+                <div className="recent-workout-details">
+                  <span className="recent-workout-sets">
+                    {workout.sets} Sets
+                  </span>
+                  <span className="recent-workout-divider">|</span>
+                  <span className="recent-workout-reps">
+                    {workout.reps} Reps
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default RecentWorkouts; 
+export default RecentWorkouts;

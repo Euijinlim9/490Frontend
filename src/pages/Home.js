@@ -5,6 +5,7 @@ import HomeFooter from "../components/HomeFooter";
 // Landing Page
 function Home() {
   const [showSurvey, setShowSurvey] = useState(true);
+
   return (
     <div className="home-page">
       <HomeHeader />
