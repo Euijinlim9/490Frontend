@@ -4,30 +4,7 @@ import "../styles/Coach.css";
 import userimg from "../images/user.svg";
 
 export const coachData=[
-    {
-      id: 1,
-      firstName: "Joe",
-      lastName: "Smith",
-      bio: "Short workouts, Big results. I'm Coach Joe and I help busy people burn fat and build endurance.",
-      specialty: "Cardio",
-      role: "Coach",
-  }, 
-  {
-    id: 2,
-    firstName: "Jane",
-    lastName: "Johnson",
-    bio: "Fitness isn't just about lifting weights, it's about moving well for life. I'm Jane and I focus on body building.",
-    specialty: "Body building",
-    role: "Coach",
-  },
-  {
-    id: 3,
-    firstName: "Nathan",
-    lastName: "Aaron",
-    bio: "Starting fitness can feel intimidating. I'm Nathan and I specialize in helping beginners with strength and balance training.",
-    specialty: "Athletic sports",
-    role: "Coach",
-  },
+
 ];
 
 function Coach() {

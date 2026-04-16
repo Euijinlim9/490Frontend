@@ -36,6 +36,7 @@ function CoachDetail() {
             <div className="line"></div>
             <p><strong>Specialty:</strong></p>
             <p>{coach.specialty}</p>
+
         </div>
     </div>
     </div>
