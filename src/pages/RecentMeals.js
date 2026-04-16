@@ -13,20 +13,30 @@ function RecentMeals(){
         <div>
             <div className="page-title">Recent Meals</div>
 
+            <div className="meals-container">
             {meals.length === 0 ? (
                 <div className="details">No meals have been logged yet.</div>
             ) : ( 
                 meals.map((meal, index) => (
-                    <div key={index}>
-                        <div className="food-name">{meal.mealName}</div>
-                        <div className="details">{meal.calories} Calories</div>
-                        <div className="details">{meal.protein}g Protein | {meal.fiber}g Fiber | {meal.carbs}g Carbs | {meal.fats}g Fats</div>
-                        <hr />
+                  <div className="meal-card" key={index}> 
+                    <div className="food-name">{meal.mealName}</div>
+
+                    <div className="calories"> 
+                        {meal.calories} Calories
                     </div>
+
+                    <div className="details"> 
+                      <span className="protein">{meal.protein}g Protein</span>{" "} | {" "}
+                      <span className="fiber">{meal.fiber}g Fiber</span>{" "} | {" "}
+                      <span className="carbs">{meal.carbs}g Carbs</span>{" "} | {" "}
+                      <span className="fats">{meal.fats}g Fats</span>
+                    </div>
+                  </div>
                 ))
             )}
+            </div>
         </div>
     ); 
 }
 
-export default RecentMeals; 
+export default RecentMeals;

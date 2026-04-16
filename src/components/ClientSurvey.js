@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
 import "../styles/Survey.css";
 
 function ClientSurvey({ show, onClose }){
+    const navigate = useNavigate(); 
+
     const [ form, setForm ] = useState({
         goal: "", 
         weeklyChange: "", 
@@ -183,6 +186,7 @@ function ClientSurvey({ show, onClose }){
 
         console.log("Survey submitted!", surveyData); 
         onClose(); 
+        navigate("/dashboard"); 
     }; 
 
     if(!show) return null; 
