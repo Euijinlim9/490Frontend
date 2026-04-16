@@ -162,7 +162,7 @@ function Logs() {
         <line x1="14" y1="3" x2="14" y2="21" stroke="currentColor" strokeWidth="2"/>
       </svg>
     </span>
-    <span>Recent Meals</span>
+    <span>Past Meals</span>
   </Link>
 
   <Link to="/recent-workouts" className="side-button">
@@ -171,7 +171,7 @@ function Logs() {
         <polyline points="4,14 8,10 12,13 18,7" fill="none" stroke="currentColor" strokeWidth="2"/>
       </svg>
     </span>
-    <span>Recent Workouts</span>
+    <span>Past Workouts</span>
   </Link>
 
 </div>
