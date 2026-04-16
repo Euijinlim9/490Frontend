@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { WorkoutContext } from "../context/WorkoutContext";
 import "../styles/PremadeWorkouts.css";
@@ -94,9 +94,35 @@ const COMMUNITY_CATEGORIES = [
 
 function PremadeWorkouts() {
   const navigate = useNavigate();
-  const { savedWorkouts, setActiveWorkout } = useContext(WorkoutContext);
+  const { setActiveWorkout } = useContext(WorkoutContext);
   const [expandedIds, setExpandedIds] = useState(new Set());
   const [favoritedIds, setFavoritedIds] = useState(new Set());
+  const [createdWorkouts, setCreatedWorkouts] = useState([]);
+
+  
+  useEffect(() =>  {
+    const fetchWorkouts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("http://localhost:4000/api/workout/premade", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        setCreatedWorkouts(data.data || []);
+        console.log("Fetched Workouts: ", data);
+      } catch(err) {
+        console.error(err);
+      }
+    };
+
+    fetchWorkouts();
+  }, []);
+  
 
   const startWorkout = (e, workout) => {
     e.stopPropagation();
@@ -113,8 +139,18 @@ function PremadeWorkouts() {
     });
   };
 
-  const myWorkouts = savedWorkouts.filter((w) => !w.isPublic || w.isOwn);
-
+  const myWorkouts =  createdWorkouts.map((w) => ({
+    id: w.workout_id,
+    name: w.title,
+    isPublic: true,
+    exercises: (w.Exercises || []).map((ex) => ({
+      name: ex.name,
+      sets: ex.workout_exercise?.sets,
+      reps: ex.workout_exercise?.reps,
+      breakTime: 60, // not in db yet so this is a default value
+    })),
+  })); 
+  
   const toggle = (id) => setExpandedIds((prev) => {
     const next = new Set(prev);
     next.has(id) ? next.delete(id) : next.add(id);
