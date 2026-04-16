@@ -1,0 +1,230 @@
+.aw-page {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  color: white;
+  box-sizing: border-box;
+  flex: 1;
+  gap: 20px;
+}
+
+.aw-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.aw-back-btn {
+  padding: 8px 14px;
+  background: rgba(255, 80, 80, 0.15);
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  border-radius: 10px;
+  color: #ff6b6b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aw-back-btn:hover {
+  background: rgba(255, 80, 80, 0.3);
+}
+
+.aw-workout-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.aw-progress {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.aw-progress-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.aw-progress-fill {
+  height: 100%;
+  background: #6ca6ff;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.aw-card {
+  background: rgba(128, 128, 128, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.aw-phase-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6ca6ff;
+  background: rgba(108, 166, 255, 0.15);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.aw-rest-label {
+  color: #f0a500;
+  background: rgba(240, 165, 0, 0.15);
+}
+
+.aw-ex-name {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.aw-ex-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.aw-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.aw-stat-val {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.aw-stat-label {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+}
+
+.aw-timer {
+  margin: 0;
+  font-size: 64px;
+  font-weight: 700;
+  color: #f0a500;
+}
+
+.aw-rest-next {
+  margin: 0;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.aw-btn-primary {
+  padding: 12px 32px;
+  background: #6ca6ff;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  max-width: 280px;
+}
+
+.aw-btn-primary:hover {
+  background: #5590e8;
+}
+
+.aw-btn-secondary {
+  padding: 10px 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  max-width: 280px;
+}
+
+.aw-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Exercise queue */
+.aw-exercise-queue {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.aw-queue-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  opacity: 0.5;
+}
+
+.aw-queue-item.active {
+  opacity: 1;
+  border-color: #6ca6ff;
+  background: rgba(108, 166, 255, 0.1);
+}
+
+.aw-queue-item.done {
+  opacity: 0.35;
+}
+
+.aw-queue-num {
+  font-size: 12px;
+  color: #aaa;
+  width: 18px;
+  text-align: center;
+}
+
+.aw-queue-name {
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.aw-queue-check {
+  color: #6ca6ff;
+  font-size: 13px;
+}
+
+/* Done screen */
+.aw-done-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 16px;
+  text-align: center;
+}
+
+.aw-done-icon {
+  font-size: 64px;
+}
+
+.aw-done-box h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.aw-done-box p {
+  margin: 0;
+  color: #aaa;
+  font-size: 14px;
+}

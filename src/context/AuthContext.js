@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const res = fetch(`${process.env.BACKEND_URL}/auth/me`, {
+        const res = await fetch(`http://localhost:4000/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

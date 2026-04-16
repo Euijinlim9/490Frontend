@@ -1,0 +1,435 @@
+.custom-workout-page {
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
+  color: white;
+  box-sizing: border-box;
+  flex: 1;
+  gap: 24px;
+}
+
+.cw-topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cw-back-btn {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cw-back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.cw-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.cw-saved-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #7ed87e;
+  color: #1a2a1a;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  animation: fadeInOut 2.5s ease forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.cw-workout-meta {
+  background: rgba(128, 128, 128, 0.45);
+  border: 2px solid white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cw-meta-name-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.cw-meta-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.cw-meta-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ccc;
+}
+
+.cw-meta-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  max-width: 340px;
+}
+
+.cw-meta-input::placeholder {
+  color: #888;
+}
+
+.cw-meta-input:focus {
+  border-color: #6ca6ff;
+}
+
+.cw-input-error {
+  border-color: #f27474;
+  box-shadow: 0 0 0 2px rgba(242, 116, 116, 0.3);
+}
+
+.cw-visibility-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.cw-visibility-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  min-width: 50px;
+  text-align: right;
+}
+
+.cw-slider {
+  width: 52px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cw-slider-on {
+  background: #506a92;
+}
+
+.cw-slider-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.cw-slider-on .cw-slider-thumb {
+  transform: translateX(24px);
+}
+
+.cw-added-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cw-section-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cw-added-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  gap: 10px;
+}
+
+.cw-added-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cw-added-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cw-yt-link {
+  font-size: 11px;
+  color: #6ca6ff;
+  text-decoration: none;
+}
+
+.cw-yt-link:hover {
+  text-decoration: underline;
+}
+
+.cw-added-edit-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.cw-added-edit-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cw-added-edit-group label {
+  font-size: 10px;
+  color: #aaa;
+  font-weight: 600;
+}
+
+.cw-added-edit-group input {
+  width: 60px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cw-added-edit-group input:focus {
+  border-color: #6ca6ff;
+}
+
+.cw-finish-btn {
+  padding: 10px;
+  background: #7ed87e;
+  border: none;
+  border-radius: 10px;
+  color: #1a2a1a;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.cw-finish-btn:hover {
+  background: #5ec45e;
+}
+
+.cw-remove-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.cw-remove-btn:hover {
+  color: #ff7f7f;
+}
+
+.cw-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.cw-left {
+  width: 40%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cw-right {
+  flex: 1;
+  background: rgba(128, 128, 128, 0.45);
+  border: 2px solid white;
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.cw-form {
+  background: rgba(128, 128, 128, 0.45);
+  border: 2px solid white;
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cw-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cw-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ccc;
+}
+
+.cw-form-group input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cw-form-group input::placeholder {
+  color: #888;
+}
+
+.cw-form-group input:focus {
+  border-color: #6ca6ff;
+}
+
+.cw-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.cw-form-row .cw-form-group {
+  flex: 1;
+}
+
+.cw-add-btn {
+  padding: 10px;
+  background: #506a92;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cw-add-btn:hover {
+  background: #3b5f8f;
+}
+
+.cw-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.cw-exercise-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s ease;
+}
+
+.cw-exercise-card:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cw-card-added {
+  border-color: #7ed87e;
+  opacity: 0.7;
+}
+
+.cw-card-thumbnail {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+}
+
+.cw-card-info {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.cw-card-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cw-card-muscle {
+  font-size: 11px;
+  color: #6ca6ff;
+  font-weight: 600;
+}
+
+.cw-card-meta {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.cw-card-add-btn {
+  margin: 0 12px 12px 12px;
+  padding: 7px;
+  background: #506a92;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cw-card-add-btn:hover {
+  background: #3b5f8f;
+}
+
+.cw-card-add-btn:disabled {
+  background: rgba(126, 216, 126, 0.3);
+  color: #7ed87e;
+  cursor: default;
+}

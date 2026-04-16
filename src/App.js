@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Coach from "./pages/Coach";
 import Workouts from "./pages/Workouts";
+import CustomWorkout from "./pages/CustomWorkout";
+import PremadeWorkouts from "./pages/PremadeWorkouts";
 import Logs from "./pages/Logs";
 import Calendar from "./pages/Calendar";
 import Payments from "./pages/Payments";
@@ -18,8 +20,11 @@ import Profile from "./pages/Profile";
 import SurveyPage from "./pages/SurveyPage";
 import GoogleAuthCallback from "./components/GoogleAuthCallback";
 import CoachDetails from "./pages/CoachDetail";
-
+import RecentMeals from "./pages/RecentMeals";
+import RecentWorkouts from "./pages/RecentWorkouts";
+import ActiveWorkout from "./pages/ActiveWorkout";
 import PaymentHistory from "./pages/PaymentHistory";
+import ClientSurvey from "./components/ClientSurvey";
 
 function App() {
   const location = useLocation();
@@ -44,12 +49,18 @@ function App() {
           <Route path="/coach" element={<Coach />} />
           <Route path="/coach/:id" element={<CoachDetails />} />
           <Route path="/workouts" element={<Workouts />} />
+          <Route path="/workouts/custom" element={<CustomWorkout />} />
+          <Route path="/workouts/premade" element={<PremadeWorkouts />} />
+          <Route path="/workouts/active" element={<ActiveWorkout />} />
           <Route path="/logs" element={<Logs />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/payments" element={<Payments />} />
           <Route path="/payment-history" element={<PaymentHistory />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/recent-meals" element={<RecentMeals />} />
+          <Route path="/recent-workouts" element={<RecentWorkouts />} />
+          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
         </Routes>
       </div>
     </div>

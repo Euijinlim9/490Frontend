@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+
+import sleepIcon from "../images/sleep.svg";
+import waterIcon from "../images/water.svg";
 
 function Dashboard() {
-  // User data
   const { user } = useContext(AuthContext);
-
-  // temporary sample data
 
   const quickActions = {
     workoutPath: "/workouts",
@@ -25,97 +32,204 @@ function Dashboard() {
       "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
   };
 
-  const stats = {
-    calories: {
-      current: 896,
-      goal: 1750,
-    },
-    activity: {
-      current: 12,
-      goal: 120,
-    },
-  };
+  const [wellness, setWellness] = useState({
+    sleepHours: 0,
+    waterCurrent: 0,
+    waterGoal: 0,
+    heartRate: 0,
+  });
 
-  const wellness = {
-    sleepHours: 6,
-    waterCurrent: 20,
-    waterGoal: 72,
-    heartRate: 60,
-  };
+  const [editingCard, setEditingCard] = useState(null);
 
-  const macros = {
-    dateLabel: "Mar 5th",
-    totalCalories: 896,
-    protein: 30,
-    carbs: 21,
-    fats: 23,
-  };
+  const [wellnessInputs, setWellnessInputs] = useState({
+    sleepHours: "",
+    waterCurrent: "",
+    waterGoal: "",
+    heartRate: "",
+  });
 
-  const weightData = [
-    { label: "Mar 1", value: 176 },
-    { label: "Mar 7", value: 173.5 },
-    { label: "Mar 14", value: 174.2 },
-    { label: "Mar 21", value: 170 },
-    { label: "Mar 28", value: 170 },
-    { label: "Apr 4", value: 169.8 },
-  ];
+  const [weightInput, setWeightInput] = useState("");
+  const [weightData, setWeightData] = useState([]);
 
-  const calendarWidget = {
-    monthLabel: "March 2026",
-    weekdayLabel: "Monday",
-    selectedDay: 26,
-    days: [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-      22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-    ],
-  };
+  useEffect(() => {
+    const savedWeightData =
+      JSON.parse(localStorage.getItem("weightData")) || [];
+    setWeightData(savedWeightData);
+  }, []);
 
+  const [mealTotals, setMealTotals] = useState({
+    totalCalories: 0,
+    protein: 0,
+    fiber: 0,
+    carbs: 0,
+    fats: 0,
+  });
+
+  useEffect(() => {
+    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
+    const today = new Date().toLocaleDateString();
+
+    const todaysMeals = savedMeals.filter((meal) => meal.date === today);
+
+    const totals = todaysMeals.reduce(
+      (acc, meal) => {
+        acc.totalCalories += Number(meal.calories) || 0;
+        acc.protein += Number(meal.protein) || 0;
+        acc.carbs += Number(meal.carbs) || 0;
+        acc.fats += Number(meal.fats) || 0;
+        acc.fiber += Number(meal.fiber) || 0;
+        return acc;
+      },
+      {
+        totalCalories: 0,
+        protein: 0,
+        fiber: 0,
+        carbs: 0,
+        fats: 0,
+      }
+    );
+
+    setMealTotals(totals);
+  }, []);
+
+  const calorieGoal = 1750;
   const caloriesPercent = Math.min(
-    (stats.calories.current / stats.calories.goal) * 100,
+    calorieGoal ? (mealTotals.totalCalories / calorieGoal) * 100 : 0,
     100
   );
+
+  const [activityCurrent, setActivityCurrent] = useState(0);
+
+  useEffect(() => {
+    const savedWorkouts =
+      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
+    const today = new Date().toLocaleDateString();
+
+    const todaysWorkouts = savedWorkouts.filter((workout) => {
+      if (!workout.date) return false;
+
+      const workoutDate = new Date(workout.date).toLocaleDateString();
+      return workoutDate === today;
+    });
+
+    const totalMinutes = todaysWorkouts.reduce((acc, workout) => {
+      acc += Number(workout.duration) || 0;
+      return acc;
+    }, 0);
+
+    setActivityCurrent(totalMinutes);
+  }, []);
+
+  useEffect(() => {
+    const savedWellness =
+      JSON.parse(localStorage.getItem("loggedWellness")) || [];
+
+    const today = new Date().toLocaleDateString();
+
+    const todaysWellness = savedWellness.filter(
+      (entry) => entry.date === today
+    );
+
+    const waterTotal = todaysWellness.reduce((acc, entry) => {
+      return acc + (Number(entry.waterLog) || 0);
+    }, 0);
+
+    const latestEntry =
+      todaysWellness.length > 0
+        ? todaysWellness[todaysWellness.length - 1]
+        : null;
+
+    setWellness({
+      sleepHours: latestEntry ? Number(latestEntry.hoursSlept) || 0 : 0,
+      waterCurrent: waterTotal,
+      waterGoal: 0,
+      heartRate: latestEntry ? Number(latestEntry.heartRate) || 0 : 0,
+  });
+}, []);
+
+  const activityGoal = 120;
 
   const activityPercent = Math.min(
-    (stats.activity.current / stats.activity.goal) * 100,
+    activityGoal ? (activityCurrent / activityGoal) * 100 : 0,
     100
   );
 
-  const macroTotal = macros.protein + macros.carbs + macros.fats;
+  const macroTotal =
+    mealTotals.protein +
+    mealTotals.fiber +
+    mealTotals.carbs +
+    mealTotals.fats;
 
-  const proteinPercent = macroTotal ? (macros.protein / macroTotal) * 100 : 0;
-  const carbsPercent = macroTotal ? (macros.carbs / macroTotal) * 100 : 0;
-  const fatsPercent = macroTotal ? (macros.fats / macroTotal) * 100 : 0;
+  const proteinPercent = macroTotal
+    ? (mealTotals.protein / macroTotal) * 100
+    : 0;
+  const fiberPercent = macroTotal ? (mealTotals.fiber / macroTotal) * 100 : 0;
+  const carbsPercent = macroTotal ? (mealTotals.carbs / macroTotal) * 100 : 0;
+  const fatsPercent = macroTotal ? (mealTotals.fats / macroTotal) * 100 : 0;
 
   const macrosGradient = `conic-gradient(
     #54c4f2 0% ${proteinPercent}%,
-    #506a92 ${proteinPercent}% ${proteinPercent + carbsPercent}%,
-    #6ca6ff ${proteinPercent + carbsPercent}% 100%
+    #8b5cf6 ${proteinPercent}% ${proteinPercent + fiberPercent}%,
+    #506a92 ${proteinPercent + fiberPercent}% ${
+    proteinPercent + fiberPercent + carbsPercent
+  }%,
+    #6ca6ff ${proteinPercent + fiberPercent + carbsPercent}% 100%
   )`;
 
-  const minWeight = Math.min(...weightData.map((point) => point.value));
-  const maxWeight = Math.max(...weightData.map((point) => point.value));
-  const range = maxWeight - minWeight || 1;
+  const chartData = useMemo(() => {
+    return weightData;
+  }, [weightData]);
+
+  const handleAddWeight = (e) => {
+    e.preventDefault();
+    if (!weightInput.trim()) return;
+
+    const newEntry = {
+      label: new Date().toISOString(),
+      value: Number(weightInput),
+    };
+
+    if (Number.isNaN(newEntry.value)) return;
+
+    const updatedWeightData = [...weightData, newEntry];
+
+    setWeightData(updatedWeightData);
+    localStorage.setItem("weightData", JSON.stringify(updatedWeightData));
+    setWeightInput("");
+  };
+
+  const startEditing = (field) => {
+    setEditingCard(field);
+    setWellnessInputs((prev) => ({
+      ...prev,
+      [field]: wellness[field],
+    }));
+  };
+
+  const handleWellnessInputChange = (e) => {
+    const { name, value } = e.target;
+    setWellnessInputs((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const saveWellnessField = (field) => {
+    setWellness((prev) => ({
+      ...prev,
+      [field]: Number(wellnessInputs[field]) || 0,
+    }));
+    setEditingCard(null);
+  };
 
   return (
     <div className="dashboard-page">
       <div className="dashboard-layout">
         <div className="dashboard-left">
-          <h1>Welcome {user?.first_name}!</h1>
+          <div className="welcome">Welcome back, {user?.first_name}!</div>
 
           <section className="dashboard-section">
-            <h3 className="section-title">Quick Start</h3>
-            <div className="dashboard-card quickstart-card">
-              <Link to={quickActions.workoutPath} className="dash-btn">
-                Start a workout
-              </Link>
-              <Link to={quickActions.mealPath} className="dash-btn">
-                Log a meal
-              </Link>
-            </div>
-          </section>
-
-          <section className="dashboard-section">
-            <h3 className="section-title">Today's Workout</h3>
+            <div className="section-title">Today's Workout</div>
             <div className="dashboard-card workout-card">
               <div className="workout-image">
                 <img src={todaysWorkout.image} alt={todaysWorkout.title} />
@@ -124,13 +238,13 @@ function Dashboard() {
               <div className="workout-info">
                 <div className="workout-header-row">
                   <div>
-                    <h4 className="workout-title">{todaysWorkout.title}</h4>
+                    <div className="workout-title">{todaysWorkout.title}</div>
                   </div>
                   <span className="workout-level">{todaysWorkout.level}</span>
                 </div>
 
                 <div className="workout-meta">
-                  <span>{todaysWorkout.duration} Minutes</span>
+                  <span>{todaysWorkout.duration} min</span>
                   <span>{todaysWorkout.caloriesBurn} kcal</span>
                 </div>
 
@@ -147,13 +261,24 @@ function Dashboard() {
           </section>
 
           <section className="dashboard-section">
+            <div className="dashboard-card quickstart-card">
+              <Link to={quickActions.workoutPath} className="dash-btn">
+                Start a workout
+              </Link>
+              <Link to={quickActions.mealPath} className="dash-btn">
+                Log a meal
+              </Link>
+            </div>
+          </section>
+
+          <section className="dashboard-section">
             <div className="dashboard-card stats-card">
               <div className="stat-block">
                 <div className="stat-header">
                   <span className="stat-title">Calories</span>
                   <span className="stat-number">
-                    {stats.calories.current.toLocaleString()}/
-                    {stats.calories.goal.toLocaleString()}
+                    {mealTotals.totalCalories.toLocaleString()}/
+                    {calorieGoal.toLocaleString()}
                   </span>
                 </div>
 
@@ -169,7 +294,7 @@ function Dashboard() {
                 <div className="stat-header">
                   <span className="stat-title">Activity Minutes</span>
                   <span className="stat-number">
-                    {stats.activity.current}/{stats.activity.goal}
+                    {activityCurrent}/{activityGoal}
                   </span>
                 </div>
 
@@ -187,28 +312,64 @@ function Dashboard() {
             <div className="health-row">
               <div className="health-card">
                 <h4 className="health-title">Sleep</h4>
-                <div className="health-icon">☾</div>
-                <p className="health-value">
-                  {wellness.sleepHours} <span>hours</span>
-                </p>
+                <div className="health-icon">
+                  <img src={sleepIcon} alt="sleep" />
+                </div>
+
+                {editingCard === "sleepHours" ? (
+                  <input
+                    type="number"
+                    name="sleepHours"
+                    value={wellnessInputs.sleepHours}
+                    onChange={handleWellnessInputChange}
+                    onBlur={() => saveWellnessField("sleepHours")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        saveWellnessField("sleepHours");
+                      }
+                    }}
+                    className="wellness-inline-input"
+                    autoFocus
+                  />
+                ) : (
+                  <p
+                    className="health-value clickable-value"
+                    onClick={() => startEditing("sleepHours")}
+                  >
+                    {wellness.sleepHours} <span>hours</span>
+                  </p>
+                )}
               </div>
 
               <div className="health-card">
                 <h4 className="health-title">Water</h4>
-                <div className="health-icon">💧</div>
-                <p className="health-value">
-                  {wellness.waterCurrent}
-                  <span>/{wellness.waterGoal}</span>
-                </p>
-                <p className="health-subtext">ounces</p>
-              </div>
+                <div className="health-icon">
+                  <img src={waterIcon} alt="water" />
+                </div>
 
-              <div className="health-card">
-                <h4 className="health-title">Heart Rate</h4>
-                <div className="health-icon">♡</div>
-                <p className="health-value">
-                  {wellness.heartRate} <span>bpm</span>
-                </p>
+                {editingCard === "waterCurrent" ? (
+                  <input
+                    type="number"
+                    name="waterCurrent"
+                    value={wellnessInputs.waterCurrent}
+                    onChange={handleWellnessInputChange}
+                    onBlur={() => saveWellnessField("waterCurrent")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        saveWellnessField("waterCurrent");
+                      }
+                    }}
+                    className="wellness-inline-input"
+                    autoFocus
+                  />
+                ) : (
+                  <p
+                    className="health-value clickable-value"
+                    onClick={() => startEditing("waterCurrent")}
+                  >
+                    {wellness.waterCurrent} <span>ounces</span>
+                  </p>
+                )}
               </div>
             </div>
           </section>
@@ -219,7 +380,7 @@ function Dashboard() {
             <div className="widget-card macros-card">
               <div className="widget-header">
                 <h4>Macros</h4>
-                <span>{macros.dateLabel}</span>
+                <span>Today</span>
               </div>
 
               <div className="macro-donut-wrap">
@@ -228,7 +389,7 @@ function Dashboard() {
                   style={{ background: macrosGradient }}
                 >
                   <div className="macro-donut-inner">
-                    <span>{macros.totalCalories}</span>
+                    <span>{mealTotals.totalCalories}</span>
                   </div>
                 </div>
               </div>
@@ -237,15 +398,23 @@ function Dashboard() {
                 <div className="macro-item">
                   <span className="macro-dot protein-dot"></span>
                   <div>
-                    <strong>{macros.protein}g</strong>
+                    <strong>{mealTotals.protein}g</strong>
                     <p>Protein</p>
+                  </div>
+                </div>
+
+                <div className="macro-item">
+                  <span className="macro-dot fiber-dot"></span>
+                  <div>
+                    <strong>{mealTotals.fiber}g</strong>
+                    <p>Fiber</p>
                   </div>
                 </div>
 
                 <div className="macro-item">
                   <span className="macro-dot carbs-dot"></span>
                   <div>
-                    <strong>{macros.carbs}g</strong>
+                    <strong>{mealTotals.carbs}g</strong>
                     <p>Carbs</p>
                   </div>
                 </div>
@@ -253,7 +422,7 @@ function Dashboard() {
                 <div className="macro-item">
                   <span className="macro-dot fats-dot"></span>
                   <div>
-                    <strong>{macros.fats}g</strong>
+                    <strong>{mealTotals.fats}g</strong>
                     <p>Fats</p>
                   </div>
                 </div>
@@ -265,110 +434,60 @@ function Dashboard() {
                 <h4>Weight (lbs)</h4>
               </div>
 
-              <div className="weight-chart">
-                <div className="y-axis-labels">
-                  {[180, 175, 170, 165, 160, 155].map((tick) => (
-                    <span key={tick}>{tick}</span>
-                  ))}
-                </div>
+              <form onSubmit={handleAddWeight} className="dashboard-form">
+                <input
+                  type="number"
+                  step="0.1"
+                  placeholder="Enter weight"
+                  value={weightInput}
+                  onChange={(e) => setWeightInput(e.target.value)}
+                />
+                <button type="submit" className="weight-btn">
+                  Add Weight
+                </button>
+              </form>
 
-                <div className="chart-area">
-                  {[180, 175, 170, 165, 160, 155].map((tick) => (
-                    <div key={tick} className="chart-grid-line"></div>
-                  ))}
-
-                  <svg
-                    className="weight-line-svg"
-                    viewBox="0 0 260 150"
-                    preserveAspectRatio="none"
+              <div className="weight-chart-recharts">
+                <ResponsiveContainer width="100%" height={220}>
+                  <LineChart
+                    data={chartData}
+                    margin={{ top: 15, right: 10, left: -10, bottom: 15 }}
                   >
-                    <polyline
-                      fill="none"
-                      stroke="#3b5f8f"
-                      strokeWidth="3"
-                      points={weightData
-                        .map((point, index) => {
-                          const x =
-                            weightData.length === 1
-                              ? 130
-                              : (index / (weightData.length - 1)) * 240 + 10;
-
-                          const y =
-                            10 + ((maxWeight - point.value) / range) * 110;
-
-                          return `${x},${y}`;
-                        })
-                        .join(" ")}
+                    <CartesianGrid
+                      stroke="rgb(255, 255, 255)"
+                      vertical={false}
                     />
-                    {weightData.map((point, index) => {
-                      const x =
-                        weightData.length === 1
-                          ? 130
-                          : (index / (weightData.length - 1)) * 240 + 10;
-
-                      const y = 10 + ((maxWeight - point.value) / range) * 110;
-
-                      return (
-                        <circle
-                          key={point.label}
-                          cx={x}
-                          cy={y}
-                          r="5"
-                          fill="#355a8c"
-                          stroke="white"
-                          strokeWidth="2"
-                        />
-                      );
-                    })}
-                  </svg>
-
-                  <div className="x-axis-labels">
-                    {weightData.map((point) => (
-                      <span key={point.label}>{point.label}</span>
-                    ))}
-                  </div>
-                </div>
+                    <XAxis
+                      dataKey="label"
+                      tick={{ fill: "#cfd6de", fontSize: 12 }}
+                      tickFormatter={(value) => {
+                        const date = new Date(value);
+                        return `${date.getMonth() + 1}/${date.getDate()}`;
+                      }}
+                    />
+                    <YAxis
+                      domain={["dataMin - 2", "dataMax + 2"]}
+                      tick={{ fill: "#cfd6de", fontSize: 12 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#3b66a8"
+                      strokeWidth={3}
+                      dot={{
+                        r: 6,
+                        fill: "#3b66a8",
+                        stroke: "white",
+                        strokeWidth: 2,
+                      }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
-
-          <section className="calendar-section">
-            <div className="calendar-widget">
-              <div className="calendar-left">
-                <div className="calendar-top-row">
-                  <button className="calendar-arrow">‹</button>
-                  <span>{calendarWidget.monthLabel}</span>
-                  <button className="calendar-arrow">›</button>
-                </div>
-
-                <p className="calendar-weekday">
-                  {calendarWidget.weekdayLabel}
-                </p>
-                <h2 className="calendar-day-number">
-                  {calendarWidget.selectedDay}
-                </h2>
-              </div>
-
-              <div className="calendar-right">
-                <div className="calendar-days-grid">
-                  {calendarWidget.days.map((day) => {
-                    const isSelected = day === calendarWidget.selectedDay;
-
-                    return (
-                      <div
-                        key={day}
-                        className={`calendar-day ${
-                          isSelected ? "selected-day" : ""
-                        }`}
-                      >
-                        {day}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </section>
         </div>
       </div>
     </div>
