@@ -60,7 +60,6 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
-          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
         </Routes>
       </div>
     </div>
