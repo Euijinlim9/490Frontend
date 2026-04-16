@@ -23,13 +23,12 @@ function Dashboard() {
   };
 
   const todaysWorkout = {
-    title: "Guided Cardio",
-    level: "Intermediate",
-    duration: 60,
-    caloriesBurn: 350,
-    streak: 28,
-    image:
-      "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=80",
+    title: "",
+    level: "",
+    duration: "",
+    caloriesBurn: "",
+    streak: "",
+    image: "",
   };
 
   const [wellness, setWellness] = useState({
@@ -195,8 +194,22 @@ function Dashboard() {
   )`;
 
   const chartData = useMemo(() => {
-    return weightData;
-  }, [weightData]);
+    const groupedByDay = {};
+
+    weightData.forEach((entry) => {
+      const dateObj = new Date(entry.label);
+      const dayKey = dateObj.toLocaleDateString();
+
+      // keep the latest entry for that day
+      groupedByDay[dayKey] = {
+        day: dayKey,
+        value: Number(entry.value),
+        fullDate: entry.label,
+      };
+    });
+
+    return Object.values(groupedByDay);
+},    [weightData]);
 
   const handleAddWeight = (e) => {
     e.preventDefault();
@@ -469,37 +482,38 @@ function Dashboard() {
                 <ResponsiveContainer width="100%" height={220}>
                   <LineChart
                     data={chartData}
-                    margin={{ top: 15, right: 10, left: -10, bottom: 15 }}
+                    margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
                   >
                     <CartesianGrid
-                      stroke="rgb(255, 255, 255)"
+                      stroke="rgba(255,255,255,0.12)"
                       vertical={false}
                     />
+
                     <XAxis
-                      dataKey="label"
-                      tick={{ fill: "#cfd6de", fontSize: 12 }}
-                      tickFormatter={(value) => {
-                        const date = new Date(value);
-                        return `${date.getMonth() + 1}/${date.getDate()}`;
-                      }}
-                    />
-                    <YAxis
-                      domain={["dataMin - 2", "dataMax + 2"]}
+                      dataKey="day"
                       tick={{ fill: "#cfd6de", fontSize: 12 }}
                       axisLine={false}
                       tickLine={false}
                     />
+
+                    <YAxis
+                      domain={[
+                        (dataMin) => Math.floor(dataMin - 2),
+                        (dataMax) => Math.ceil(dataMax + 2),
+                      ]}
+                      tick={{ fill: "#cfd6de", fontSize: 12 }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={40}
+                    />
+
                     <Line
                       type="monotone"
                       dataKey="value"
-                      stroke="#3b66a8"
+                      stroke="#6ca6ff"
                       strokeWidth={3}
-                      dot={{
-                        r: 6,
-                        fill: "#3b66a8",
-                        stroke: "white",
-                        strokeWidth: 2,
-                      }}
+                      dot={{ r: 4, fill: "#6ca6ff", stroke: "#fff", strokeWidth: 2 }}
+                      activeDot={{ r: 6 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
