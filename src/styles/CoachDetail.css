@@ -19,7 +19,7 @@
     cursor: pointer;
     font-size: 14px;
     padding: 8px 10px;
-    color: #000000;
+    color: #838383;
     transition: 0.2s;
 }
 
@@ -72,4 +72,5 @@
     flex: 1;            
     display: flex;
     flex-direction: column;
+    color:white;
 }
