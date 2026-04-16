@@ -272,3 +272,62 @@
   font-size: 11px;
   color: #aaa;
 }
+
+.pw-delete-btn {
+  background: #e73a1c;
+  border: none;
+  border-radius: 999px;
+  color: white;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.delete-modal-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-modal{
+  background: rgba(108, 166, 255, 0.82);
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+}
+
+.delete-modal-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.delete-modal .delete-btn{
+  background: red;
+  color: white;
+}
+
+.delete-btn:hover{
+  background: white;
+}
+
+.delete-modal .cancel-delete-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 1px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel-delete-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

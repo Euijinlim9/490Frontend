@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { WorkoutContext } from "../context/WorkoutContext";
 import "../styles/PremadeWorkouts.css";
@@ -94,9 +94,65 @@ const COMMUNITY_CATEGORIES = [
 
 function PremadeWorkouts() {
   const navigate = useNavigate();
-  const { savedWorkouts, setActiveWorkout } = useContext(WorkoutContext);
+  const { setActiveWorkout } = useContext(WorkoutContext);
   const [expandedIds, setExpandedIds] = useState(new Set());
   const [favoritedIds, setFavoritedIds] = useState(new Set());
+  const [createdWorkouts, setCreatedWorkouts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  
+  useEffect(() =>  {
+    const fetchWorkouts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("http://localhost:4000/api/workout/premade", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        setCreatedWorkouts(data.data || []);
+        setCurrentPage(data.currentPage || 1);
+        setTotalPages(data.totalPages || 1);
+        console.log("Fetched Workouts: ", data);
+      } catch(err) {
+        console.error(err);
+      }
+    };
+
+    fetchWorkouts();
+  }, [currentPage]);
+  
+  
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:4000/api/workout/premade/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if(!res.ok) throw new Error(data.error);
+
+      setCreatedWorkouts((prev) => 
+        prev.filter((w) => w.workout_id !== id)
+      );
+
+      setDeleteTarget(null);
+    } catch (err){
+      console.error(err);
+    }
+  }
 
   const startWorkout = (e, workout) => {
     e.stopPropagation();
@@ -113,7 +169,18 @@ function PremadeWorkouts() {
     });
   };
 
-  const myWorkouts = savedWorkouts.filter((w) => !w.isPublic || w.isOwn);
+  const myWorkouts =  createdWorkouts.map((w) => ({
+    id: w.workout_id,
+    name: w.title,
+    isPublic: true,
+    estimated_minutes: w.estimated_minutes,
+    exercises: (w.Exercises || []).map((ex) => ({
+      name: ex.name,
+      sets: ex.workout_exercise?.sets,
+      reps: ex.workout_exercise?.reps,
+      breakTime: ex.workout_exercise?.rest_seconds || 10,
+    })),
+  })); 
 
   const toggle = (id) => setExpandedIds((prev) => {
     const next = new Set(prev);
@@ -131,7 +198,7 @@ function PremadeWorkouts() {
               <a className="pw-yt-link" href={ex.youtubeUrl} target="_blank" rel="noreferrer">▶ Watch</a>
             )}
           </div>
-          <span className="pw-ex-meta">{ex.sets} sets · {ex.reps} reps · {ex.breakTime}s rest{ex.weight ? ` · ${ex.weight}lbs` : ""}</span>
+          <span className="pw-ex-meta">{ex.sets} sets · {ex.reps} reps · {ex.breakTime}s rest</span>
         </div>
       ))}
     </div>
@@ -142,6 +209,8 @@ function PremadeWorkouts() {
       <div className="pw-card-header">
         <span className="pw-card-name">{workout.name}</span>
         {workout.isPublic && <span className="pw-public-badge">Public</span>}
+        <button className="pw-delete-btn" onClick={() => setDeleteTarget(workout.id)}>Delete</button>
+
       </div>
       <span className="pw-card-meta">{workout.exercises.length} exercises</span>
       <ExerciseList exercises={workout.exercises} />
@@ -168,7 +237,7 @@ function PremadeWorkouts() {
           )}
         </div>
 
-        <div className="pw-section">
+        {/*<div className="pw-section">
           <h3 className="pw-section-title">Community Workouts</h3>
           <div className="pw-community-grid">
             {GENERAL_WORKOUTS.map((w) => {
@@ -239,8 +308,23 @@ function PremadeWorkouts() {
               );
             })}
           </div>
+        </div>*/}
+
+
+      </div>
+      {deleteTarget && (
+      <div className="delete-modal-backdrop">
+        <div className="delete-modal">
+          <h3>Delete workout?</h3>
+          <p>This action cannot be undone.</p>
+
+          <div className="delete-modal-actions">
+            <button className="cancel-delete-btn" onClick={() => setDeleteTarget(null)}>Cancel</button>
+            <button className="delete-btn" onClick={() => handleDelete(deleteTarget)}>Delete</button>
+          </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
