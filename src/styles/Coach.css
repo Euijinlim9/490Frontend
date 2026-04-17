@@ -1,95 +1,272 @@
-.search-container {
-    display: flex;
-    align-items: center;
-    gap: 10px; 
-    background-color:#848484;
-    padding:10px;
-    border-radius: 10px;    
-    width: fit-content;
-    margin-top:30px;
-    margin-left:15px;
+/* ============================================
+   Page Header
+   ============================================ */
+.coach-page-header {
+  text-align: center;
+  padding: 48px 20px 0;
 }
 
-.coach-container{
-    display:grid;
-    grid-auto-flow: column;
-    grid-template-columns: repeat(4, auto);
-    overflow-x: auto;
-    padding:50px;
-    padding-left: 50px;
-    padding-top:50px;
+.coach-page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  background: linear-gradient(135deg, #6ca6ff 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.coach-page-header p {
+  font-size: 1rem;
+  color: #a0a6b0;
+  margin: 0;
+}
+
+/* ============================================
+     Search Bar
+     ============================================ */
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  border-radius: 14px;
+  width: fit-content;
+  margin: 32px auto 0;
+  backdrop-filter: blur(10px);
 }
 
 .search-input {
-    width: 350px;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: none;        
-    outline: none; 
+  width: 340px;
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  outline: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.search-input::placeholder {
+  color: #6a6f78;
+}
+
+.search-input:focus {
+  border-color: rgba(108, 166, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .search-container .search-input {
-    background-color: #cfcfcf;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .filter-dropdown {
-    padding: 10px;
-    font-size: 16px;
-    background-color:transparent;
-    border-radius: 10px;
-    border: 3px solid #ccc;  
-    color: rgb(0, 0, 0);   
-    font-weight:700;
+  padding: 10px 14px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.filter-dropdown:hover,
+.filter-dropdown:focus {
+  border-color: rgba(108, 166, 255, 0.4);
+}
+
+.filter-dropdown option {
+  background: #1a1d24;
+  color: #fff;
 }
 
 .search-button {
-    padding: 10px 16px;
-    font-size:16px;
-    background-color: #000000;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6ca6ff 0%, #4d8ae8 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .search-button:hover {
-    background-color: #464646;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 166, 255, 0.3);
 }
 
-.coach-list{
-    display: flex;
-    align-items: center;
-    padding:10px;
-    border-radius: 10px;    
-    width: fit-content;
+/* ============================================
+     Status Messages (loading / error / empty)
+     ============================================ */
+.coach-status {
+  text-align: center;
+  padding: 40px;
+  opacity: 0.7;
+  font-size: 16px;
+  color: #a0a6b0;
 }
 
-.coach-card{
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    max-width: 300px;
-    text-decoration: none;
-    color: inherit;
+.coach-status.error {
+  color: #dc3545;
+  opacity: 1;
 }
 
-.coach-card h3{
-    margin: 5px 0 0;
-    font-size: 18px;
-    padding-bottom: 5px;
+/* ============================================
+     Coach Grid & Cards
+     ============================================ */
+.coach-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.coach-card p{
-    margin:0;
-    font-size: 14px;
-    color:#999faa;
+.coach-card {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
-.avatar{
-    width: 100%;
-    height: 160px;
-    border-radius: 0;
-    object-fit: cover;
-    margin-bottom: 3px;
+.coach-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(
+    135deg,
+    rgba(108, 166, 255, 0.15) 0%,
+    rgba(139, 92, 246, 0.1) 100%
+  );
+  z-index: 0;
+}
+
+.coach-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(108, 166, 255, 0.4);
+  box-shadow: 0 12px 32px rgba(108, 166, 255, 0.15);
+}
+
+.coach-card .avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+  align-self: center;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  background: #1a1d24;
+  position: relative;
+  z-index: 1;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.coach-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  color: #28a745;
+  margin-left: 0;
+}
+
+.coach-specialty {
+  margin: 6px 0 14px 0 !important;
+  font-size: 0.82rem !important;
+  color: #6ca6ff !important;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+.coach-card p {
+  margin: 0 0 16px 0;
+  font-size: 0.875rem;
+  color: #a0a6b0;
+  line-height: 1.5;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  min-height: 3.9em;
+}
+
+.coach-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.8rem;
+  color: #8a909a;
+  position: relative;
+  z-index: 1;
+}
+
+.coach-card-footer span:last-child {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.coach-price {
+  color: #6ca6ff !important;
+}
+
+/* ============================================
+     Legacy list style (kept for compatibility)
+     ============================================ */
+.coach-list {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  width: fit-content;
 }
