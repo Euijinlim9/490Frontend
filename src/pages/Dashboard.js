@@ -15,7 +15,46 @@ import sleepIcon from "../images/sleep.svg";
 import waterIcon from "../images/water.svg";
 
 function Dashboard() {
-  const { user } = useContext(AuthContext);
+  const { user, activeRole } = useContext(AuthContext);
+
+  const [myCoach, setMyCoach] = useState({ state: "loading", coach: null });
+
+  const fetchMyCoach = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:4000/api/client/my-coach", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to load coach!");
+      const data = await res.json();
+      setMyCoach(data);
+    } catch (error) {
+      console.error(error);
+      setMyCoach({ state: "none", coach: null });
+    }
+  };
+
+  useEffect(() => {
+    if (activeRole === "client") {
+      fetchMyCoach();
+    }
+  }, [activeRole]);
+
+  const handleCancelRequest = async () => {
+    if (!window.confirm("Cancel your request to this coach?")) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:4000/api/coaches/request", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok && res.status !== 204) throw new Error("Failed to cancel");
+      setMyCoach({ state: "none", coach: null });
+    } catch (error) {
+      console.error(error);
+      alert("Could not cancel request. Try again.");
+    }
+  };
 
   const quickActions = {
     workoutPath: "/workouts",
@@ -172,10 +211,7 @@ function Dashboard() {
   );
 
   const macroTotal =
-    mealTotals.protein +
-    mealTotals.fiber +
-    mealTotals.carbs +
-    mealTotals.fats;
+    mealTotals.protein + mealTotals.fiber + mealTotals.carbs + mealTotals.fats;
 
   const proteinPercent = macroTotal
     ? (mealTotals.protein / macroTotal) * 100
@@ -209,7 +245,7 @@ function Dashboard() {
     });
 
     return Object.values(groupedByDay);
-},    [weightData]);
+  }, [weightData]);
 
   const handleAddWeight = (e) => {
     e.preventDefault();
@@ -258,13 +294,62 @@ function Dashboard() {
       <div className="dashboard-layout">
         <div className="dashboard-left">
           <div className="welcome">Welcome back, {user?.first_name}!</div>
+          {activeRole === "client" && (
+            <section className="dashboard-section">
+              <div className="section-title">My Coach</div>
+              <div className="dashboard-card my-coach-card">
+                {myCoach.state === "loading" && <p>Loading...</p>}
+
+                {myCoach.state === "none" && (
+                  <div className="my-coach-empty">
+                    <p>You don't have a coach yet.</p>
+                    <Link to="/coach" className="dash-btn">
+                      Browse coaches
+                    </Link>
+                  </div>
+                )}
+
+                {(myCoach.state === "pending" || myCoach.state === "active") &&
+                  myCoach.coach && (
+                    <div className="my-coach-info">
+                      <img
+                        src={myCoach.coach.profile_pic || "/default-avatar.png"}
+                        alt={myCoach.coach.first_name}
+                        className="my-coach-avatar"
+                      />
+                      <div className="my-coach-details">
+                        <div className="my-coach-name-row">
+                          <strong>
+                            {myCoach.coach.first_name} {myCoach.coach.last_name}
+                          </strong>
+                          <span className={`my-coach-badge ${myCoach.state}`}>
+                            {myCoach.state === "pending"
+                              ? "Request Pending"
+                              : "Active"}
+                          </span>
+                        </div>
+                        <p className="my-coach-specialization">
+                          {myCoach.coach.specialization}
+                        </p>
+                        {myCoach.state === "pending" && (
+                          <button
+                            onClick={handleCancelRequest}
+                            className="dash-btn cancel-btn"
+                          >
+                            Cancel Request
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+              </div>
+            </section>
+          )}
 
           <section className="dashboard-section">
             <div className="section-title">Today's Workout</div>
             <div className="dashboard-card workout-card">
-              <div className="workout-image">
-                
-              </div>
+              <div className="workout-image"></div>
 
               <div className="workout-info">
                 <div className="workout-header-row">
@@ -512,7 +597,12 @@ function Dashboard() {
                       dataKey="value"
                       stroke="#6ca6ff"
                       strokeWidth={3}
-                      dot={{ r: 4, fill: "#6ca6ff", stroke: "#fff", strokeWidth: 2 }}
+                      dot={{
+                        r: 4,
+                        fill: "#6ca6ff",
+                        stroke: "#fff",
+                        strokeWidth: 2,
+                      }}
                       activeDot={{ r: 6 }}
                     />
                   </LineChart>
