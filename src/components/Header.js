@@ -29,21 +29,37 @@ function Header() {
         <Link to="/dashboard" className="nav-btn">
           Dashboard
         </Link>
-        <Link to="/coach" className="nav-btn">
-          Coach
-        </Link>
-        <Link to="/workouts" className="nav-btn">
-          Workouts
-        </Link>
-        <Link to="/logs" className="nav-btn">
-          Logs
-        </Link>
-        <Link to="/calendar" className="nav-btn">
-          Calendar
-        </Link>
-        <Link to="/payments" className="nav-btn">
-          Payments
-        </Link>
+
+        {activeRole === "client" && (
+          <>
+            <Link to="/coach" className="nav-btn">
+              Coach
+            </Link>
+            <Link to="/workouts" className="nav-btn">
+              Workouts
+            </Link>
+            <Link to="/logs" className="nav-btn">
+              Logs
+            </Link>
+            <Link to="/calendar" className="nav-btn">
+              Calendar
+            </Link>
+            <Link to="/payments" className="nav-btn">
+              Payments
+            </Link>
+          </>
+        )}
+
+        {activeRole === "coach" && (
+          <>
+            <Link to="/workouts" className="nav-btn">
+              Workouts
+            </Link>
+            <Link to="/calendar" className="nav-btn">
+              Schedule
+            </Link>
+          </>
+        )}
       </div>
 
       <div className="right-btns">
