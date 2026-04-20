@@ -44,7 +44,11 @@ function CoachDetail() {
   }, [id]);
 
   useEffect(() => {
-    if (activeRole !== "client") return;
+    if (activeRole === "coach") {
+      // Coach viewing a profile — definitely can't request, don't fetch
+      setMyCoachState("not_a_client");
+      return;
+    }
 
     const fetchMyCoach = async () => {
       const token = localStorage.getItem("token");
@@ -52,7 +56,10 @@ function CoachDetail() {
         const res = await fetch("http://localhost:4000/api/client/my-coach", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          setMyCoachState("none");
+          return;
+        }
         const data = await res.json();
         setMyCoachState(data.state);
       } catch (err) {
