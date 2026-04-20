@@ -129,7 +129,8 @@ function CoachDashboardView({
                     )}
                     {!req.client.goal &&
                       !req.client.type_workout &&
-                      !req.client.current_activity && (
+                      !req.client.current_activity &&
+                      !req.client.coach_help && (
                         <p className="coach-dash-muted">
                           This client hasn't completed their survey yet.
                         </p>
