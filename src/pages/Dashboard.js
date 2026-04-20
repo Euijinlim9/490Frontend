@@ -121,6 +121,8 @@ function Dashboard() {
       if (requestsRes.ok) {
         const data = await requestsRes.json();
         setPendingRequests(data.data || []);
+      } else {
+        setPendingRequests([]);
       }
 
       // clients endpoint is sprint B
@@ -132,6 +134,8 @@ function Dashboard() {
       }
     } catch (error) {
       console.error("Failed to fetch coach data:", error);
+      setPendingRequests([]);
+      setActiveClients([]);
     } finally {
       setCoachDataLoading(false);
     }
