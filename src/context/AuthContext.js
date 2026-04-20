@@ -10,7 +10,18 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeRole, setActiveRole] = useState(null);
+  const [activeRole, setActiveRoleState] = useState(
+    localStorage.getItem("activeRole") || null
+  );
+
+  const setActiveRole = (role) => {
+    setActiveRoleState(role);
+    if (role) {
+      localStorage.setItem("activeRole", role);
+    } else {
+      localStorage.removeItem("activeRole");
+    }
+  };
 
   // Fetch user info thorugh the JWT Token
   useEffect(() => {
@@ -47,8 +58,10 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     // remove the token from localStorage
     localStorage.removeItem("token");
+    localStorage.removeItem("activeRole");
     // clean the UI
     setUser(null);
+    setActiveRoleState(null);
   };
 
   return (

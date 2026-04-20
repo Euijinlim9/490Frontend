@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 
 function Login() {
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext);
+  const { setUser, setActiveRole } = useContext(AuthContext);
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
@@ -31,6 +31,7 @@ function Login() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         setUser(data.user);
+        setActiveRole(data.user.role);
         navigate("/dashboard");
       } else {
         setError(data.message || data.error);
