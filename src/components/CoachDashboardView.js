@@ -170,8 +170,11 @@ function CoachDashboardView({
                   {client.first_name} {client.last_name}
                 </h4>
                 <p className="coach-client-since">
-                  Client since{" "}
-                  {new Date(client.start_date).toLocaleDateString()}
+                  {client.start_date
+                    ? `Client since ${new Date(
+                        client.start_date
+                      ).toLocaleDateString()}`
+                    : "Recently joined"}
                 </p>
                 <button className="coach-client-view" disabled>
                   View Details (coming soon)

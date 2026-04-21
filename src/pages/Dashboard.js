@@ -24,7 +24,10 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch("http://localhost:4000/api/client/my-coach", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Active-Role": activeRole,
+        },
       });
       if (!res.ok) throw new Error("Failed to load coach!");
       const data = await res.json();
@@ -47,7 +50,10 @@ function Dashboard() {
     try {
       const res = await fetch("http://localhost:4000/api/coaches/request", {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Active-Role": activeRole,
+        },
       });
       if (!res.ok && res.status !== 204) throw new Error("Failed to cancel");
       setMyCoach({ state: "none", coach: null });
@@ -111,10 +117,16 @@ function Dashboard() {
     try {
       const [requestsRes, clientsRes] = await Promise.all([
         fetch("http://localhost:4000/api/coach/requests", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
         }),
         fetch("http://localhost:4000/api/coach/clients", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
         }),
       ]);
 
@@ -150,7 +162,10 @@ function Dashboard() {
         `http://localhost:4000/api/coach/requests/${clientUserId}/approve`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
         }
       );
       if (!res.ok) throw new Error("Failed to approve");
@@ -169,7 +184,10 @@ function Dashboard() {
         `http://localhost:4000/api/coach/requests/${clientUserId}/reject`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
         }
       );
       if (!res.ok && res.status !== 204) throw new Error("Failed to reject");
@@ -193,6 +211,29 @@ function Dashboard() {
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
     return then.toLocaleDateString();
+  };
+  const handleUnhireCoach = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to unhire your coach? This will end your coaching relationship."
+      )
+    )
+      return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:4000/api/client/my-coach", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Active-Role": activeRole,
+        },
+      });
+      if (!res.ok && res.status !== 204) throw new Error("Failed to unhire");
+      setMyCoach({ state: "none", coach: null });
+    } catch (err) {
+      console.error(err);
+      alert("Could not unhire coach. Try again.");
+    }
   };
 
   useEffect(() => {
@@ -402,14 +443,24 @@ function Dashboard() {
             {activeRole === "client" && (
               <section className="dashboard-section">
                 <div className="section-title">My Coach</div>
-                <div className="dashboard-card my-coach-card">
-                  {myCoach.state === "loading" && <p>Loading...</p>}
+
+                <div className="my-coach-card">
+                  {myCoach.state === "loading" && (
+                    <div className="my-coach-loading">Loading...</div>
+                  )}
 
                   {myCoach.state === "none" && (
                     <div className="my-coach-empty">
-                      <p>You don't have a coach yet.</p>
-                      <Link to="/coach" className="dash-btn">
-                        Browse coaches
+                      <div className="my-coach-empty-icon">🏋️</div>
+                      <div className="my-coach-empty-text">
+                        <h4>You don't have a coach yet</h4>
+                        <p>
+                          Browse our coaches and find the right fit for your
+                          goals.
+                        </p>
+                      </div>
+                      <Link to="/coach" className="my-coach-cta">
+                        Browse Coaches →
                       </Link>
                     </div>
                   )}
@@ -417,7 +468,7 @@ function Dashboard() {
                   {(myCoach.state === "pending" ||
                     myCoach.state === "active") &&
                     myCoach.coach && (
-                      <div className="my-coach-info">
+                      <div className="my-coach-active">
                         <img
                           src={
                             myCoach.coach.profile_pic || "/default-avatar.png"
@@ -425,27 +476,57 @@ function Dashboard() {
                           alt={myCoach.coach.first_name}
                           className="my-coach-avatar"
                         />
-                        <div className="my-coach-details">
+
+                        <div className="my-coach-info">
                           <div className="my-coach-name-row">
-                            <strong>
+                            <h4 className="my-coach-name">
                               {myCoach.coach.first_name}{" "}
                               {myCoach.coach.last_name}
-                            </strong>
-                            <span className={`my-coach-badge ${myCoach.state}`}>
+                            </h4>
+                            <span
+                              className={`my-coach-status-pill ${myCoach.state}`}
+                            >
                               {myCoach.state === "pending"
-                                ? "Request Pending"
+                                ? "Pending"
                                 : "Active"}
                             </span>
                           </div>
-                          <p className="my-coach-specialization">
-                            {myCoach.coach.specialization}
+                          <p className="my-coach-specialty">
+                            {myCoach.coach.specialization || "General Coaching"}
                           </p>
+                          {myCoach.state === "active" && (
+                            <p className="my-coach-hint">
+                              You're working with this coach.
+                            </p>
+                          )}
+                          {myCoach.state === "pending" && (
+                            <p className="my-coach-hint">
+                              Waiting for coach to approve your request.
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="my-coach-actions">
+                          <Link
+                            to={`/coach/${myCoach.coach.user_id}`}
+                            className="my-coach-btn-secondary"
+                          >
+                            View Profile
+                          </Link>
                           {myCoach.state === "pending" && (
                             <button
                               onClick={handleCancelRequest}
-                              className="dash-btn cancel-btn"
+                              className="my-coach-btn-danger"
                             >
                               Cancel Request
+                            </button>
+                          )}
+                          {myCoach.state === "active" && (
+                            <button
+                              onClick={handleUnhireCoach}
+                              className="my-coach-btn-danger"
+                            >
+                              Unhire
                             </button>
                           )}
                         </div>

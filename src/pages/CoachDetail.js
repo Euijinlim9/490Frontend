@@ -7,7 +7,7 @@ import "../styles/CoachDetail.css";
 function CoachDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { activeRole } = useContext(AuthContext);
+  const { user, activeRole } = useContext(AuthContext);
 
   const [coach, setCoach] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +54,10 @@ function CoachDetail() {
       const token = localStorage.getItem("token");
       try {
         const res = await fetch("http://localhost:4000/api/client/my-coach", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
         });
         if (!res.ok) {
           setMyCoachState("none");
@@ -82,7 +85,10 @@ function CoachDetail() {
         `http://localhost:4000/api/coaches/${id}/request`,
         {
           method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
         }
       );
 
@@ -123,9 +129,12 @@ function CoachDetail() {
       </div>
     );
   }
-
-  const canRequest = activeRole === "client" && myCoachState === "none";
+  const isSelf = user && coach && user.user_id === coach.user_id;
+  const canRequest =
+    activeRole === "client" && myCoachState === "none" && !isSelf;
   const requestButtonLabel = (() => {
+    if (isSelf) return "This is your profile";
+
     if (activeRole !== "client") return "Only clients can request";
     if (myCoachState === "pending") return "Request Pending";
     if (myCoachState === "active") return "You already have a coach";
