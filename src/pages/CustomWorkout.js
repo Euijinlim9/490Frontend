@@ -14,12 +14,11 @@ const emptyForm = () => ({
 
 function CustomWorkout() {
   const navigate = useNavigate();
-  const { addWorkout } = useContext(WorkoutContext);
+  useContext(WorkoutContext);
 
   const [workoutName, setWorkoutName] = useState("");
   const [description, setDescription] = useState("");
   const [estimatedMinutes, setEstimatedMinutes] = useState("");
-  const [isPublic, setIsPublic] = useState(true);
   const [form, setForm] = useState(emptyForm());
   const [addedExercises, setAddedExercises] = useState([]);
   const [nameError, setNameError] = useState(false);
@@ -27,13 +26,14 @@ function CustomWorkout() {
   const [exercises, setExercises] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
-  const [input, setInput] = useState("");
   const [formError, setFormError] = useState(false);
-  const [filter, setFilter] = useState( {
-    muscle: "", equipment: "",
+  const [filter, setFilter] = useState({
+    muscle: "",
+    equipment: "",
   });
-  const [appliedFilter, setAppliedFilter]= useState( {
-    muscle: "", equipment: "",
+  const [appliedFilter, setAppliedFilter] = useState({
+    muscle: "",
+    equipment: "",
   });
 
   // fetches exercises
@@ -46,19 +46,21 @@ function CustomWorkout() {
           page: currentPage,
         });
 
-        const res = await fetch(`http://localhost:4000/api/workout/custom?${param.toString()}`);
+        const res = await fetch(
+          `http://localhost:4000/api/workout/custom?${param.toString()}`
+        );
 
         const data = await res.json();
 
         setExercises(data.data);
         setTotalPages(data.totalPages);
         setCurrentPage(data.currentPage || 1);
-      } catch(err){
+      } catch (err) {
         console.error(err);
       }
     };
 
-    fetchExercises(); 
+    fetchExercises();
   }, [currentPage, appliedFilter]);
 
   const handleFilterChange = (e) => {
@@ -70,7 +72,7 @@ function CustomWorkout() {
     }));
   };
 
-  const pageSearch= () => {
+  const pageSearch = () => {
     setCurrentPage(1);
     setAppliedFilter(filter);
   };
@@ -84,7 +86,7 @@ function CustomWorkout() {
     if (!form.name || !form.sets || !form.reps || !form.breakTime) {
       setFormError(true);
       return;
-    } 
+    }
 
     setFormError(false);
 
@@ -120,7 +122,6 @@ function CustomWorkout() {
     );
   };
 
-
   // changed to post and save workout to db
   const handleFinish = async () => {
     if (!workoutName || !estimatedMinutes) {
@@ -129,7 +130,7 @@ function CustomWorkout() {
       return;
     }
     if (addedExercises.length === 0) return;
-        
+
     for (let ex of addedExercises) {
       if (!ex.sets || !ex.reps || !ex.breakTime) {
         alert("All exercises must have sets, reps, and rest.");
@@ -144,8 +145,6 @@ function CustomWorkout() {
       rest: ex.breakTime,
       notes: ex.notes,
     }));
-
-
 
     try {
       const token = localStorage.getItem("token");
@@ -163,26 +162,23 @@ function CustomWorkout() {
           estimated_minutes: parseInt(estimatedMinutes),
           exercises: formattedExercises,
         }),
-      }); 
+      });
 
       const data = await res.json();
-      console.log(data) // should say "Workout created successfully" along with data
-      
+      console.log(data); // should say "Workout created successfully" along with data
 
       //reset everything
       setWorkoutName("");
       setAddedExercises([]);
-      setIsPublic(false);
       setNameError(false);
       setFormError(false);
       setShowSaved(true);
       setEstimatedMinutes("");
       setDescription("");
       setTimeout(() => setShowSaved(false), 2500);
-    } catch(err) {
+    } catch (err) {
       console.error(err);
-    }    
-   
+    }
   };
 
   return (
@@ -190,7 +186,9 @@ function CustomWorkout() {
       {showSaved && <div className="cw-saved-toast">✓ Workout Saved!</div>}
 
       <div className="cw-topbar">
-        <button className="cw-back-btn" onClick={() => navigate("/workouts")}>← Back</button>
+        <button className="cw-back-btn" onClick={() => navigate("/workouts")}>
+          ← Back
+        </button>
         <h2 className="cw-title">Custom Workout</h2>
       </div>
 
@@ -203,17 +201,28 @@ function CustomWorkout() {
               type="text"
               placeholder="e.g. Morning Push Day"
               value={workoutName}
-              onChange={(e) => { setWorkoutName(e.target.value); setNameError(false); }}
+              onChange={(e) => {
+                setWorkoutName(e.target.value);
+                setNameError(false);
+              }}
             />
 
             <div className="cw-meta-extra">
               <div className="cw-form-group">
                 <label>Description</label>
-                <input type="text" placeholder="e.g Back + Bicep Focus" value={description} onChange={(e) => setDescription(e.target.value)}/>
+                <input
+                  type="text"
+                  placeholder="e.g Back + Bicep Focus"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
               </div>
               <div className="cw-form-dropdown">
                 <label>Estimated Time (Minutes)</label>
-                <select value={estimatedMinutes} onChange={(e) => setEstimatedMinutes(e.target.value)}>
+                <select
+                  value={estimatedMinutes}
+                  onChange={(e) => setEstimatedMinutes(e.target.value)}
+                >
                   <option value="">Select Time</option>
                   <option value="30">30 min</option>
                   <option value="45">45 min</option>
@@ -222,7 +231,6 @@ function CustomWorkout() {
                 </select>
               </div>
             </div>
-
           </div>
           {/*<div className="cw-visibility-row">
             <span className="cw-visibility-label">{isPublic ? "Public" : "Private"}</span>
@@ -243,68 +251,123 @@ function CustomWorkout() {
                 <div className="cw-added-info">
                   <span className="cw-added-name">{ex.name}</span>
                   {ex.youtubeUrl && (
-                    <a href={ex.youtubeUrl} target="_blank" rel="noreferrer" className="cw-yt-link">Watch on YouTube</a>
+                    <a
+                      href={ex.youtubeUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="cw-yt-link"
+                    >
+                      Watch on YouTube
+                    </a>
                   )}
                   <div className="cw-added-edit-row">
                     <div className="cw-added-edit-group">
                       <label>Sets</label>
-                      <input type="number" min="1" className={formError && !ex.sets ? "dw-input-error" : ""} value={ex.sets} onChange={(e) => handleEditExercise(i, "sets", e.target.value)} />
+                      <input
+                        type="number"
+                        min="1"
+                        className={
+                          formError && !ex.sets ? "dw-input-error" : ""
+                        }
+                        value={ex.sets}
+                        onChange={(e) =>
+                          handleEditExercise(i, "sets", e.target.value)
+                        }
+                      />
                     </div>
                     <div className="cw-added-edit-group">
                       <label>Reps</label>
-                      <input type="number" min="1" className={formError && !ex.reps ? "dw-input-error" : ""} value={ex.reps} onChange={(e) => handleEditExercise(i, "reps", e.target.value)} />
+                      <input
+                        type="number"
+                        min="1"
+                        className={
+                          formError && !ex.reps ? "dw-input-error" : ""
+                        }
+                        value={ex.reps}
+                        onChange={(e) =>
+                          handleEditExercise(i, "reps", e.target.value)
+                        }
+                      />
                     </div>
                     <div className="cw-added-edit-group">
                       <label>Rest (s)</label>
-                      <input type="number" min="0" className={formError && !ex.breakTime ? "dw-input-error" : ""} value={ex.breakTime} onChange={(e) => handleEditExercise(i, "breakTime", e.target.value)} />
+                      <input
+                        type="number"
+                        min="0"
+                        className={
+                          formError && !ex.breakTime ? "dw-input-error" : ""
+                        }
+                        value={ex.breakTime}
+                        onChange={(e) =>
+                          handleEditExercise(i, "breakTime", e.target.value)
+                        }
+                      />
                     </div>
                     <div className="cw-added-edit-group">
                       <label>Notes</label>
-                      <input name="notes" type="text" placeholder="input weight, time, etc." value={ex.notes} onChange={(e) => handleEditExercise(i, "notes", e.target.value)} />
+                      <input
+                        name="notes"
+                        type="text"
+                        placeholder="input weight, time, etc."
+                        value={ex.notes}
+                        onChange={(e) =>
+                          handleEditExercise(i, "notes", e.target.value)
+                        }
+                      />
                     </div>
                   </div>
                 </div>
-                <button className="cw-remove-btn" onClick={() => handleRemove(i)}>✕</button>
+                <button
+                  className="cw-remove-btn"
+                  onClick={() => handleRemove(i)}
+                >
+                  ✕
+                </button>
               </div>
             ))}
-            <button className="cw-finish-btn" onClick={handleFinish}>Finished</button>
+            <button className="cw-finish-btn" onClick={handleFinish}>
+              Finished
+            </button>
           </div>
         )}
       </div>
 
       <div className="cw-layout">
-
         <div className="cw-right">
           <h3 className="cw-section-title">Exercise Catalog</h3>
-           
-           <div className="search-overlay">
-                <label htmlFor="muscle">Muscle Group:</label>
-                <select name="muscle" id="muscle" onChange={handleFilterChange}>
-                  <option value="">Any</option>
-                  <option value="triceps">Triceps</option>
-                  <option value="biceps">Biceps</option>
-                  <option value="abs">Abs</option>
-                  <option value="chest">Chest</option>
-                  <option value="back">Back</option>
-                  <option value="core">Core</option>
-                  <option value="glutes">Glutes</option>
-                  <option value="shoulders">Shoulders</option>
-                  <option value="full body">Full Body</option>
-                </select>
 
-                <label htmlFor="equipment">Equipment:</label>
-                <select name="equipment" id="equipment" onChange={handleFilterChange}>
-                  <option value="">Any</option>
-                  <option value="dumbbell">Dumbell</option>
-                  <option value="barbell">Barbell</option>
-                  <option value="cable">Cable Machine</option>
-                  <option value="none">No Equipment</option>
-                  <option value="ball">Ball</option>
-                  <option value="machine">Machine</option>
-                </select>
+          <div className="search-overlay">
+            <label htmlFor="muscle">Muscle Group:</label>
+            <select name="muscle" id="muscle" onChange={handleFilterChange}>
+              <option value="">Any</option>
+              <option value="triceps">Triceps</option>
+              <option value="biceps">Biceps</option>
+              <option value="abs">Abs</option>
+              <option value="chest">Chest</option>
+              <option value="back">Back</option>
+              <option value="core">Core</option>
+              <option value="glutes">Glutes</option>
+              <option value="shoulders">Shoulders</option>
+              <option value="full body">Full Body</option>
+            </select>
 
-                <button onClick={pageSearch}>Search</button>
-           </div>
+            <label htmlFor="equipment">Equipment:</label>
+            <select
+              name="equipment"
+              id="equipment"
+              onChange={handleFilterChange}
+            >
+              <option value="">Any</option>
+              <option value="dumbbell">Dumbell</option>
+              <option value="barbell">Barbell</option>
+              <option value="cable">Cable Machine</option>
+              <option value="none">No Equipment</option>
+              <option value="ball">Ball</option>
+              <option value="machine">Machine</option>
+            </select>
+
+            <button onClick={pageSearch}>Search</button>
+          </div>
           <div className="cw-cards-grid">
             {exercises.length === 0 ? (
               <p className="cw-no-results">No exercises found.</p>
@@ -312,16 +375,34 @@ function CustomWorkout() {
               exercises.map((ex, i) => {
                 const added = addedExercises.some((a) => a.name === ex.name);
                 return (
-                  <div key={i} className={`cw-exercise-card ${added ? "cw-card-added" : ""}`}>
-                    <a href= {ex.video_url}>
-                      <img src={ex.image_url} alt={ex.name} className="cw-card-thumbnail" />
+                  <div
+                    key={i}
+                    className={`cw-exercise-card ${
+                      added ? "cw-card-added" : ""
+                    }`}
+                  >
+                    <a href={ex.video_url}>
+                      <img
+                        src={ex.image_url}
+                        alt={ex.name}
+                        className="cw-card-thumbnail"
+                      />
                     </a>
                     <div className="cw-card-info">
                       <span className="cw-card-name">{ex.name}</span>
-                      <span className="cw-card-muscle">{ex.pirmary_muscle}</span>
-                      <span className="cw-card-meta"> Category: {ex.category} · Equipment: {ex.equipment} </span>
+                      <span className="cw-card-muscle">
+                        {ex.pirmary_muscle}
+                      </span>
+                      <span className="cw-card-meta">
+                        {" "}
+                        Category: {ex.category} · Equipment: {ex.equipment}{" "}
+                      </span>
                     </div>
-                    <button className="cw-card-add-btn" onClick={() => handleAddCommon(ex)} disabled={added}>
+                    <button
+                      className="cw-card-add-btn"
+                      onClick={() => handleAddCommon(ex)}
+                      disabled={added}
+                    >
                       {added ? "Added" : "+ Add"}
                     </button>
                   </div>
@@ -329,17 +410,27 @@ function CustomWorkout() {
               })
             )}
           </div>
-           <div className="page-template">
-                <button className="page-button" onClick={() => setCurrentPage(prev => prev - 1)} disabled={currentPage === 1}>
-                    Previous
-                </button>
+          <div className="page-template">
+            <button
+              className="page-button"
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
 
-                <span className="counter">Page {currentPage} of {totalPages}</span>
+            <span className="counter">
+              Page {currentPage} of {totalPages}
+            </span>
 
-                <button className="page-button" onClick={() => setCurrentPage(prev => prev + 1)} disabled={currentPage === totalPages}>
-                    Next
-                </button>
-            </div>
+            <button
+              className="page-button"
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
         </div>
 
         <div className="cw-left">
@@ -348,33 +439,67 @@ function CustomWorkout() {
           <div className="cw-form">
             <div className="cw-form-group">
               <label>Exercise Name</label>
-              <input name="name" type="text" placeholder="e.g. Cable Fly" value={form.name} onChange={handleChange} />
+              <input
+                name="name"
+                type="text"
+                placeholder="e.g. Cable Fly"
+                value={form.name}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="cw-form-group">
               <label>YouTube Link</label>
-              <input name="youtubeUrl" type="text" placeholder="https://youtube.com/..." value={form.youtubeUrl} onChange={handleChange} />
+              <input
+                name="youtubeUrl"
+                type="text"
+                placeholder="https://youtube.com/..."
+                value={form.youtubeUrl}
+                onChange={handleChange}
+              />
             </div>
 
             <div className="cw-form-row">
               <div className="cw-form-group">
                 <label>Sets</label>
-                <input name="sets" type="number" placeholder="3" min="1" value={form.sets} onChange={handleChange} />
+                <input
+                  name="sets"
+                  type="number"
+                  placeholder="3"
+                  min="1"
+                  value={form.sets}
+                  onChange={handleChange}
+                />
               </div>
               <div className="cw-form-group">
                 <label>Reps</label>
-                <input name="reps" type="number" placeholder="10" min="1" value={form.reps} onChange={handleChange} />
+                <input
+                  name="reps"
+                  type="number"
+                  placeholder="10"
+                  min="1"
+                  value={form.reps}
+                  onChange={handleChange}
+                />
               </div>
               <div className="cw-form-group">
                 <label>Rest (sec)</label>
-                <input name="breakTime" type="number" placeholder="60" min="0" value={form.breakTime} onChange={handleChange} />
+                <input
+                  name="breakTime"
+                  type="number"
+                  placeholder="60"
+                  min="0"
+                  value={form.breakTime}
+                  onChange={handleChange}
+                />
               </div>
             </div>
 
-            <button className="cw-add-btn" onClick={handleAddCustom}>Add Exercise</button>
+            <button className="cw-add-btn" onClick={handleAddCustom}>
+              Add Exercise
+            </button>
           </div>
         </div>
-
       </div>
     </div>
   );

@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+} from "react";
 import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
@@ -20,7 +26,7 @@ function Dashboard() {
 
   const [myCoach, setMyCoach] = useState({ state: "loading", coach: null });
 
-  const fetchMyCoach = async () => {
+  const fetchMyCoach = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch("http://localhost:4000/api/client/my-coach", {
@@ -36,13 +42,13 @@ function Dashboard() {
       console.error(error);
       setMyCoach({ state: "none", coach: null });
     }
-  };
+  }, [activeRole]);
 
   useEffect(() => {
     if (activeRole === "client") {
       fetchMyCoach();
     }
-  }, [activeRole]);
+  }, [activeRole, fetchMyCoach]);
 
   const handleCancelRequest = async () => {
     if (!window.confirm("Cancel your request to this coach?")) return;
@@ -111,7 +117,7 @@ function Dashboard() {
   const [coachDataLoading, setCoachDataLoading] = useState(false);
   const [activeClients, setActiveClients] = useState([]);
 
-  const fetchCoachData = async () => {
+  const fetchCoachData = useCallback(async () => {
     setCoachDataLoading(true);
     const token = localStorage.getItem("token");
     try {
@@ -147,12 +153,12 @@ function Dashboard() {
     } finally {
       setCoachDataLoading(false);
     }
-  };
+  }, [activeRole]);
   useEffect(() => {
     if (activeRole === "coach") {
       fetchCoachData();
     }
-  }, [activeRole]);
+  }, [activeRole, fetchCoachData]);
 
   const handleApproveRequest = async (clientUserId, clientName) => {
     if (!window.confirm(`Approve ${clientName} as a client?`)) return;
@@ -353,7 +359,7 @@ function Dashboard() {
     : 0;
   const fiberPercent = macroTotal ? (mealTotals.fiber / macroTotal) * 100 : 0;
   const carbsPercent = macroTotal ? (mealTotals.carbs / macroTotal) * 100 : 0;
-  const fatsPercent = macroTotal ? (mealTotals.fats / macroTotal) * 100 : 0;
+  //const fatsPercent = macroTotal ? (mealTotals.fats / macroTotal) * 100 : 0;
 
   const macrosGradient = `conic-gradient(
     #54c4f2 0% ${proteinPercent}%,
