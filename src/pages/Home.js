@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import HomeHeader from "../components/HomeHeader";
 import HomeFooter from "../components/HomeFooter";
 
