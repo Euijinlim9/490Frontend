@@ -1,0 +1,31 @@
+# “Whenever someone pushes code or opens a PR, pretend we are a fresh machine, install everything from scratch, and see if the frontend still builds.”
+
+name: Frontend CI
+
+on:
+  push:
+    branches: [main, feature/**]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # downloads our Github repo onto runner machine
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # installs Node.js version 20 on the Github runner
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      # Installs all packages from package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      # Runs the build script which builds the app like a production build
+      - name: Build project
+        run: npm run build
