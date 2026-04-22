@@ -256,8 +256,11 @@
 }
 
 .health-icon {
-  font-size: 42px;
-  margin-bottom: 12px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  width: 100%; 
+  margin: 14px 0 18px 0; 
 }
 
 .health-value {
@@ -948,4 +951,12 @@
     flex: 1;
     text-align: center;
   }
+}
+
+.health-svg {
+  width: 46px;
+  height: 46px;
+  color: rgba(255,255,255,0.92);
+  display: block; 
+  overflow: visible; 
 }
