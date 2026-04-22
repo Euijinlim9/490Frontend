@@ -46,15 +46,7 @@ function Profile() {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  //const { user, setUser, logout, activeRole } = useContext(AuthContext);
-  const user = {
-  first_name: "John",
-  last_name: "Doe",
-  email: "john@example.com",
-  phone: "123-456-7890",
-  goal: "lose",
-  profile_pic: null,
-};
+  const { user, setUser, logout, activeRole } = useContext(AuthContext);
 
 const activeRole = "coach"; // or "client"
 const setUser = () => {};
@@ -78,7 +70,7 @@ const logout = () => {};
   const [message, setMessage] = useState("");
 
   // Fetch coach data when active role is coach
-  /*useEffect(() => {
+  useEffect(() => {
     const fetchCoachData = async () => {
       if (activeRole !== "coach") return;
 
@@ -98,7 +90,7 @@ const logout = () => {};
     };
     fetchCoachData();
   }, [activeRole]);
-*/
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -453,7 +445,7 @@ const logout = () => {};
                       ) : (
                         certifications.map((c) => (
                           <div key={c.id} className="item-card">
-                            <a href={c.document_url} target="_blank">
+                            <a href={c.document_url} target="_blank" rel="noopener noreferrer">
                               View Document
                             </a>
                           </div>
