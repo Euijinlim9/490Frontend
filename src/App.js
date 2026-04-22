@@ -25,6 +25,10 @@ import RecentWorkouts from "./pages/RecentWorkouts";
 import ActiveWorkout from "./pages/ActiveWorkout";
 import PaymentHistory from "./pages/PaymentHistory";
 import ClientSurvey from "./components/ClientSurvey";
+import LogMeal from "./pages/LogMeal"; 
+import LogWorkout from "./pages/LogWorkout"; 
+import LogWellness from "./pages/LogWellness"; 
+import PremadeMeals from "./pages/PremadeMeals"; 
 
 function App() {
   const location = useLocation();
@@ -60,7 +64,10 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
-          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
+          <Route path="/log-meal" element={<LogMeal />} />
+          <Route path="/log-workout" element={<LogWorkout />} /> 
+          <Route path="/log-wellness" element={<LogWellness />} /> 
+          <Route path="/premade-meals" element={<PremadeMeals />} />
         </Routes>
       </div>
     </div>

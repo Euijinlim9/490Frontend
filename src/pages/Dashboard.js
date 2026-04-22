@@ -20,6 +20,8 @@ import {
 
 import sleepIcon from "../images/sleep.svg";
 import waterIcon from "../images/water.svg";
+import heartIcon from "../images/heart.svg";
+import stepIcon from "../images/step.svg";
 
 function Dashboard() {
   const { user, activeRole } = useContext(AuthContext);
@@ -87,7 +89,8 @@ function Dashboard() {
     sleepHours: 0,
     waterCurrent: 0,
     waterGoal: 0,
-    heartRate: 0,
+    heartLog: 0,
+    stepLog: 0,
   });
 
   const [editingCard, setEditingCard] = useState(null);
@@ -96,7 +99,8 @@ function Dashboard() {
     sleepHours: "",
     waterCurrent: "",
     waterGoal: "",
-    heartRate: "",
+    heartLog: "",
+    stepLog: "",
   });
 
   const [weightInput, setWeightInput] = useState("");
@@ -141,7 +145,6 @@ function Dashboard() {
         setPendingRequests(data.data || []);
       }
 
-      // clients endpoint is sprint B
       if (clientsRes.ok) {
         const data = await clientsRes.json();
         setActiveClients(data.data || []);
@@ -154,6 +157,7 @@ function Dashboard() {
       setCoachDataLoading(false);
     }
   }, [activeRole]);
+
   useEffect(() => {
     if (activeRole === "coach") {
       fetchCoachData();
@@ -218,6 +222,7 @@ function Dashboard() {
     if (diffDays < 7) return `${diffDays}d ago`;
     return then.toLocaleDateString();
   };
+
   const handleUnhireCoach = async () => {
     if (
       !window.confirm(
@@ -306,7 +311,6 @@ function Dashboard() {
 
     const todaysWorkouts = savedWorkouts.filter((workout) => {
       if (!workout.date) return false;
-
       const workoutDate = new Date(workout.date).toLocaleDateString();
       return workoutDate === today;
     });
@@ -322,7 +326,6 @@ function Dashboard() {
   useEffect(() => {
     const savedWellness =
       JSON.parse(localStorage.getItem("loggedWellness")) || [];
-
     const today = new Date().toLocaleDateString();
 
     const todaysWellness = savedWellness.filter(
@@ -342,7 +345,8 @@ function Dashboard() {
       sleepHours: latestEntry ? Number(latestEntry.hoursSlept) || 0 : 0,
       waterCurrent: waterTotal,
       waterGoal: 0,
-      heartRate: latestEntry ? Number(latestEntry.heartRate) || 0 : 0,
+      heartLog: latestEntry ? Number(latestEntry.heartRate) || 0 : 0,
+      stepLog: latestEntry ? Number(latestEntry.stepLog) || 0 : 0,
     });
   }, []);
 
@@ -359,7 +363,6 @@ function Dashboard() {
     : 0;
   const fiberPercent = macroTotal ? (mealTotals.fiber / macroTotal) * 100 : 0;
   const carbsPercent = macroTotal ? (mealTotals.carbs / macroTotal) * 100 : 0;
-  //const fatsPercent = macroTotal ? (mealTotals.fats / macroTotal) * 100 : 0;
 
   const macrosGradient = `conic-gradient(
     #54c4f2 0% ${proteinPercent}%,
@@ -377,7 +380,6 @@ function Dashboard() {
       const dateObj = new Date(entry.label);
       const dayKey = dateObj.toLocaleDateString();
 
-      // keep the latest entry for that day
       groupedByDay[dayKey] = {
         day: dayKey,
         value: Number(entry.value),
@@ -446,6 +448,7 @@ function Dashboard() {
         <div className="dashboard-layout">
           <div className="dashboard-left">
             <div className="welcome">Welcome back, {user?.first_name}!</div>
+
             {activeRole === "client" && (
               <section className="dashboard-section">
                 <div className="section-title">My Coach</div>
@@ -680,6 +683,68 @@ function Dashboard() {
                       onClick={() => startEditing("waterCurrent")}
                     >
                       {wellness.waterCurrent} <span>ounces</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="health-card">
+                  <h4 className="health-title">Heart</h4>
+                  <div className="health-icon">
+                    <img src={heartIcon} alt="heart" />
+                  </div>
+
+                  {editingCard === "heartLog" ? (
+                    <input
+                      type="number"
+                      name="heartLog"
+                      value={wellnessInputs.heartLog}
+                      onChange={handleWellnessInputChange}
+                      onBlur={() => saveWellnessField("heartLog")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          saveWellnessField("heartLog");
+                        }
+                      }}
+                      className="wellness-inline-input"
+                      autoFocus
+                    />
+                  ) : (
+                    <p
+                      className="health-value clickable-value"
+                      onClick={() => startEditing("heartLog")}
+                    >
+                      {wellness.heartLog} <span>bpm</span>
+                    </p>
+                  )}
+                </div>
+
+                <div className="health-card">
+                  <h4 className="health-title">Steps</h4>
+                  <div className="health-icon">
+                    <img src={stepIcon} alt="step" />
+                  </div>
+
+                  {editingCard === "stepLog" ? (
+                    <input
+                      type="number"
+                      name="stepLog"
+                      value={wellnessInputs.stepLog}
+                      onChange={handleWellnessInputChange}
+                      onBlur={() => saveWellnessField("stepLog")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          saveWellnessField("stepLog");
+                        }
+                      }}
+                      className="wellness-inline-input"
+                      autoFocus
+                    />
+                  ) : (
+                    <p
+                      className="health-value clickable-value"
+                      onClick={() => startEditing("stepLog")}
+                    >
+                      {wellness.stepLog} <span>steps</span>
                     </p>
                   )}
                 </div>
