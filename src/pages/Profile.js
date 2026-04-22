@@ -5,9 +5,60 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const[showNewForm, setShowNewForm] = useState(false);
+  const[qualifications, setQualifications] = useState([]);
+  const [certifications, setCertifications] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const[type, setType] = useState("qualification");
+  const[file, setFile]=useState(null);
+  const[qualForm, setQualForm] = useState({
+    degree_name:"",
+    institution: "",
+    field_of_study: "",
+    year_completed: "",
+  });
+
+ 
+  useEffect(() => {
+  if (!modalOpen) return;
+
+  const token = localStorage.getItem("token");
+
+  const fetchData = async () => {
+    const [qRes, cRes] = await Promise.all([
+      fetch("http://localhost:4000/api/qualifications", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+      fetch("http://localhost:4000/api/certifications", {
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ]);
+
+    const qData = await qRes.json();
+    const cData = await cRes.json();
+
+    setQualifications(qData);
+    setCertifications(cData);
+  };
+
+  fetchData();
+}, [modalOpen]);
+
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { user, setUser, logout, activeRole } = useContext(AuthContext);
+  //const { user, setUser, logout, activeRole } = useContext(AuthContext);
+  const user = {
+  first_name: "John",
+  last_name: "Doe",
+  email: "john@example.com",
+  phone: "123-456-7890",
+  goal: "lose",
+  profile_pic: null,
+};
+
+const activeRole = "coach"; // or "client"
+const setUser = () => {};
+const logout = () => {};
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -27,7 +78,7 @@ function Profile() {
   const [message, setMessage] = useState("");
 
   // Fetch coach data when active role is coach
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchCoachData = async () => {
       if (activeRole !== "coach") return;
 
@@ -47,7 +98,7 @@ function Profile() {
     };
     fetchCoachData();
   }, [activeRole]);
-
+*/
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -131,7 +182,37 @@ function Profile() {
     }
   };
 
-  if (!user) return <p>Loading ...</p>;
+  const handleSubmit = async () => {
+  const formData = new FormData();
+
+  formData.append("type", type);
+
+  if (type === "certification") {
+    if (!file) return alert("Upload a file");
+
+    formData.append("document", file);
+  }
+
+  if (type === "qualification") {
+    formData.append("degree_name", qualForm.degree_name);
+    formData.append("institution", qualForm.institution);
+    formData.append("field_of_study", qualForm.field_of_study);
+    formData.append("year_completed", qualForm.year_completed);
+  }
+
+  const res = await fetch("/api/documents", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await res.json();
+
+  console.log(data);
+  setModalOpen(false);
+};
+
+  //if (!user) return <p>Loading ...</p>;
+  if (!user) return <user />;
 
   return (
     <div className="profile-page">
@@ -287,6 +368,126 @@ function Profile() {
                 <option value="general-fitness">General Fitness</option>
               </select>
             </div>
+
+            <button className="save-btn" onClick={() => setModalOpen(true)}>
+              Update Qualifications</button>
+              {modalOpen && (
+            <div className="modal-container">
+              {/* modal pops up when coach tries to update qualifications/certification */}
+              <div className="modal"> 
+                <div className="modal-header">
+                  <h2>Update Qualifications and Certification</h2>
+                </div>
+                <div className="toggle">
+                  <button className="toggle-btns" onClick={() => setType("qualification")}>
+                    Qualification
+                  </button>
+                  <button className="toggle-btns" onClick={() => setType("certification")}>
+                    Certification
+                  </button>
+                  </div>
+                <div className="modal-content">
+                  {/*qualification form option*/}
+                  {!showNewForm && type ==="qualification" && (
+                    <>
+                    <h3>Existing Qualifications</h3>
+                    {qualifications.length === 0 ? (
+                      <p>You have no existing qualifications.</p>
+                    ) : (
+                      qualifications.map((q) => (
+                        <div key={q.id} className="item-card">
+                          <p>{q.degree_name}</p>
+                          <p>{q.institution}</p>
+                          <p>{q.year_completed}</p>
+                        </div>
+                      ))
+                    )}
+                  <div className="modal-footer">
+                  <button className="modal-btns" onClick={() => setShowNewForm(true)}>
+                    + Add New
+                  </button>
+                  <button className="modal-btns" type="button" onClick={() => setModalOpen(false)}>
+                    Close
+                    </button>
+                </div>
+                    </>
+                  )}
+                  {type ==="qualification" && showNewForm && (
+                    <>
+                    <div className="input-group">
+                      <label>Degree Name</label>
+                    <input placeholder="e.g Bachelor of Science"
+                    onChange={(e) => setQualForm({...qualForm, degree_name: e.target.value})
+                    }
+                    />
+                    <label>Institution</label>
+                    <input placeholder="e.g New Jersey Institute of Technology"
+                    onChange={(e) => setQualForm({...qualForm, institution: e.target.value})
+                  }
+                  />
+                  <label>Field of Study</label>
+                  <input placeholder="e.g Medicine"
+                  onChange={(e) => setQualForm({...qualForm, field_of_study: e.target.value})
+                }
+                  />
+                  <label>Year Completed</label>
+                  <input placeholder="e.g 2026"
+                  onChange={(e) => setQualForm({...qualForm, year_completed: e.target.value})}
+                  />
+                  </div>
+                  <div className="modal-footer">
+                  <button className="modal-btns" onClick={handleSubmit}>Submit</button>
+  
+                  <button className="modal-btns" onClick={() => setShowNewForm(false)}>
+                    Back
+                    </button>
+                    </div>
+                    </>
+                    )}
+                    {/*certification form option*/}
+                    {!showNewForm && type ==="certification" && (
+                      <>
+                      <h3>Exisiting Certifications</h3>
+                      {certifications.length === 0 ? (
+                        <p>You have no existing certifications</p>
+                      ) : (
+                        certifications.map((c) => (
+                          <div key={c.id} className="item-card">
+                            <a href={c.document_url} target="_blank">
+                              View Document
+                            </a>
+                          </div>
+                        ))
+                      )}
+                  <div className="modal-footer">
+                  <button className="modal-btns" onClick={() => setShowNewForm(true)}>
+                    + Add New
+                  </button>
+                  <button className="modal-btns" type="button" onClick={() => setModalOpen(false)}>
+                    Close
+                    </button>
+                </div>
+                      </>
+                    )}
+                    {type === "certification" && showNewForm && (
+                      <>
+                      <input type = "file"
+                      onChange={(e) => setFile(e.target.files[0])}
+                      />
+                      <div className="modal-footer">
+                      <button className="modal-btns" onClick={handleSubmit}>Submit</button>
+                      <button className="modal-btns" onClick={() => setShowNewForm(false)}>
+                        Back
+                        </button>
+                        </div>
+                      </>
+                      
+                    )}
+                </div>
+                
+              </div>
+            </div>
+              )}
           </>
         )}
 

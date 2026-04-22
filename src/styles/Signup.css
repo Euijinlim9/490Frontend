@@ -172,6 +172,12 @@
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease;
+  flex-direction: column;
+}
+
+.upload-cert-btn label {
+  display: block;
+  margin-bottom: 6px;
 }
 
 .upload-cert-btn:hover {
