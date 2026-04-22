@@ -47,10 +47,6 @@ function Profile() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { user, setUser, logout, activeRole } = useContext(AuthContext);
-
-const activeRole = "coach"; // or "client"
-const setUser = () => {};
-const logout = () => {};
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -204,7 +200,7 @@ const logout = () => {};
 };
 
   //if (!user) return <p>Loading ...</p>;
-  if (!user) return <user />;
+  if (!user) return <p>Loading...</p>;
 
   return (
     <div className="profile-page">
