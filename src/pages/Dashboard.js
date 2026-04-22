@@ -13,6 +13,8 @@ import {
 
 import sleepIcon from "../images/sleep.svg";
 import waterIcon from "../images/water.svg";
+import heartIcon from "../images/heart.svg";
+import stepIcon from "../images/step.svg";
 
 function Dashboard() {
   const { user } = useContext(AuthContext);
@@ -399,6 +401,68 @@ function Dashboard() {
                     onClick={() => startEditing("waterCurrent")}
                   >
                     {wellness.waterCurrent} <span>ounces</span>
+                  </p>
+                )}
+              </div>
+
+              <div className="health-card">
+                <h4 className="health-title">Heart</h4>
+                <div className="health-icon">
+                  <img src={heartIcon} alt="heart" />
+                </div>
+
+                {editingCard === "heartLog" ? (
+                  <input
+                    type="number"
+                    name="heartLog"
+                    value={wellnessInputs.heartLog}
+                    onChange={handleWellnessInputChange}
+                    onBlur={() => saveWellnessField("heartLog")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        saveWellnessField("heartLog");
+                      }
+                    }}
+                    className="wellness-inline-input"
+                    autoFocus
+                  />
+                ) : (
+                  <p
+                    className="health-value clickable-value"
+                    onClick={() => startEditing("heartLog")}
+                  >
+                    {wellness.heartLog} <span>bpm</span>
+                  </p>
+                )}
+              </div>
+
+              <div className="health-card">
+                <h4 className="health-title">Steps</h4>
+                <div className="health-icon">
+                  <img src={stepIcon} alt="step" />
+                </div>
+
+                {editingCard === "stepLog" ? (
+                  <input
+                    type="number"
+                    name="stepLog"
+                    value={wellnessInputs.stepLog}
+                    onChange={handleWellnessInputChange}
+                    onBlur={() => saveWellnessField("stepLog")}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        saveWellnessField("stepLog");
+                      }
+                    }}
+                    className="wellness-inline-input"
+                    autoFocus
+                  />
+                ) : (
+                  <p
+                    className="health-value clickable-value"
+                    onClick={() => startEditing("stepLog")}
+                  >
+                    {wellness.stepLog} <span>steps</span>
                   </p>
                 )}
               </div>
