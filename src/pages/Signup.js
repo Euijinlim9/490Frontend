@@ -12,6 +12,7 @@ function Signup() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("client");
   const [success, setSuccess] = useState("");
+  const [coachCertification, setCoachCertification] = useState([]);
   const [clientForm, setClientForm] = useState({
     first_name: "",
     last_name: "",
@@ -78,10 +79,20 @@ function Signup() {
   const handleCoachSignup = async () => {
     setError("");
     try {
+      const formData = new FormData();
+      formData.append("first_name", coachForm.first_name);
+      formData.append("last_name", coachForm.last_name);
+      formData.append("email", coachForm.email);
+      formData.append("password", coachForm.password);
+      formData.append("phone", coachForm.phone);
+
+      coachCertification.forEach((file) => {
+        formData.append("certification", file);
+      });
+
       const res = await fetch("http://localhost:4000/auth/register/coach", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(coachForm),
+        body: formData,
       });
       const data = await res.json();
       if (res.ok) {
@@ -264,7 +275,13 @@ function Signup() {
                 onChange={handleCoachChange}
               />
             </div>
-            <button className="upload-cert-btn">Upload Certification</button>
+            <div className="upload-cert-btn">
+            <label>Upload Certification</label>
+            <input 
+            type="file" multiple
+            accept=".pdf, .png, .jpg, .jpeg"
+            onChange={(e) => setCoachCertification(Array.from(e.target.files))}/>
+            </div>
             <button className="signup-btn" onClick={handleCoachSignup}>
               Create Coach Account
             </button>
