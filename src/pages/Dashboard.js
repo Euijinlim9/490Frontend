@@ -462,7 +462,7 @@ function Dashboard() {
                     <div className="my-coach-empty">
                       <div className="my-coach-empty-icon">🏋️</div>
                       <div className="my-coach-empty-text">
-                        <h4>You don't have a coach yet</h4>
+                        <h4>You don't have a coach yet.</h4>
                         <p>
                           Browse our coaches and find the right fit for your
                           goals.
@@ -628,7 +628,16 @@ function Dashboard() {
                 <div className="health-card">
                   <h4 className="health-title">Sleep</h4>
                   <div className="health-icon">
-                    <img src={sleepIcon} alt="sleep" />
+                    <svg viewBox="0 0 24 24" className="health-svg">
+                      <path
+                        d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      </svg>
                   </div>
 
                   {editingCard === "sleepHours" ? (
@@ -659,7 +668,16 @@ function Dashboard() {
                 <div className="health-card">
                   <h4 className="health-title">Water</h4>
                   <div className="health-icon">
-                    <img src={waterIcon} alt="water" />
+                    <svg viewBox="0 0 24 24" className="health-svg">
+    `                 <path
+                        d="M12 2C12 2 6 9 6 13a6 6 0 0 0 12 0c0-4-6-11-6-11z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
 
                   {editingCard === "waterCurrent" ? (
@@ -690,7 +708,16 @@ function Dashboard() {
                 <div className="health-card">
                   <h4 className="health-title">Heart</h4>
                   <div className="health-icon">
-                    <img src={heartIcon} alt="heart" />
+                    <svg viewBox="0 0 24 24" className="health-svg">
+                      <path
+                        d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0L12 7.9 8.7 4.6c-1.5-1.5-4-1.5-5.5 0 -1.5 1.5-1.5 4 0 5.5L12 19l8.8-8.9c1.5-1.5 1.5-4 0-5.5z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
 
                   {editingCard === "heartLog" ? (
@@ -721,7 +748,36 @@ function Dashboard() {
                 <div className="health-card">
                   <h4 className="health-title">Steps</h4>
                   <div className="health-icon">
-                    <img src={stepIcon} alt="step" />
+                     <svg viewBox="0 0 24 24" className="health-svg">
+                      <path
+                        d="M5 19V11"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M10 19V7"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M15 19V13"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M20 19V9"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                      />
+                     </svg>
                   </div>
 
                   {editingCard === "stepLog" ? (
