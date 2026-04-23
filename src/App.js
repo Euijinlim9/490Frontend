@@ -1,6 +1,8 @@
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 
 import Header from "./components/Header";
 
@@ -25,6 +27,11 @@ import RecentWorkouts from "./pages/RecentWorkouts";
 import ActiveWorkout from "./pages/ActiveWorkout";
 import PaymentHistory from "./pages/PaymentHistory";
 import ClientSurvey from "./components/ClientSurvey";
+import AdminHeader from "./components/AdminHeader";
+import CoachApplications from "./pages/adminpages/CoachApplications";
+import ViewUsers from "./pages/adminpages/ViewUsers";
+import AdminExercise from "./pages/adminpages/AdminExercise";
+import UserReport from "./pages/adminpages/UserReports";
 
 function App() {
   const location = useLocation();
@@ -33,9 +40,16 @@ function App() {
   const hideHeader2 = location.pathname === "/signup";
   const hideHeader3 = location.pathname === "/login";
 
+  const { activeRole } = useContext(AuthContext);
+
   return (
     <div className="body">
-      {!hideHeader && !hideHeader2 && !hideHeader3 && <Header />}
+      {!hideHeader && !hideHeader2 && !hideHeader3 && (
+      <>
+      <Header />
+      {activeRole === "admin" && <AdminHeader />}
+      </>
+    )}
 
       <div className="page-content">
         <Routes>
@@ -61,6 +75,15 @@ function App() {
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
           <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
+            {activeRole === "admin" && (
+              <>
+              <Route path="/admin/coachapp" element={<CoachApplications />} />
+              <Route path="/admin/viewusers" element={<ViewUsers />} />
+              <Route path="/admin/exercise" element={<AdminExercise />} />
+              <Route path="/admin/userreport" element={<UserReport />} />
+              </>
+            )}
+
         </Routes>
       </div>
     </div>

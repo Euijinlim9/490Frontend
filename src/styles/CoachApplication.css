@@ -1,0 +1,76 @@
+.coach-app-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.coach-app-card {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.coach-app-card h3{
+    display:flex;
+    justify-content: center;
+}
+
+.btn-footer{
+    display:flex;
+    border-top: 1px;
+    padding: 10px 10px;
+    gap:10px;
+}
+
+.view-btn{
+    width:100%;
+    background-color:#747474;
+    font-size: 20px;
+    border:none;
+    border-radius: 5px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.accept-btn{
+    width: 50%;
+    background-color: rgb(63, 222, 63);
+    font-size: 20px;
+    border:none;
+    border-radius: 5px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.reject-btn{
+    width: 50%;
+    background-color: rgb(222, 63, 63);
+    font-size: 20px;
+    border:none;
+    border-radius: 5px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+
+.modal-header2{
+    display:flex;
+    background: rgb(173, 173, 173);
+    color:rgb(0, 0, 0);
+    padding: 10px 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    justify-content: space-between;
+    align-items:center;
+}
