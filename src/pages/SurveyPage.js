@@ -15,6 +15,8 @@ const SurveyPage = () => {
   ) : (
     <ClientSurvey show={true} onClose={() => navigate("/dashboard")} />
   );
+
+  
 };
 
 export default SurveyPage;

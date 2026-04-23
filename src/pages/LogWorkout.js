@@ -1,8 +1,10 @@
 import "../styles/Logs.css";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function LogWorkout() {
+  const navigate = useNavigate();
   const [workoutForm, setWorkoutForm] = useState({
     incline: "",
     distance: "",
@@ -38,6 +40,7 @@ function LogWorkout() {
       distance: "",
       speed: "",
     });
+    navigate("/dashboard"); 
   };
 
   return (
