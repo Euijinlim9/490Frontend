@@ -1,7 +1,9 @@
         import "../styles/Logs.css"; 
         import React, { useState } from "react";
+        import { useNavigate } from "react-router-dom";
         
         function LogWellness(){
+          const navigate = useNavigate();
           const [wellnessForm, setWellnessForm] = useState({
             hoursSlept: "",
             waterLog: "",
@@ -33,6 +35,7 @@
               heartRate: "", 
               stepLog: "",  
             });
+            navigate("/dashboard"); 
            };    
             
             
@@ -95,7 +98,7 @@
                     />
                   </div>
 
-                <button type="submit" className="form-button">Submit Wellness</button>
+                <button type="submit" className="form-button">Log Wellness</button>
             </form> 
         </div> 
     </div> 

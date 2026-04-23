@@ -173,7 +173,6 @@
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 8px 18px rgba(64, 115, 201, 0.28);
 }
 
 .start-workout-btn:hover {
@@ -430,7 +429,6 @@
   font-size: 15px;
   font-weight: 600;
   text-align: center;
-  box-shadow: 0 8px 18px rgba(64, 115, 201, 0.28);
   cursor: pointer;
 }
 
@@ -959,4 +957,35 @@
   color: rgba(255,255,255,0.92);
   display: block; 
   overflow: visible; 
+}
+
+.graph-tabs,
+.time-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.graph-tabs button,
+.time-tabs button {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #dbe4f0;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.graph-tabs button:hover,
+.time-tabs button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.graph-tabs button.active,
+.time-tabs button.active {
+  background: linear-gradient(135deg, #3f73c9, #568df0);
+  color: white;
 }
