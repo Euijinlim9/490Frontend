@@ -1,7 +1,9 @@
 import "../styles/Logs.css";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LogMeal() {
+  const navigate = useNavigate();
   const [mealForm, setMealForm] = useState({
     mealName: "",
     calories: "",
@@ -42,7 +44,8 @@ function LogMeal() {
       fats: "",
       sugars: "",
       mealTime: "",
-    });
+    }); 
+    navigate("/dashboard"); 
   };
 
   return (

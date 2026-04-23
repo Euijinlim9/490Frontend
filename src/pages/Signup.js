@@ -95,7 +95,7 @@ function Signup() {
         }
         setSuccess("Coach account created! Redirecting...");
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/survey");
         }, 2000);
       } else {
         setError(data.message || data.error);
