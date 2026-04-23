@@ -26,7 +26,7 @@ function RecentWorkouts() {
                 <div className="recent-workout-name">{workout.workoutType}</div>
 
                 <div className="recent-workout-minutes">
-                  {workout.duration} Calories
+                  {workout.duration} Minutes
                 </div>
 
                 <div className="recent-workout-details">
