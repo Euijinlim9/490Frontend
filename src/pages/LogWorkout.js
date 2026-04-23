@@ -9,6 +9,7 @@ function LogWorkout() {
     incline: "",
     distance: "",
     speed: "",
+    time: "",
   });
 
   const handleChange = (e) => {
@@ -39,6 +40,7 @@ function LogWorkout() {
       incline: "",
       distance: "",
       speed: "",
+      time: "",
     });
     navigate("/dashboard"); 
   };
@@ -74,7 +76,7 @@ function LogWorkout() {
             </div>
 
             <div className="form-group">
-              <label>Speed</label>
+              <label>Speed (mph)</label>
               <input
                 className="log-input"
                 type="number"
@@ -86,7 +88,7 @@ function LogWorkout() {
             </div>
 
             <div className="form-group">
-              <label>Distance</label>
+              <label>Distance (mi)</label>
               <input
                 className="log-input"
                 type="number"
@@ -94,6 +96,17 @@ function LogWorkout() {
                 value={workoutForm.distance}
                 onChange={handleChange}
                 placeholder="Cardio Distance"
+              />
+            </div>
+            <div className="form-group">
+              <label>Time (min)</label>
+              <input
+                className="log-input"
+                type="number"
+                name="time"
+                value={workoutForm.time}
+                onChange={handleChange}
+                placeholder="Cardio Workout Time"
               />
             </div>
           </div>
