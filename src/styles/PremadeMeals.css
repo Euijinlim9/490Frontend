@@ -1,0 +1,77 @@
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px;
+  border-radius: 14px;
+  width: fit-content;
+  margin: 32px auto 0;
+  backdrop-filter: blur(10px);
+}
+
+.search-input {
+  width: 340px;
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  outline: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.search-input::placeholder {
+  color: #6a6f78;
+}
+
+.search-input:focus {
+  border-color: rgba(108, 166, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.search-container .search-input {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.filter-dropdown {
+  padding: 10px 14px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.filter-dropdown:hover,
+.filter-dropdown:focus {
+  border-color: rgba(108, 166, 255, 0.4);
+}
+
+.filter-dropdown option {
+  background: #1a1d24;
+  color: #fff;
+}
+
+.search-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6ca6ff 0%, #4d8ae8 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 166, 255, 0.3);
+}
