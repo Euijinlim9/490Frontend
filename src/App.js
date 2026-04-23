@@ -32,6 +32,10 @@ import CoachApplications from "./pages/adminpages/CoachApplications";
 import ViewUsers from "./pages/adminpages/ViewUsers";
 import AdminExercise from "./pages/adminpages/AdminExercise";
 import UserReport from "./pages/adminpages/UserReports";
+import LogMeal from "./pages/LogMeal"; 
+import LogWorkout from "./pages/LogWorkout"; 
+import LogWellness from "./pages/LogWellness"; 
+import PremadeMeals from "./pages/PremadeMeals"; 
 
 function App() {
   const location = useLocation();
@@ -84,6 +88,10 @@ function App() {
               </>
             )}
 
+          <Route path="/log-meal" element={<LogMeal />} />
+          <Route path="/log-workout" element={<LogWorkout />} /> 
+          <Route path="/log-wellness" element={<LogWellness />} /> 
+          <Route path="/premade-meals" element={<PremadeMeals />} />
         </Routes>
       </div>
     </div>
