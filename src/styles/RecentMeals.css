@@ -19,7 +19,8 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 18px 22px;
-        transition: all 0.2s ease;
+        transition: all 0.2s ease; 
+        min-height: 100px !important;
     }
 
     .meal-card:hover{
@@ -53,3 +54,26 @@
     .fiber { color: #8b5cf6; }
     .carbs { color: #506a92; }
     .fats { color: #6ca6ff; }
+
+.meal-card,
+.recent-workout-card {
+  position: relative;
+}
+
+.delete-log-btn {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-log-btn:hover {
+  background: rgba(255, 80, 80, 0.25);
+}

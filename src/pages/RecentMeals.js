@@ -9,6 +9,12 @@ function RecentMeals(){
         setMeals([...savedMeals].reverse()); 
     }, []); 
 
+    const handleDeleteMeal = (indexToDelete) => {
+      const updatedMeals = meals.filter((_, index) => index !== indexToDelete); 
+      setMeals(updatedMeals); 
+      localStorage.setItem("loggedMeals", JSON.stringify([...updatedMeals].reverse())); 
+    };
+
     return(
         <div>
             <div className="page-title">Recent Meals</div>
@@ -19,6 +25,13 @@ function RecentMeals(){
             ) : ( 
                 meals.map((meal, index) => (
                   <div className="meal-card" key={index}> 
+                    <button 
+                      className="delete-log-btn"
+                      onClick={() => handleDeleteMeal(index)}
+                    >
+                        Delete
+                    </button>
+                    
                     <div className="food-name">{meal.mealName}</div>
 
                     <div className="calories"> 

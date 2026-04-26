@@ -10,6 +10,12 @@ function RecentWorkouts() {
     setWorkouts([...savedWorkouts].reverse());
   }, []);
 
+  const handleDeleteWorkout = (indexToDelete) => {
+    const updatedWorkouts = workouts.filter((_, index) => index !== indexToDelete); 
+    setWorkouts(updatedWorkouts); 
+    localStorage.setItem("loggedWorkouts", JSON.stringify([...updatedWorkouts].reverse())); 
+  }; 
+
   return (
     <div className="recent-workouts-page">
       <div className="recent-workouts-title">Recent Workouts</div>
@@ -22,6 +28,13 @@ function RecentWorkouts() {
         ) : (
           workouts.map((workout, index) => (
             <div className="recent-workout-card" key={index}>
+              <button
+                className="delete-log-btn"
+                onClick={() => handleDeleteWorkout(index)}
+              >
+                Delete
+              </button>
+              
               <div className="recent-workout-content">
                 <div className="recent-workout-name">{workout.workoutType}</div>
 

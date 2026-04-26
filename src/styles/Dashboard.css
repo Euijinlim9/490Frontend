@@ -989,3 +989,45 @@
   background: linear-gradient(135deg, #3f73c9, #568df0);
   color: white;
 }
+
+.delete-metric-btn{
+  margin-top: 8px; 
+  background: rgba(255, 80, 80, 0.12); 
+  color: #ff6b6b; 
+  border: 1px solid rgba(255, 80, 80, 0.3); 
+  border-radius: 999px; 
+  padding: 6px 12px; 
+  font-size: 12px; 
+  font-weight: 600; 
+  cursor: pointer; 
+}
+
+.delete-metric-btn:hover{
+  background: rgba(255, 80, 80, 0.22); 
+}
+
+.macro-date-controls{
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+
+.macro-date-controls button{
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.14); 
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.macro-date-controls button:hover{
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.macro-date-controls span{
+  color: #b7c0cc; 
+  font-size: 14px; 
+}
