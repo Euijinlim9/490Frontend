@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 function CoachDashboardView({
   user,
   pendingRequests,
@@ -7,6 +9,8 @@ function CoachDashboardView({
   onReject,
   getTimeAgo,
 }) {
+  const navigate = useNavigate();
+
   return (
     <div className="coach-dash">
       <div className="coach-dash-header">
@@ -176,8 +180,11 @@ function CoachDashboardView({
                       ).toLocaleDateString()}`
                     : "Recently joined"}
                 </p>
-                <button className="coach-client-view" disabled>
-                  View Details (coming soon)
+                <button
+                  className="coach-client-view"
+                  onClick={() => navigate(`/coach/clients/${client.user_id}`)}
+                >
+                  View Details
                 </button>
               </div>
             ))}

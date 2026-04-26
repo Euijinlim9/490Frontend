@@ -52,8 +52,8 @@ function CustomWorkout() {
 
         const data = await res.json();
 
-        setExercises(data.data);
-        setTotalPages(data.totalPages);
+        setExercises(data.data || []);
+        setTotalPages(data.totalPages || 1);
         setCurrentPage(data.currentPage || 1);
       } catch (err) {
         console.error(err);
