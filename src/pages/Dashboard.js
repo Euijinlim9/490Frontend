@@ -521,7 +521,7 @@ function Dashboard() {
 
     setMealChartData(groupByDay(savedMeals, "date", "calories"));
     setWorkoutChartData(groupByDay(savedWorkouts, "date", "duration"));
-  }, []); 
+  }, [groupByDay]); 
 
  const deleteTodayMetric = (field) => {
   const today = new Date().toLocaleDateString(); 

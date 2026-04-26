@@ -1,5 +1,5 @@
 import "../styles/PremadeMeals.css"; 
-import React, { useEffect, useState } from "react";
+import React, { suseState } from "react";
 
 function PremadeMeals (){
  const [query, setQuery] = useState("");
