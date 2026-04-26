@@ -9,7 +9,7 @@ function Header() {
 
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const effectiveRole = activeRole || user?.role || "client"; 
+//const effectiveRole = activeRole || user?.role || "client"; 
 
   const handleLogout = () => {
     logout();
