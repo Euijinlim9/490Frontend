@@ -379,7 +379,7 @@ function Dashboard() {
 
   const formatDay = (date) => new Date(date).toLocaleDateString(); 
 
-  const groupByDay = (items, dateKey, valueKey) => {
+  const groupByDay = useCallback((items, dateKey, valueKey) => {
   const grouped = {}; 
 
   items.forEach((item) => {
@@ -393,7 +393,7 @@ function Dashboard() {
     day, 
     value,
   }));
- }; 
+ }, []); 
 
  const chartData = useMemo(() => {
     const groupedByDay = {};
@@ -793,7 +793,7 @@ function Dashboard() {
                   <button 
                     type="button"
                     className="delete-metric-btn"
-                    onClick={() => deleteTodayMetric("stepLog")}
+                    onClick={() => deleteTodayMetric("sleepHours")}
                   > 
                   Delete Today
                   </button>
@@ -840,7 +840,7 @@ function Dashboard() {
                   <button 
                     type="button"
                     className="delete-metric-btn"
-                    onClick={() => deleteTodayMetric("stepLog")}
+                    onClick={() => deleteTodayMetric("waterCurrent")}
                   > 
                   Delete Today
                   </button>
@@ -887,7 +887,7 @@ function Dashboard() {
                   <button 
                     type="button"
                     className="delete-metric-btn"
-                    onClick={() => deleteTodayMetric("stepLog")}
+                    onClick={() => deleteTodayMetric("heartLog")}
                   > 
                   Delete Today
                   </button>

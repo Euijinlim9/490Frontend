@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
+import { Link } from "react-router-dom";
 
 function LandingFooter() {
   const navigate = useNavigate();
@@ -41,16 +42,16 @@ function LandingFooter() {
           <div className="landing-footer__columns">
             <div className="landing-footer__column">
               <h4>Product</h4>
-              <a href="#features">Features</a>
-              <a href="#how-it-works">How It Works</a>
-              <a href="#pricing">Pricing</a>
+              <Link to="/features">Features</Link>
+              <Link to="/how">How It Works</Link>
+              <Link to="/pricing">Pricing</Link>
             </div>
 
             <div className="landing-footer__column">
               <h4>Company</h4>
-              <a href="#about">About Us</a>
-              <a href="#careers">Careers</a>
-              <a href="#contact">Contact</a>
+              <Link to="/about">About Us</Link>
+              <Link to="/careers">Careers</Link>
+              <Link to="/contact">Contact</Link>
             </div>
 
             <div className="landing-footer__column">
@@ -80,8 +81,8 @@ function LandingFooter() {
         <div className="landing-footer__bottom">
           <p>&copy; 2026 Fitness FR. All rights reserved.</p>
           <div className="landing-footer__legal">
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms of Service</a>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Service</Link>
           </div>
         </div>
       </div>

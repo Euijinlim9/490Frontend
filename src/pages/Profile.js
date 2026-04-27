@@ -144,7 +144,7 @@ function Profile() {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    navigate("/home");
   };
 
   const handleDeleteAccount = async () => {

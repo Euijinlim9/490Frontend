@@ -36,19 +36,27 @@ import LogMeal from "./pages/LogMeal";
 import LogWorkout from "./pages/LogWorkout"; 
 import LogWellness from "./pages/LogWellness"; 
 import PremadeMeals from "./pages/PremadeMeals"; 
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsService from "./pages/TermsService";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import About from "./pages/About";
+import HowItWorks from "./pages/HowItWorks";
+import Contact from "./pages/Contact";
+import Careers from "./pages/Careers";
 
 function App() {
   const location = useLocation();
 
-  const hideHeader = location.pathname === "/";
-  const hideHeader2 = location.pathname === "/signup";
-  const hideHeader3 = location.pathname === "/login";
+  const hideMainHeader = 
+    location.pathname === "/" || location.pathname === "/home" || location.pathname === "/signup" || location.pathname === "/login" || location.pathname === "/privacy" || location.pathname === "/terms" 
+    || location.pathname === "/features" || location.pathname === "/how" || location.pathname === "/pricing" || location.pathname === "/about" || location.pathname === "/careers" || location.pathname === "/contact";  
 
   const { activeRole } = useContext(AuthContext);
 
   return (
     <div className="body">
-      {!hideHeader && !hideHeader2 && !hideHeader3 && (
+      {!hideMainHeader && (
       <>
       <Header />
       {activeRole === "admin" && <AdminHeader />}
@@ -92,6 +100,16 @@ function App() {
           <Route path="/log-workout" element={<LogWorkout />} /> 
           <Route path="/log-wellness" element={<LogWellness />} /> 
           <Route path="/premade-meals" element={<PremadeMeals />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsService />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/how" element={<HowItWorks />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/careers" element={<Careers />} />
+
+
         </Routes>
       </div>
     </div>
