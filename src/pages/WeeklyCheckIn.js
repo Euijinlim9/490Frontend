@@ -1,5 +1,5 @@
 import React, { useState } from "react"; 
-import "../styles/WeeklyCheckIn.css"; 
+import "../styles/CheckIn.css"; 
 
 function WeeklyCheckIn(){
     const [formData, setFormData] = useState({
