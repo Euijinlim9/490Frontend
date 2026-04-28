@@ -996,9 +996,9 @@
   color: #ff6b6b; 
   border: 1px solid rgba(255, 80, 80, 0.3); 
   border-radius: 999px; 
-  padding: 6px 12px; 
-  font-size: 12px; 
-  font-weight: 600; 
+  padding: 3px 6px; 
+  font-size: 8px; 
+  font-weight: 500; 
   cursor: pointer; 
 }
 
