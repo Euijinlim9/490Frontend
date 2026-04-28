@@ -22,6 +22,10 @@ function CoachDetail() {
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState("");
 
+  const [showReportForm, setShowReportForm] = useState(false); 
+  const [reportReason, setReportReason] = useState(""); 
+  const [reportDetails, setReportDetails] = useState(""); 
+
   useEffect(() => {
     const fetchCoach = async () => {
       const token = localStorage.getItem("token");
@@ -222,6 +226,37 @@ function CoachDetail() {
 
   const hourlyRate = coach.Coach?.price || 50;
 
+  const handleReportSubmit = (e) => {
+    e.preventDefault();
+
+    if (!reportReason || !reportDetails.trim()) {
+      alert("Please choose a reason and add details."); 
+      return; 
+    }
+
+    const savedReports = JSON.parse(localStorage.getItem(`coachReports-${id}`)) || [];
+
+    const newReport = {
+      coachId: id, 
+      coachName: `${coach.first_name} ${coach.last_name}`, 
+      clientName: user?.first_name || "Client", 
+      reason: reportReason, 
+      details: reportDetails, 
+      date: new Date().toLocaleDateString(),
+    }; 
+
+    localStorage.setItem(
+      `coachReports-${id}`, 
+      JSON.stringify([...savedReports, newReport]) 
+    ); 
+
+    alert("Report submitted. Thank you for letting us know."); 
+
+    setReportReason(""); 
+    setReportDetails(""); 
+    setShowReportForm(false); 
+  }; 
+
   return (
     <div className="cp-page">
       <Link to="/coach" className="cp-back">
@@ -261,6 +296,15 @@ function CoachDetail() {
                 >
                   {requestButtonLabel}
                 </button>
+
+                {activeRole === "client" && !isSelf && (
+                  <button
+                    className="cp-report-btn"
+                    onClick={() => setShowReportForm((prev) => !prev)}
+                  > 
+                    Report Coach
+                  </button>
+                )}
               </div>
 
               <div className="cp-stats">
@@ -298,6 +342,36 @@ function CoachDetail() {
             </div>
           </div>
         </div>
+
+        {showReportForm && (
+          <div className="cp-card"> 
+           <h3 className="cp-card-title">Report Coach</h3>
+           <form className="cp-report-form" onSubmit={handleReportSubmit}>
+            <select
+              className="cp-report-select"
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+            >
+              <option value="">Select a reason</option>
+              <option value="Inappropriate behavior">Inappropriate Behavior</option>
+              <option value="Scam or suspicious activity">Scam or suspicious activity</option>
+              <option value="False information">False information</option>
+              <option value="Harassment">Harassment</option>
+              <option value="Other">Other</option>
+            </select>
+            <textarea 
+              className="cp-report-input"
+              placeholder="Explain what happened.."
+              value={reportDetails}
+              onChange={(e) => setReportDetails(e.target.value)}
+            />
+
+            <button type="submit" className="cp-report-submit">
+              Submit Report
+            </button>s
+           </form>
+           </div> 
+        )}
 
         <div className="cp-tabs">
           <button
@@ -512,5 +586,4 @@ function CoachDetail() {
     </div>
   );
 }
-
 export default CoachDetail;
