@@ -35,7 +35,11 @@ function DailyCheckIns(){
             "DailyCheckIns", 
             JSON.stringify([...savedDailyCheckins, newDailyCheckin])
         );
-
+        
+        localStorage.setItem(
+            "lastDailyCheckin", 
+            new Date().toLocaleDateString()
+        ); 
         alert("Weekly check-in saved!"); 
 
         setFormData({

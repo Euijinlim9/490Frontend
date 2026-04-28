@@ -34,6 +34,8 @@ function WeeklyCheckIn(){
             JSON.stringify([...savedCheckins, newCheckin])
         );
 
+        localStorage.setItem("lastWeeklyCheckin", `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date.getDate()}`); 
+
         alert("Weekly check-in saved!"); 
 
         setFormData({
