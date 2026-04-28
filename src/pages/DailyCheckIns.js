@@ -1,5 +1,6 @@
 import React, { useState } from "react"; 
 import "../styles/CheckIn.css"; 
+import { useNavigate } from "react-router-dom"; 
 
 function DailyCheckIns(){
     const [formData, setFormData] = useState({
@@ -10,6 +11,8 @@ function DailyCheckIns(){
         body: "", 
         motivation: "", 
     }); 
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target; 
@@ -39,17 +42,9 @@ function DailyCheckIns(){
             "lastDailyCheckin", 
             new Date().toLocaleDateString()
         ); 
-        alert("Weekly check-in saved!"); 
-
-        setFormData({
-            mood: "", 
-            energy: 5, 
-            stress: 5,  
-            sleep: "",
-            body: "", 
-            motivation: "",
-        });
-    };
+        alert("Weekly check-in saved!");  
+        navigate("/dashboard");
+    }; 
 
     return (
         <div className="weekly-page"> 
