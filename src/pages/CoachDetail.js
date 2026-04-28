@@ -368,7 +368,7 @@ function CoachDetail() {
 
             <button type="submit" className="cp-report-submit">
               Submit Report
-            </button>s
+            </button>
            </form>
            </div> 
         )}
