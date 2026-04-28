@@ -1,6 +1,6 @@
 import React, { useState } from "react"; 
-import { useNavigate } from "react";
 import "../styles/CheckIn.css"; 
+import { useNavigate } from "react-router-dom"; 
 
 function DailyCheckIns(){
     const [formData, setFormData] = useState({
