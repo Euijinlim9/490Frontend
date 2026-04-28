@@ -122,6 +122,19 @@ function CoachDetail() {
 
       if (!res.ok) throw new Error("Failed to send request");
 
+      const existingNotifications = JSON.parse(localStorage.getItem(`coachNotifications-${coach.user_id}`)) || []; 
+
+      const newNotification = {
+        message: `${user?.first_name} set you a coaching request`, 
+        date: new Date().toLocaleString(),
+        read: false,
+      }; 
+
+      localStorage.setItem(
+        `coachNotifications-${coach.user_id}`, 
+        JSON.stringify([newNotification, ...existingNotifications])
+      ); 
+
       navigate("/dashboard");
     } catch (err) {
       console.error(err);

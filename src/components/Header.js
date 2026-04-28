@@ -1,20 +1,36 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/Header.css";
 
 function Header() {
-  const { user, logout, activeRole, setActiveRole } = useContext(AuthContext);
+  const { user, logout, activeRole, setActiveRole } =
+    useContext(AuthContext);
+
   const navigate = useNavigate();
 
   const [showDropdown, setShowDropdown] = useState(false);
-
-//const effectiveRole = activeRole || user?.role || "client"; 
+  const [notifications, setNotifications] = useState([]);
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
+
+  useEffect(() => {
+    if (!user) return;
+
+    const notificationKey =
+      activeRole === "coach"
+        ? `coachNotifications-${user.user_id}`
+        : `clientNotifications-${user.user_id}`;
+
+    const saved = JSON.parse(localStorage.getItem(notificationKey)) || [];
+
+    setNotifications(saved);
+  }, [user, activeRole]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <div className="header">
@@ -37,15 +53,19 @@ function Header() {
             <Link to="/coach" className="nav-btn">
               Coach
             </Link>
+
             <Link to="/workouts" className="nav-btn">
               Workouts
             </Link>
+
             <Link to="/logs" className="nav-btn">
               Logs
             </Link>
+
             <Link to="/calendar" className="nav-btn">
               Calendar
             </Link>
+
             <Link to="/payments" className="nav-btn">
               Payments
             </Link>
@@ -57,6 +77,7 @@ function Header() {
             <Link to="/workouts" className="nav-btn">
               Workouts
             </Link>
+
             <Link to="/calendar" className="nav-btn">
               Schedule
             </Link>
@@ -65,6 +86,37 @@ function Header() {
       </div>
 
       <div className="right-btns">
+        {(activeRole === "coach" || activeRole === "client") && (
+          <div className="icon-btn">
+            <Link to="/notifications" className="circle notif-circle">
+              <svg viewBox="0 0 24 24" className="circle-icon">
+                <path
+                  d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22z"
+                  fill="currentColor"
+                />
+
+                <path
+                  d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2v1h16v-1l-2-2z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
+              {unreadCount > 0 && (
+                <span className="notif-badge">{unreadCount}</span>
+              )}
+            </Link>
+
+            <div className="nav-small">
+              <Link to="/notifications" className="nav-btn-small">
+                Alerts
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div className="icon-btn">
           <Link to="/messages" className="circle">
             <svg viewBox="0 0 24 24" className="circle-icon">
@@ -155,7 +207,9 @@ function Header() {
                 <div
                   className="dropdown-item"
                   onClick={() => {
-                    setActiveRole(activeRole === "coach" ? "client" : "coach");
+                    setActiveRole(
+                      activeRole === "coach" ? "client" : "coach"
+                    );
                     setShowDropdown(false);
                   }}
                 >
