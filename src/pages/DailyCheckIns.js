@@ -6,7 +6,6 @@ function DailyCheckIns(){
         mood: "", 
         energy: 5, 
         stress: 5, 
-        mood: "", 
         sleep: "",
         body: "", 
         motivation: "", 
@@ -45,8 +44,7 @@ function DailyCheckIns(){
         setFormData({
             mood: "", 
             energy: 5, 
-            stress: 5, 
-            mood: "", 
+            stress: 5,  
             sleep: "",
             body: "", 
             motivation: "",
