@@ -44,6 +44,8 @@ import About from "./pages/About";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
 import Careers from "./pages/Careers";
+import WeeklyCheckIn from "./pages/WeeklyCheckIn";
+import DailyCheckIns from "./pages/DailyCheckIns";
 
 function App() {
   const location = useLocation();
@@ -108,7 +110,8 @@ function App() {
           <Route path="/how" element={<HowItWorks />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/careers" element={<Careers />} />
-
+          <Route path="/weekly-checkin" element={<WeeklyCheckIn />} />
+          <Route path="/daily-checkin" element={<DailyCheckIns />} />
 
         </Routes>
       </div>

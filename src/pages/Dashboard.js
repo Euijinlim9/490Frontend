@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
 import CoachDashboardView from "../components/CoachDashboardView";
@@ -558,6 +558,32 @@ function Dashboard() {
 
  const selectedMacroDateText = 
   selectedMacroDate.toLocaleDateString() === new Date().toLocaleDateString() ? "Today" : selectedMacroDate.toLocaleDateString(); 
+
+  const navigate = useNavigate(); 
+
+  useEffect(() => {
+    const today = new Date().toLocaleDateString(); 
+
+    const lastCheckinDate = localStorage.getItem("lastDailyCheckin"); 
+
+    if(lastCheckinDate !== today) {
+      navigate("/daily-checkin"); 
+    }
+  }, [navigate]); 
+
+  useEffect(() => {
+    const today = new Date(); 
+
+    const isSunday = today.getDay() === 0; 
+
+    const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+
+    const lastWeeklyCheckin = localStorage.getItem("lastWeeklyCheckin"); 
+
+    if (isSunday && lastWeeklyCheckin !== thisWeek){
+      navigate("/weekly-checkin"); 
+    }
+  }, [navigate]); 
 
   return (
     <div className="dashboard-page">
