@@ -275,12 +275,50 @@ function Signup() {
                 onChange={handleCoachChange}
               />
             </div>
-            <div className="upload-cert-btn">
-            <label>Upload Certification</label>
-            <input 
-            type="file" multiple
-            accept=".pdf, .png, .jpg, .jpeg"
-            onChange={(e) => setCoachCertification(Array.from(e.target.files))}/>
+            <div className="upload-zone">
+              <div className="upload-zone-icon">↑</div>
+              <p className="upload-zone-title">
+                Drag and drop files here or upload
+              </p>
+              <p className="upload-zone-sub">
+                Accepted file types: PDF, PNG, JPG, JPEG
+              </p>
+              <label className="upload-zone-btn">
+                Upload
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf, .png, .jpg, .jpeg"
+                  style={{ display: "none" }}
+                  onChange={(e) =>
+                    setCoachCertification(Array.from(e.target.files))
+                  }
+                />
+              </label>
+              {coachCertification.length > 0 && (
+                <div className="upload-file-list">
+                  <p className="upload-count">
+                    0 of {coachCertification.length} Files uploaded
+                  </p>
+                  {coachCertification.map((file, i) => (
+                    <div key={i} className="upload-file-row">
+                      <div className="upload-file-info">
+                        <span className="upload-file-icon">📄</span>
+                        <span className="upload-file-name">{file.name}</span>
+                        <span className="upload-file-size">
+                          {(file.size / (1024 * 1024)).toFixed(1)}mb
+                        </span>
+                      </div>
+                      <div className="upload-progress-bar">
+                        <div
+                          className="upload-progress-fill"
+                          style={{ width: "100%" }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <button className="signup-btn" onClick={handleCoachSignup}>
               Create Coach Account
@@ -288,14 +326,17 @@ function Signup() {
           </div>
         )}
 
-        <div className="signup-divider">
-          <span>or continue with</span>
-        </div>
-
-        <button className="google-signup-btn" onClick={handleGoogleSignup}>
-          <img src={googleLogo} alt="Google" className="google-logo" />
-          Google
-        </button>
+        {activeTab === "client" && (
+          <>
+            <div className="signup-divider">
+              <span>or continue with</span>
+            </div>
+            <button className="google-signup-btn" onClick={handleGoogleSignup}>
+              <img src={googleLogo} alt="Google" className="google-logo" />
+              Google
+            </button>
+          </>
+        )}
 
         <p className="signin-link">
           Already have an account?{" "}

@@ -37,6 +37,7 @@ import LogWorkout from "./pages/LogWorkout";
 import LogWellness from "./pages/LogWellness";
 import PremadeMeals from "./pages/PremadeMeals";
 import ClientDetail from "./pages/ClientDetail";
+import CoachPlans from "./pages/CoachPlans";
 
 function App() {
   const location = useLocation();
@@ -67,6 +68,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />
           <Route path="/coach/:id" element={<CoachDetails />} />
+          <Route path="/coach/plans" element={<CoachPlans />} />
+
           <Route
             path="/coach/clients/:clientUserId"
             element={<ClientDetail />}
