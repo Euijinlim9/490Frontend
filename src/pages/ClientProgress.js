@@ -1,12 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../styles/ClientProgress.css";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
 function ClientProgress() {
   const { clientUserId } = useParams();
 
   const [client, setClient] = useState(null);
   const [workoutLogs, setWorkoutLogs] = useState([]);
+  const [selectedMetric, setSelectedMetric] = useState("workouts");
+
+  const [graphData, setGraphData] = useState({
+    workouts: [],
+    calories: [],
+    weight: [],
+    energy: [],
+    stress: [],
+    motivation: [],
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -36,8 +54,20 @@ function ClientProgress() {
         const clientData = await clientRes.json();
         const workoutData = await workoutRes.json();
 
+        const workouts = workoutData.data || [];
+
         setClient(clientData);
-        setWorkoutLogs(workoutData.data || []);
+        setWorkoutLogs(workouts);
+
+        const workoutChartData = workouts.map((log) => ({
+          day: new Date(log.date).toLocaleDateString(),
+          value: 1,
+        }));
+
+        setGraphData((prev) => ({
+          ...prev,
+          workouts: workoutChartData,
+        }));
       } catch (err) {
         console.error("Failed to load client progress:", err);
       }
@@ -45,6 +75,41 @@ function ClientProgress() {
 
     fetchClientData();
   }, [clientUserId]);
+
+  const graphOptions = {
+    workouts: {
+      title: "Workout Progress",
+      data: graphData.workouts,
+      label: "Workouts",
+    },
+    calories: {
+      title: "Calories",
+      data: graphData.calories,
+      label: "Calories",
+    },
+    weight: {
+      title: "Weight",
+      data: graphData.weight,
+      label: "Weight",
+    },
+    energy: {
+      title: "Energy",
+      data: graphData.energy,
+      label: "Energy",
+    },
+    stress: {
+      title: "Stress",
+      data: graphData.stress,
+      label: "Stress",
+    },
+    motivation: {
+      title: "Motivation",
+      data: graphData.motivation,
+      label: "Motivation",
+    },
+  };
+
+  const currentGraph = graphOptions[selectedMetric];
 
   if (!client) {
     return <div className="client-progress-page">Loading...</div>;
@@ -98,6 +163,108 @@ function ClientProgress() {
           </section>
 
           <section className="client-card">
+            <h2 className="client-card-title">{currentGraph.title}</h2>
+
+            <div className="graph-tabs">
+              <button
+                type="button"
+                className={selectedMetric === "workouts" ? "active" : ""}
+                onClick={() => setSelectedMetric("workouts")}
+              >
+                Workouts
+              </button>
+
+              <button
+                type="button"
+                className={selectedMetric === "calories" ? "active" : ""}
+                onClick={() => setSelectedMetric("calories")}
+              >
+                Calories
+              </button>
+
+              <button
+                type="button"
+                className={selectedMetric === "weight" ? "active" : ""}
+                onClick={() => setSelectedMetric("weight")}
+              >
+                Weight
+              </button>
+
+              <button
+                type="button"
+                className={selectedMetric === "energy" ? "active" : ""}
+                onClick={() => setSelectedMetric("energy")}
+              >
+                Energy
+              </button>
+
+              <button
+                type="button"
+                className={selectedMetric === "stress" ? "active" : ""}
+                onClick={() => setSelectedMetric("stress")}
+              >
+                Stress
+              </button>
+
+              <button
+                type="button"
+                className={selectedMetric === "motivation" ? "active" : ""}
+                onClick={() => setSelectedMetric("motivation")}
+              >
+                Motivation
+              </button>
+            </div>
+
+            {currentGraph.data.length === 0 ? (
+              <p className="empty-state">
+                No {currentGraph.label.toLowerCase()} graph data yet.
+              </p>
+            ) : (
+              <div className="client-chart">
+                <ResponsiveContainer width="100%" height={240}>
+                  <LineChart
+                    data={currentGraph.data}
+                    margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+                  >
+                    <CartesianGrid
+                      stroke="rgba(255,255,255,0.12)"
+                      vertical={false}
+                    />
+
+                    <XAxis
+                      dataKey="day"
+                      tick={{ fill: "#cfd6de", fontSize: 12 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+
+                    <YAxis
+                      tick={{ fill: "#cfd6de", fontSize: 12 }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={40}
+                    />
+
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#6ca6ff"
+                      strokeWidth={3}
+                      dot={{
+                        r: 4,
+                        fill: "#6ca6ff",
+                        stroke: "#fff",
+                        strokeWidth: 2,
+                      }}
+                      activeDot={{ r: 6 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </section>
+
+          <section className="client-card">
             <h2 className="client-card-title">Workout Logs</h2>
 
             {workoutLogs.length === 0 ? (
@@ -119,7 +286,7 @@ function ClientProgress() {
           <section className="client-card">
             <h2 className="client-card-title">Diet Logs</h2>
             <p className="empty-state">
-              Needs backend meal-log endpoint or temporary localStorage setup.
+              Needs backend meal-log endpoint.
             </p>
           </section>
         </div>

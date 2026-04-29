@@ -216,6 +216,8 @@ function Dashboard() {
   const [mealChartData, setMealChartData] = useState([]);
   const [workoutChartData, setWorkoutChartData] = useState([]);
   const [selectedMacroDate, setSelectedMacroDate] = useState(new Date());
+  const [dailySurveyChartData, setDailySurveyChartData] = useState([]); 
+  const [weeklySurveyChartData, setWeeklySurveyChartData] = useState([]); 
 
   const [selectedMetric, setSelectedMetric] = useState("weight");
   const [selectedTimeView, setSelectedTimeView] = useState("daily");
@@ -646,6 +648,24 @@ function Dashboard() {
       dataKey: "value",
       xKey: "day",
     },
+    dailyEnergy: {
+      title: "Daily Energy", 
+      data: dailySurveyChartData, 
+      dataKey: "energy", 
+      xKey: "day",
+    },
+    dailyStress: {
+      title: "Daily Stress", 
+      data: dailySurveyChartData, 
+      dataKey: "stress", 
+      xKey: "day",
+    }, 
+    dailyMotivation: {
+      title: "Daily Motivation", 
+      data: dailySurveyChartData, 
+      dataKey: "motivation", 
+      xKey: "day", 
+    }, 
   };
 
   const currentGraph = metricConfigs[selectedMetric];
@@ -768,28 +788,59 @@ function Dashboard() {
       : selectedMacroDate.toLocaleDateString();
 
   useEffect(() => {
+    if (!user || !activeRole) return;
+
     const today = new Date().toLocaleDateString();
+    const lastCheckinDate = localStorage.getItem(`lastDailyCheckin-${user.user_id}`);
 
-    const lastCheckinDate = localStorage.getItem("lastDailyCheckin");
-
-    if (lastCheckinDate !== today) {
-      navigate("/daily-checkin");
+    if(activeRole === "client" && lastCheckinDate !== today){
+      navigate("/daily-checkin"); 
     }
-  }, [navigate]);
+  }, [navigate, user, activeRole]);
 
   useEffect(() => {
-    const today = new Date();
+    if (!user || activeRole !== "client") return;
 
+    const today = new Date();
     const isSunday = today.getDay() === 0;
 
     const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
-    const lastWeeklyCheckin = localStorage.getItem("lastWeeklyCheckin");
+    const lastWeeklyCheckin = localStorage.getItem(`lastWeeklyCheckin-${user.user_id}`);
 
     if (isSunday && lastWeeklyCheckin !== thisWeek) {
       navigate("/weekly-checkin");
     }
-  }, [navigate]);
+  }, [navigate, user, activeRole]);
+
+  useEffect(() => {
+    if (!user) return; 
+
+    const dailyCheckins = JSON.parse(localStorage.getItem("DailyCheckIns")) || []; 
+
+    const weeklyCheckins = JSON.parse(localStorage.getItem("weeklyCheckins")) || []; 
+
+    const userDaily = dailyCheckins 
+      .filter((entry) => entry.userId === user.user_id)
+      .map((entry) => ({
+        day: entry.date, 
+        energy: Number(entry.energy) || 0, 
+        stress: Number(entry.stress) || 0, 
+        motivation: Number(entry.motivation) || 0,
+      })); 
+    
+      const userWeekly = weeklyCheckins
+        .filter((entry) => entry.userId === user.user_id)
+        .map((entry) => ({
+          day: entry.date, 
+          weight: Number(entry.weight) || 0, 
+          energy: Number(entry.energy) || 0, 
+          stress: Number(entry.stress) || 0, 
+      })); 
+
+      setDailySurveyChartData(userDaily); 
+      setWeeklySurveyChartData(userWeekly); 
+  }, [user]); 
 
   return (
     <div className="dashboard-page">
@@ -1420,6 +1471,31 @@ function Dashboard() {
                   >
                     Workouts
                   </button>
+
+                  <button 
+                    type="button"
+                    className={selectedMetric === "dailyEnergy" ? "active" : ""}
+                    onClick={() => setSelectedMetric("dailyEnergy")}
+                  >
+                    Energy
+                  </button>
+
+                  <button
+                    type="button"
+                    className={selectedMetric === "dailyStress" ? "active" : ""}
+                    onClick={() => setSelectedMetric("dailyStress")}
+                  >
+                    Stress
+                  </button> 
+
+                  <button
+                    type="button"
+                    className={selectedMetric === "dailyMotivation" ? "active" : ""}
+                    onClick={() => setSelectedMetric("dailyMotivation")}
+                  > 
+                    Motivation
+                  </button>
+
                 </div>
 
                 <div className="time-tabs">
