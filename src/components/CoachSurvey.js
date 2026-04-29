@@ -1,118 +1,153 @@
 import React, { useState } from "react";
 import "../styles/Survey.css";
 
-function CoachSurvey({ show, onClose }){
-    const [ form, setForm ] = useState({
-        specialities: "", 
-        workoutType: "", 
-        clientLevel: "", 
-        coachingStyle: "",
-        preferredGoals: "", 
-        availabilityDay: "", 
-        limitations: "",
-    }); 
+function CoachSurvey({ show, onClose }) {
+  const [form, setForm] = useState({
+    workoutType: "",
+    clientLevel: "",
+    coachingStyle: "",
+    preferredGoals: "",
+    availabilityDay: [],
+    limitations: "",
+  });
 
-    const handleChange = (e) => {
-        setForm({
-            ...form, 
-            [e.target.name]: e.target.value, 
-        });
-    }; 
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+  const handleAvailabilityChange = (e) => {
+    const value = e.target.value;
 
-        console.log("Survey submitted!", form); 
-        //backend 
-        onClose(); 
-    }; 
+    setForm((prev) => ({
+      ...prev,
+      availabilityDay: e.target.checked
+        ? [...prev.availabilityDay, value]
+        : prev.availabilityDay.filter((day) => day !== value),
+    }));
+  };
 
-    if (!show) return null;
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-    return(
-        <div className="survey-overlay">
-            <div className="survey-box"> 
-                <h2>Initial Survey</h2>
-                <form onSubmit={handleSubmit} className="survey-form"> 
+    console.log("Coach survey submitted!", form);
 
-                    <select name="workoutType" value={form.typeWorkout} onChange={handleChange}>
-                        <option value="">Type of Workout</option>
-                        <option value="strength-training">Strength Training</option>
-                        <option value="cardio">Cardio</option>
-                        <option value="low-impact">Low Impact</option>
-                        <option value="mixed">Mixed</option>
-                    </select>
+    // backend will go here later
 
-                    <select name="clientLevel" value={form.dietPreference} onChange={handleChange}>
-                        <option value="">Preferred Client Level For Activity</option>
-                        <option value="none">No preference</option>
-                        <option value="beginner">Beginner</option>
-                        <option value="moderate">Moderate</option>
-                        <option value="advanced">Advanced</option>
-                    </select>
+    onClose();
+  };
 
-                    <select name="coachingStyle" value={form.currentActivity} onChange={handleChange}>
-                        <option value="">What Type of Cpaching Style Matches You Closest</option>
-                        <option value="strict">Strict</option>
-                        <option value="flexible">Flexible</option>
-                        <option value="hands-on">Hands-on</option>
-                        <option value="hands-off">Hands-off</option>
-                    </select>
+  if (!show) return null;
 
-                    <select name="preferredGoals" value={form.coachHelp} onChange={handleChange}>
-                        <option value="">What your Prefer Your Client's Goal To Be</option>
-                        <option value="muscle-gain">Muscle Gain</option>
-                        <option value="fat-loss">Fat Loss</option>
-                        <option value="consistency">Consistency</option>
-                    </select>
+  return (
+    <div className="survey-overlay">
+      <div className="survey-box">
+        <h2>Initial Survey</h2>
 
-                  <div className="availability-days">
-                    {[
-                      "Monday",
-                      "Tuesday",
-                      "Wednesday",
-                      "Thursday",
-                      "Friday",
-                      "Saturday",
-                      "Sunday",
-                    ].map((day) => (
-                     <label key={day}>
-                       <input
-                          type="checkbox"
-                          value={day.toLowerCase()}
-                          checked={form.availabilityDay.includes(day.toLowerCase())}
-                          onChange={(e) => {
-                            const value = e.target.value;
+        <form onSubmit={handleSubmit} className="survey-form">
+          <select
+            name="workoutType"
+            value={form.workoutType}
+            onChange={handleChange}
+          >
+            <option value="">Type of Workout</option>
+            <option value="strength-training">Strength Training</option>
+            <option value="cardio">Cardio</option>
+            <option value="low-impact">Low Impact</option>
+            <option value="mixed">Mixed</option>
+          </select>
 
-                            setForm((prev) => ({
-                              ...prev,
-                              availabilityDay: e.target.checked
-                                ? [...prev.availabilityDay, value]
-                                : prev.availabilityDay.filter((d) => d !== value),
-                            }));
-                        }}
-                    />
-                {day}
-            </label>
-        ))}
+          <select
+            name="clientLevel"
+            value={form.clientLevel}
+            onChange={handleChange}
+          >
+            <option value="">Preferred Client Level For Activity</option>
+            <option value="none">No Preference</option>
+            <option value="beginner">Beginner</option>
+            <option value="moderate">Moderate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+
+          <select
+            name="coachingStyle"
+            value={form.coachingStyle}
+            onChange={handleChange}
+          >
+            <option value="">Coaching Style That Matches You Best</option>
+            <option value="strict">Strict</option>
+            <option value="flexible">Flexible</option>
+            <option value="hands-on">Hands-On</option>
+            <option value="hands-off">Hands-Off</option>
+          </select>
+
+          <select
+            name="preferredGoals"
+            value={form.preferredGoals}
+            onChange={handleChange}
+          >
+            <option value="">Preferred Client Goal</option>
+            <option value="muscle-gain">Muscle Gain</option>
+            <option value="fat-loss">Fat Loss</option>
+            <option value="consistency">Consistency</option>
+          </select>
+
+          <div className="availability-days">
+            <p className="availability-title">Available Days</p>
+
+            {[
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ].map((day) => {
+              const value = day.toLowerCase();
+
+              return (
+                <label className="availability-option" key={day}>
+                  <input
+                    type="checkbox"
+                    value={value}
+                    checked={form.availabilityDay.includes(value)}
+                    onChange={handleAvailabilityChange}
+                  />
+                  <span>{day}</span>
+                </label>
+              );
+            })}
+          </div>
+
+          <select
+            name="limitations"
+            value={form.limitations}
+            onChange={handleChange}
+          >
+            <option value="">Limitations of Your Coaching</option>
+            <option value="post-injury">No Clients Post-Injury</option>
+            <option value="advanced-lifting">
+              No Clients in Advanced Powerlifting
+            </option>
+            <option value="male-oriented">Only Male Clients</option>
+            <option value="female-oriented">Only Female Clients</option>
+            <option value="older-50">No Clients Over 50</option>
+            <option value="younger-50">No Clients Younger Than 50</option>
+            <option value="extreme-cardio">
+              No Extreme Cardio Clients
+            </option>
+          </select>
+
+          <button type="submit" className="submit-btn">
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
-                    <select name="limitations" value={form.workoutDay} onChange={handleChange}>
-                        <option value="">Limitations of Your Coaching</option>
-                        <option value="post-injury">No clients post-injury</option>
-                        <option value="advanced-lifting">No clients in advanced powerlifting</option>
-                        <option value="male-oriented">Only male clients</option>
-                        <option value="female-oriented">Only female clients</option>
-                        <option value="older-50">No clients over 50</option>
-                        <option value="younger-50">No client younger 50</option>
-                        <option value="extreme-cardio">No clients into extreme cardio. Running, half, full marathons, etc</option>
-
-                    </select> 
-
-                    <button type="submit" className="submit-btn">Submit</button>
-                </form>
-            </div>
-        </div>
-    );
+  );
 }
 
 export default CoachSurvey;
