@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallBack } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/CoachPlans.css";
 
@@ -28,7 +28,7 @@ function CoachPlans() {
     "X-Active-Role": activeRole,
   });
 
-  const fetchPlans = async () => {
+  const fetchPlans = useCallBack(async () => {
     setLoading(true);
     try {
       const res = await fetch("http://localhost:4000/api/coach/plans", {
@@ -41,11 +41,11 @@ function CoachPlans() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeRole]);
 
   useEffect(() => {
     fetchPlans();
-  }, [activeRole]);
+  }, [fetchPlans]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
