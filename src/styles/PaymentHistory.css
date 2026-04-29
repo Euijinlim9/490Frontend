@@ -29,6 +29,37 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.history-table th {
+  text-align: left;
+  padding: 10px 16px;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.history-table td {
+  padding: 16px;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  white-space: nowrap;
+}
+
+.history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.history-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
 .history-title {
   margin: 0;
   font-size: 26px;
@@ -42,6 +73,7 @@
   border-radius: 20px;
   padding: 24px;
   box-sizing: border-box;
+  overflow-x: auto;
 }
 
 .history-empty {

@@ -32,6 +32,7 @@ import CoachApplications from "./pages/adminpages/CoachApplications";
 import ViewUsers from "./pages/adminpages/ViewUsers";
 import AdminExercise from "./pages/adminpages/AdminExercise";
 import UserReport from "./pages/adminpages/UserReports";
+<<<<<<< HEAD
 import LogMeal from "./pages/LogMeal"; 
 import LogWorkout from "./pages/LogWorkout"; 
 import LogWellness from "./pages/LogWellness"; 
@@ -44,6 +45,14 @@ import About from "./pages/About";
 import HowItWorks from "./pages/HowItWorks";
 import Contact from "./pages/Contact";
 import Careers from "./pages/Careers";
+=======
+import LogMeal from "./pages/LogMeal";
+import LogWorkout from "./pages/LogWorkout";
+import LogWellness from "./pages/LogWellness";
+import PremadeMeals from "./pages/PremadeMeals";
+import ClientDetail from "./pages/ClientDetail";
+import CoachPlans from "./pages/CoachPlans";
+>>>>>>> feature/viewCliWorkLog
 
 function App() {
   const location = useLocation();
@@ -56,12 +65,21 @@ function App() {
 
   return (
     <div className="body">
+<<<<<<< HEAD
       {!hideMainHeader && (
       <>
       <Header />
       {activeRole === "admin" && <AdminHeader />}
       </>
     )}
+=======
+      {!hideHeader && !hideHeader2 && !hideHeader3 && (
+        <>
+          <Header />
+          {activeRole === "admin" && <AdminHeader />}
+        </>
+      )}
+>>>>>>> feature/viewCliWorkLog
 
       <div className="page-content">
         <Routes>
@@ -74,6 +92,13 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />
           <Route path="/coach/:id" element={<CoachDetails />} />
+          <Route path="/coach/plans" element={<CoachPlans />} />
+
+          <Route
+            path="/coach/clients/:clientUserId"
+            element={<ClientDetail />}
+          />
+
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/workouts/custom" element={<CustomWorkout />} />
           <Route path="/workouts/premade" element={<PremadeWorkouts />} />
@@ -86,19 +111,22 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
-          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
-            {activeRole === "admin" && (
-              <>
+          <Route
+            path="/test-survey"
+            element={<ClientSurvey show={true} onClose={() => {}} />}
+          />
+          {activeRole === "admin" && (
+            <>
               <Route path="/admin/coachapp" element={<CoachApplications />} />
               <Route path="/admin/viewusers" element={<ViewUsers />} />
               <Route path="/admin/exercise" element={<AdminExercise />} />
               <Route path="/admin/userreport" element={<UserReport />} />
-              </>
-            )}
+            </>
+          )}
 
           <Route path="/log-meal" element={<LogMeal />} />
-          <Route path="/log-workout" element={<LogWorkout />} /> 
-          <Route path="/log-wellness" element={<LogWellness />} /> 
+          <Route path="/log-workout" element={<LogWorkout />} />
+          <Route path="/log-wellness" element={<LogWellness />} />
           <Route path="/premade-meals" element={<PremadeMeals />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsService />} />

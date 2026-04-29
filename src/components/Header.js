@@ -9,8 +9,6 @@ function Header() {
 
   const [showDropdown, setShowDropdown] = useState(false);
 
-//const effectiveRole = activeRole || user?.role || "client"; 
-
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -51,11 +49,13 @@ function Header() {
             </Link>
           </>
         )}
-
         {activeRole === "coach" && (
           <>
             <Link to="/workouts" className="nav-btn">
               Workouts
+            </Link>
+            <Link to="/coach/plans" className="nav-btn">
+              Plans
             </Link>
             <Link to="/calendar" className="nav-btn">
               Schedule
