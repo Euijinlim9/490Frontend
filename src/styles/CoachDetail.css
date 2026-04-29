@@ -120,18 +120,6 @@
   color: #8a909a;
 }
 
-.cp-request-btn {
-  padding: 10px 22px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: #fff;
-  color: #0d0f14;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-  white-space: nowrap;
-}
 
 .cp-request-btn:hover:not(:disabled) {
   background: #e0e0e0;
@@ -693,18 +681,6 @@
   color: #fff;
 }
 
-.cp-review-btn {
-  width: fit-content;
-  padding: 10px 22px;
-  background: #fff;
-  color: #0d0f14;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
 .cp-modal-confirm-btn:hover:not(:disabled) {
   background: #5a95ee;
   transform: translateY(-1px);
@@ -771,23 +747,6 @@
   font-size: 0.82rem;
 }
 
-.cp-report-btn {
-  padding: 10px 18px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: rgba(255, 80, 80, 0.08);
-  color: #ff7b7b;
-  border: 1px solid rgba(255, 80, 80, 0.22);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.cp-report-btn:hover {
-  background: rgba(255, 80, 80, 0.14);
-  transform: translateY(-1px);
-}
-
 .cp-report-form {
   display: flex;
   flex-direction: column;
@@ -850,4 +809,75 @@
   border-radius: 8px;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* ============================================
+   Header Action Buttons (Request + Report)
+   ============================================ */
+
+.cp-request-btn,
+.cp-report-btn {
+  min-width: 155px;
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  letter-spacing: 0.15px;
+}
+
+/* Request Coach */
+
+.cp-request-btn {
+  background: #4a9eff;
+  color: #ffffff;
+  border: none;
+}
+
+.cp-request-btn:hover:not(:disabled) {
+  background: #5aa6ff;
+  transform: translateY(-1px);
+}
+
+.cp-request-btn:disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: #6a6f78;
+  cursor: not-allowed;
+}
+
+/* Report Coach */
+
+.cp-report-btn {
+  background: rgba(255, 90, 90, 0.08);
+  color: #ff8080;
+  border: 1px solid rgba(255, 120, 120, 0.22);
+}
+
+.cp-report-btn:hover {
+  background: rgba(255, 90, 90, 0.14);
+  border-color: rgba(255, 120, 120, 0.35);
+  transform: translateY(-1px);
+  color: #ff9696;
+}
+
+.cp-report-btn:active,
+.cp-request-btn:active {
+  transform: translateY(0);
+}
+
+/* Optional: better spacing between buttons */
+
+.cp-title-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
