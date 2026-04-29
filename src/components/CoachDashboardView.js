@@ -311,7 +311,8 @@ function CoachDashboardView({
                 </p>
 
                 <div className="coach-client-actions">
-                  <button
+                  <Link
+                    to={`/coach/client/${client.user_id}`}
                     className="coach-client-view"
                     onClick={() => navigate(`/coach/client/${client.user_id}`)}
                   >
