@@ -839,7 +839,6 @@ function Dashboard() {
       })); 
 
       setDailySurveyChartData(userDaily); 
-      setWeeklySurveyChartData(userWeekly); 
   }, [user]); 
 
   return (
