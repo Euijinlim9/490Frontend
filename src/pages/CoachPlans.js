@@ -28,7 +28,7 @@ function CoachPlans() {
     "X-Active-Role": activeRole,
   });
 
-  const fetchPlans = useCallBack(async () => {
+  const fetchPlans = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("http://localhost:4000/api/coach/plans", {
