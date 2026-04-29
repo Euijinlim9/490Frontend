@@ -66,17 +66,36 @@ function CoachSurvey({ show, onClose }){
                         <option value="consistency">Consistency</option>
                     </select>
 
-                    <select name="availabilityDay" value={form.nutritionistHelp} onChange={handleChange}>
-                        <option value="">What Days You Are Available to Coach</option>
-                        <option value="monday">Monday</option>
-                        <option value="tuesday">Tuesday</option>
-                        <option value="wednesday">Wednesday</option>
-                        <option value="thursday">Thursday</option>
-                        <option value="friday">Friday</option>
-                        <option value="saturday">Saturday</option>
-                        <option value="sunday">Sunday</option>
-                    </select> 
+                  <div className="availability-days">
+                    {[
+                      "Monday",
+                      "Tuesday",
+                      "Wednesday",
+                      "Thursday",
+                      "Friday",
+                      "Saturday",
+                      "Sunday",
+                    ].map((day) => (
+                     <label key={day}>
+                       <input
+                          type="checkbox"
+                          value={day.toLowerCase()}
+                          checked={form.availabilityDay.includes(day.toLowerCase())}
+                          onChange={(e) => {
+                            const value = e.target.value;
 
+                            setForm((prev) => ({
+                              ...prev,
+                              availabilityDay: e.target.checked
+                                ? [...prev.availabilityDay, value]
+                                : prev.availabilityDay.filter((d) => d !== value),
+                            }));
+                        }}
+                    />
+                {day}
+            </label>
+        ))}
+    </div>
                     <select name="limitations" value={form.workoutDay} onChange={handleChange}>
                         <option value="">Limitations of Your Coaching</option>
                         <option value="post-injury">No clients post-injury</option>
@@ -84,7 +103,7 @@ function CoachSurvey({ show, onClose }){
                         <option value="male-oriented">Only male clients</option>
                         <option value="female-oriented">Only female clients</option>
                         <option value="older-50">No clients over 50</option>
-                        <option value="younger-50">No client over 50</option>
+                        <option value="younger-50">No client younger 50</option>
                         <option value="extreme-cardio">No clients into extreme cardio. Running, half, full marathons, etc</option>
 
                     </select> 

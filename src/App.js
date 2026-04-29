@@ -48,7 +48,8 @@ import Contact from "./pages/Contact";
 import Careers from "./pages/Careers";
 import WeeklyCheckIn from "./pages/WeeklyCheckIn";
 import DailyCheckIns from "./pages/DailyCheckIns";
-import Notifications from "./pages/Notifications";
+import Notifications from "./pages/Notifications"; 
+import ClientProgress from "./pages/ClientProgress";
 
 function App() {
   const location = useLocation();
@@ -124,6 +125,8 @@ function App() {
           <Route path="/weekly-checkin" element={<WeeklyCheckIn />} />
           <Route path="/daily-checkin" element={<DailyCheckIns />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/coach/client/:clientUserId" element={<ClientProgress />} />
+
           {activeRole === "admin" && (
             <>
               <Route path="/admin/coachapp" element={<CoachApplications />} />
@@ -131,7 +134,8 @@ function App() {
               <Route path="/admin/exercise" element={<AdminExercise />} />
               <Route path="/admin/userreport" element={<UserReport />} />
             </>
-          )}
+          )}          <Route path="/coach/client/:clientUserId" element={<ClientProgress />} />
+
         </Routes>
       </div>
     </div>
