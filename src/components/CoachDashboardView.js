@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -18,6 +20,7 @@ function CoachDashboardView({
   loading,
   onApprove,
   onReject,
+  onDropClient, 
   onDropClient, 
   getTimeAgo,
 }) {

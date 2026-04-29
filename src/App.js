@@ -125,6 +125,8 @@ function App() {
           <Route path="/weekly-checkin" element={<WeeklyCheckIn />} />
           <Route path="/daily-checkin" element={<DailyCheckIns />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/coach/client/:clientUserId" element={<ClientProgress />} />
+
           {activeRole === "admin" && (
             <>
               <Route path="/admin/coachapp" element={<CoachApplications />} />
