@@ -27,7 +27,12 @@ function LogWorkout() {
       JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
 
     const newWorkout = {
-      ...workoutForm,
+      workoutType: "Cardio", 
+      incline: workoutForm.incline, 
+      distance: workoutForm.distance, 
+      speed: workoutForm.speed, 
+      time: workoutForm.time, 
+      duration: workoutForm.time, 
       date: new Date().toLocaleDateString(),
     };
 
