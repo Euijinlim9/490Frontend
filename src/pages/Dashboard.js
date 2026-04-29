@@ -5,6 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
+
 import { WorkoutContext } from "../context/WorkoutContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -212,9 +213,9 @@ function Dashboard() {
   const [weightInput, setWeightInput] = useState("");
   const [weightData, setWeightData] = useState([]);
   const [stepData, setStepData] = useState([]);
-  const [mealChartData, setMealChartData] = useState([]); 
-  const [workoutChartData, setWorkoutChartData] = useState([]); 
-  const [selectedMacroDate, setSelectedMacroDate] = useState(new Date()); 
+  const [mealChartData, setMealChartData] = useState([]);
+  const [workoutChartData, setWorkoutChartData] = useState([]);
+  const [selectedMacroDate, setSelectedMacroDate] = useState(new Date());
 
   const [selectedMetric, setSelectedMetric] = useState("weight");
   const [selectedTimeView, setSelectedTimeView] = useState("daily");
@@ -292,6 +293,22 @@ function Dashboard() {
         }
       );
       if (!res.ok) throw new Error("Failed to approve");
+
+      const existingNotifications =
+        JSON.parse(
+          localStorage.getItem(`clientNotifications-${clientUserId}`)
+        ) || [];
+
+      const newNotification = {
+        message: `${user?.first_name} accepted your coaching request.`,
+        date: new Date().toLocaleString(),
+        read: false,
+      };
+      localStorage.setItem(
+        `clientNotifications-${clientUserId}`,
+        JSON.stringify([newNotification, ...existingNotifications])
+      );
+
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -314,6 +331,20 @@ function Dashboard() {
         }
       );
       if (!res.ok && res.status !== 204) throw new Error("Failed to reject");
+      const existingNotifications =
+        JSON.parse(
+          localStorage.getItem(`clientNotifications-${clientUserId}`)
+        ) || [];
+
+      const newNotification = {
+        message: `${user?.first_name} rejected your coaching request.`,
+        date: new Date().toLocaleString(),
+        read: false,
+      };
+      localStorage.setItem(
+        `clientNotifications-${clientUserId}`,
+        JSON.stringify([newNotification, ...existingNotifications])
+      );
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -488,25 +519,25 @@ function Dashboard() {
     #6ca6ff ${proteinPercent + fiberPercent + carbsPercent}% 100%
   )`;
 
-  const formatDay = (date) => new Date(date).toLocaleDateString(); 
+  const formatDay = (date) => new Date(date).toLocaleDateString();
 
   const groupByDay = useCallback((items, dateKey, valueKey) => {
-  const grouped = {}; 
+    const grouped = {};
 
-  items.forEach((item) => {
-    if(!item[dateKey]) return; 
+    items.forEach((item) => {
+      if (!item[dateKey]) return;
 
-    const day = formatDay(item[dateKey]); 
-    grouped[day] = (grouped[day] || 0) + (Number(item[valueKey]) || 0); 
-  }); 
+      const day = formatDay(item[dateKey]);
+      grouped[day] = (grouped[day] || 0) + (Number(item[valueKey]) || 0);
+    });
 
-  return Object.entries(grouped).map(([day, value]) => ({
-    day, 
-    value,
-  }));
- }, []); 
+    return Object.entries(grouped).map(([day, value]) => ({
+      day,
+      value,
+    }));
+  }, []);
 
- const chartData = useMemo(() => {
+  const chartData = useMemo(() => {
     const groupedByDay = {};
 
     weightData.forEach((entry) => {
@@ -524,11 +555,11 @@ function Dashboard() {
   }, [weightData]);
 
   const stepChartData = stepData.map((entry) => ({
-    day: formatDay(entry.label), 
-    value: Number(entry.value) || 0, 
+    day: formatDay(entry.label),
+    value: Number(entry.value) || 0,
   }));
 
-  const calorieChartData = mealChartData; 
+  const calorieChartData = mealChartData;
 
   const volumeChartData = workoutChartData;
 
@@ -596,79 +627,111 @@ function Dashboard() {
   };
 
   const saveWellnessField = (field) => {
-    const value = Number(wellnessInputs[field]) || 0; 
+    const value = Number(wellnessInputs[field]) || 0;
 
     setWellness((prev) => ({
       ...prev,
-      [field]: value, 
-    })); 
+      [field]: value,
+    }));
 
-    if (field === "stepLog"){
-      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || []; 
-      const today = new Date().toLocaleDateString(); 
+    if (field === "stepLog") {
+      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
+      const today = new Date().toLocaleDateString();
 
       const filteredSteps = savedSteps.filter(
-        (entry) => new Date(entry.label).toLocaleDateString() !== today); 
-      
+        (entry) => new Date(entry.label).toLocaleDateString() !== today
+      );
+
       const newEntry = {
         label: new Date().toISOString(),
-        value, 
-      }; 
+        value,
+      };
 
-      const updatedSteps = [...filteredSteps, newEntry]; 
+      const updatedSteps = [...filteredSteps, newEntry];
 
-      localStorage.setItem("stepData", JSON.stringify(updatedSteps)); 
-      setStepData(updatedSteps); 
+      localStorage.setItem("stepData", JSON.stringify(updatedSteps));
+      setStepData(updatedSteps);
     }
     setEditingCard(null);
-  }; 
+  };
 
   useEffect(() => {
-    const savedSteps = JSON.parse(localStorage.getItem("stepData")) || []; 
-    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || []; 
-    const savedWorkouts = JSON.parse(localStorage.getItem("loggedWorkouts")) || []; 
+    const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
+    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
+    const savedWorkouts =
+      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
 
-    setStepData(savedSteps); 
+    setStepData(savedSteps);
 
     setMealChartData(groupByDay(savedMeals, "date", "calories"));
     setWorkoutChartData(groupByDay(savedWorkouts, "date", "duration"));
-  }, [groupByDay]); 
+  }, [groupByDay]);
 
- const deleteTodayMetric = (field) => {
-  const today = new Date().toLocaleDateString(); 
+  const deleteTodayMetric = (field) => {
+    const today = new Date().toLocaleDateString();
 
-  setWellness((prev) => ({
-    ...prev, 
-    [field]: 0, 
-  })); 
+    setWellness((prev) => ({
+      ...prev,
+      [field]: 0,
+    }));
 
-  if (field === "stepLog"){
-    const savedSteps = JSON.parse(localStorage.getItem("stepData")) || []; 
+    if (field === "stepLog") {
+      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
 
-    const updatedSteps = savedSteps.filter(
-      (entry) => new Date(entry.label).toLocaleDateString() !== today ); 
+      const updatedSteps = savedSteps.filter(
+        (entry) => new Date(entry.label).toLocaleDateString() !== today
+      );
 
-    localStorage.setItem("stepData", JSON.stringify(updatedSteps)); 
-    setStepData(updatedSteps); 
-  }
+      localStorage.setItem("stepData", JSON.stringify(updatedSteps));
+      setStepData(updatedSteps);
+    }
 
-  const savedWellness = JSON.parse(localStorage.getItem("loggedWellness")) || []; 
+    const savedWellness =
+      JSON.parse(localStorage.getItem("loggedWellness")) || [];
 
-  const updatedWellness = savedWellness.filter( (entry) => entry.date !== today); 
+    const updatedWellness = savedWellness.filter(
+      (entry) => entry.date !== today
+    );
 
-  localStorage.setItem("loggedWellness", JSON.stringify(updatedWellness)); 
- }; 
+    localStorage.setItem("loggedWellness", JSON.stringify(updatedWellness));
+  };
 
- const changeMacroDay = (amount) => {
-  setSelectedMacroDate((prevDate) => {
-    const newDate = new Date(prevDate); 
-    newDate.setDate(newDate.getDate() + amount); 
-    return newDate; 
-  }); 
- };
+  const changeMacroDay = (amount) => {
+    setSelectedMacroDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(newDate.getDate() + amount);
+      return newDate;
+    });
+  };
 
- const selectedMacroDateText = 
-  selectedMacroDate.toLocaleDateString() === new Date().toLocaleDateString() ? "Today" : selectedMacroDate.toLocaleDateString(); 
+  const selectedMacroDateText =
+    selectedMacroDate.toLocaleDateString() === new Date().toLocaleDateString()
+      ? "Today"
+      : selectedMacroDate.toLocaleDateString();
+
+  useEffect(() => {
+    const today = new Date().toLocaleDateString();
+
+    const lastCheckinDate = localStorage.getItem("lastDailyCheckin");
+
+    if (lastCheckinDate !== today) {
+      navigate("/daily-checkin");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const today = new Date();
+
+    const isSunday = today.getDay() === 0;
+
+    const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+
+    const lastWeeklyCheckin = localStorage.getItem("lastWeeklyCheckin");
+
+    if (isSunday && lastWeeklyCheckin !== thisWeek) {
+      navigate("/weekly-checkin");
+    }
+  }, [navigate]);
 
   return (
     <div className="dashboard-page">
@@ -1034,12 +1097,12 @@ function Dashboard() {
                       {wellness.sleepHours} <span>hours</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("sleepHours")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
 
@@ -1081,12 +1144,12 @@ function Dashboard() {
                       {wellness.waterCurrent} <span>ounces</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("waterCurrent")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
 
@@ -1128,12 +1191,12 @@ function Dashboard() {
                       {wellness.heartLog} <span>bpm</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("heartLog")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
 
@@ -1195,12 +1258,12 @@ function Dashboard() {
                       {wellness.stepLog} <span>steps</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("stepLog")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
               </div>
@@ -1213,15 +1276,15 @@ function Dashboard() {
                 <div className="widget-header">
                   <h4>Macros</h4>
 
-                  <div className="macro-date-controls"> 
+                  <div className="macro-date-controls">
                     <button type="button" onClick={() => changeMacroDay(-1)}>
                       &lt;
                     </button>
                     <span>{selectedMacroDateText}</span>
-                    <button type="button" onClick={() => changeMacroDay(1)}> 
-                      &gt; 
+                    <button type="button" onClick={() => changeMacroDay(1)}>
+                      &gt;
                     </button>
-                    </div> 
+                  </div>
                 </div>
 
                 <div className="macro-donut-wrap">

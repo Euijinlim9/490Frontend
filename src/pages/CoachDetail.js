@@ -12,10 +12,8 @@ function CoachDetail() {
   const [coach, setCoach] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [myCoachState, setMyCoachState] = useState(null);
   const [requesting, setRequesting] = useState(false);
-
   const [activeTab, setActiveTab] = useState("about");
 
   // Plans
@@ -25,6 +23,16 @@ function CoachDetail() {
   // Subscribe modal
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [subscribing, setSubscribing] = useState(false);
+
+  // Reviews
+  const [reviews, setReviews] = useState([]);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewRating, setReviewRating] = useState("");
+
+  // Report
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
 
   useEffect(() => {
     const fetchCoach = async () => {
@@ -94,6 +102,12 @@ function CoachDetail() {
     fetchMyCoach();
   }, [activeRole]);
 
+  useEffect(() => {
+    const savedReviews =
+      JSON.parse(localStorage.getItem(`coachReviews-${id}`)) || [];
+    setReviews(savedReviews);
+  }, [id]);
+
   const handleRequest = async () => {
     if (!window.confirm(`Send a coaching request to ${coach.first_name}?`))
       return;
@@ -115,7 +129,22 @@ function CoachDetail() {
         alert(data.error || "You already have a coach request.");
         return;
       }
-      if (!res.ok) throw new Error();
+      if (!res.ok) throw new Error("Failed to send request");
+
+      const existingNotifications =
+        JSON.parse(
+          localStorage.getItem(`coachNotifications-${coach.user_id}`)
+        ) || [];
+      const newNotification = {
+        message: `${user?.first_name} sent you a coaching request`,
+        date: new Date().toLocaleString(),
+        read: false,
+      };
+      localStorage.setItem(
+        `coachNotifications-${coach.user_id}`,
+        JSON.stringify([newNotification, ...existingNotifications])
+      );
+
       navigate("/dashboard");
     } catch {
       alert("Could not send request. Please try again.");
@@ -152,6 +181,53 @@ function CoachDetail() {
     }
   };
 
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    if (!reviewText.trim() || !reviewRating) {
+      alert("Please add a rating and a review.");
+      return;
+    }
+    const savedReviews =
+      JSON.parse(localStorage.getItem(`coachReviews-${id}`)) || [];
+    const newReview = {
+      rating: Number(reviewRating),
+      comment: reviewText,
+      clientName: user?.first_name || "Client",
+      date: new Date().toLocaleDateString(),
+    };
+    const updatedReviews = [...savedReviews, newReview];
+    localStorage.setItem(`coachReviews-${id}`, JSON.stringify(updatedReviews));
+    setReviews(updatedReviews);
+    setReviewText("");
+    setReviewRating("");
+  };
+
+  const handleReportSubmit = (e) => {
+    e.preventDefault();
+    if (!reportReason || !reportDetails.trim()) {
+      alert("Please choose a reason and add details.");
+      return;
+    }
+    const savedReports =
+      JSON.parse(localStorage.getItem(`coachReports-${id}`)) || [];
+    const newReport = {
+      coachId: id,
+      coachName: `${coach.first_name} ${coach.last_name}`,
+      clientName: user?.first_name || "Client",
+      reason: reportReason,
+      details: reportDetails,
+      date: new Date().toLocaleDateString(),
+    };
+    localStorage.setItem(
+      `coachReports-${id}`,
+      JSON.stringify([...savedReports, newReport])
+    );
+    alert("Report submitted. Thank you for letting us know.");
+    setReportReason("");
+    setReportDetails("");
+    setShowReportForm(false);
+  };
+
   if (loading)
     return (
       <div className="cp-page">
@@ -176,12 +252,10 @@ function CoachDetail() {
   const canRequest =
     activeRole === "client" && myCoachState === "none" && !isSelf && !hasPlans;
 
-  // Header button: plans-first, request as fallback
   const headerButton = (() => {
     if (isSelf) return null;
     if (activeRole !== "client") return null;
-    if (hasPlans) return null; // subscribe buttons live on plan cards
-    // Fallback: legacy request button
+    if (hasPlans) return null;
     const label = (() => {
       if (myCoachState === "pending") return "Request Pending";
       if (myCoachState === "active") return "You already have a coach";
@@ -231,6 +305,14 @@ function CoachDetail() {
                   </p>
                 </div>
                 {headerButton}
+                {activeRole === "client" && !isSelf && (
+                  <button
+                    className="cp-report-btn"
+                    onClick={() => setShowReportForm((prev) => !prev)}
+                  >
+                    Report Coach
+                  </button>
+                )}
               </div>
               <div className="cp-stats">
                 <div className="cp-stat">
@@ -244,7 +326,14 @@ function CoachDetail() {
                   <span className="cp-stat-label">Per hour</span>
                 </div>
                 <div className="cp-stat">
-                  <span className="cp-stat-value">New</span>
+                  <span className="cp-stat-value">
+                    {reviews.length > 0
+                      ? (
+                          reviews.reduce((sum, r) => sum + r.rating, 0) /
+                          reviews.length
+                        ).toFixed(1)
+                      : "New"}
+                  </span>
                   <span className="cp-stat-label">Rating</span>
                 </div>
                 <div className="cp-stat">
@@ -257,6 +346,40 @@ function CoachDetail() {
             </div>
           </div>
         </div>
+
+        {/* Report form */}
+        {showReportForm && (
+          <div className="cp-card">
+            <h3 className="cp-card-title">Report Coach</h3>
+            <form className="cp-report-form" onSubmit={handleReportSubmit}>
+              <select
+                className="cp-report-select"
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+              >
+                <option value="">Select a reason</option>
+                <option value="Inappropriate behavior">
+                  Inappropriate Behavior
+                </option>
+                <option value="Scam or suspicious activity">
+                  Scam or suspicious activity
+                </option>
+                <option value="False information">False information</option>
+                <option value="Harassment">Harassment</option>
+                <option value="Other">Other</option>
+              </select>
+              <textarea
+                className="cp-report-input"
+                placeholder="Explain what happened.."
+                value={reportDetails}
+                onChange={(e) => setReportDetails(e.target.value)}
+              />
+              <button type="submit" className="cp-report-submit">
+                Submit Report
+              </button>
+            </form>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="cp-tabs">
@@ -359,17 +482,99 @@ function CoachDetail() {
                 ))}
               </div>
             )}
+
+            {/* Book a Session — placeholder */}
+            <div className="cp-section-header">
+              <h3>Book a Session</h3>
+              <p>One-off or bundled sessions at the coach's hourly rate.</p>
+            </div>
+            <div className="cp-booking-card">
+              <div className="cp-booking-info">
+                <div className="cp-booking-rate">
+                  <span className="cp-booking-price">${hourlyRate}</span>
+                  <span className="cp-booking-unit">/ hour</span>
+                </div>
+                <p className="cp-booking-desc">
+                  Schedule a single session or buy a bundle at a discount.
+                </p>
+                <div className="cp-booking-bundles">
+                  <div className="cp-bundle">
+                    <span className="cp-bundle-count">1 Session</span>
+                    <span className="cp-bundle-price">${hourlyRate}</span>
+                  </div>
+                  <div className="cp-bundle">
+                    <span className="cp-bundle-count">5 Sessions</span>
+                    <span className="cp-bundle-price">
+                      ${Math.round(hourlyRate * 5 * 0.9)}
+                    </span>
+                    <span className="cp-bundle-save">Save 10%</span>
+                  </div>
+                  <div className="cp-bundle">
+                    <span className="cp-bundle-count">10 Sessions</span>
+                    <span className="cp-bundle-price">
+                      ${Math.round(hourlyRate * 10 * 0.85)}
+                    </span>
+                    <span className="cp-bundle-save">Save 15%</span>
+                  </div>
+                </div>
+              </div>
+              <button className="cp-booking-btn" disabled>
+                Coming Soon
+              </button>
+            </div>
           </>
         )}
 
+        {/* Reviews */}
         {activeTab === "reviews" && (
-          <div className="cp-card cp-empty">
-            <div className="cp-empty-icon">⭐</div>
-            <h3>No reviews yet</h3>
-            <p>Be the first client to leave a review for {coach.first_name}.</p>
+          <div className="cp-card">
+            <h3 className="cp-card-title">Client Reviews</h3>
+            {activeRole === "client" && !isSelf && (
+              <form className="cp-review-form" onSubmit={handleReviewSubmit}>
+                <textarea
+                  placeholder="Write your review here..."
+                  className="cp-review-input"
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                />
+                <select
+                  className="cp-review-rating"
+                  value={reviewRating}
+                  onChange={(e) => setReviewRating(e.target.value)}
+                >
+                  <option value="">Rating</option>
+                  <option value="5">5 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="3">3 Stars</option>
+                  <option value="2">2 Stars</option>
+                  <option value="1">1 Star</option>
+                </select>
+                <button type="submit" className="cp-review-btn">
+                  Submit Review
+                </button>
+              </form>
+            )}
+            <div className="cp-reviews-list">
+              {reviews.length === 0 ? (
+                <p>No reviews yet.</p>
+              ) : (
+                reviews.map((review, index) => (
+                  <div key={index} className="cp-review-card">
+                    <div className="cp-review-stars">
+                      {"⭐".repeat(review.rating)}
+                    </div>
+                    <p>{review.comment}</p>
+                    <span>
+                      {review.clientName} · {review.date}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         )}
 
+        {/* Certifications */}
         {activeTab === "certifications" && (
           <div className="cp-card cp-empty">
             <div className="cp-empty-icon">🎓</div>
