@@ -217,7 +217,7 @@ function Dashboard() {
   const [workoutChartData, setWorkoutChartData] = useState([]);
   const [selectedMacroDate, setSelectedMacroDate] = useState(new Date());
   const [dailySurveyChartData, setDailySurveyChartData] = useState([]); 
-  const [weeklySurveyChartData, setWeeklySurveyChartData] = useState([]); 
+  //const [weeklySurveyChartData, setWeeklySurveyChartData] = useState([]); 
 
   const [selectedMetric, setSelectedMetric] = useState("weight");
   const [selectedTimeView, setSelectedTimeView] = useState("daily");
