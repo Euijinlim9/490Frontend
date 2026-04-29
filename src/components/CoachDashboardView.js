@@ -5,6 +5,7 @@ function CoachDashboardView({
   loading,
   onApprove,
   onReject,
+  onDropClient, 
   getTimeAgo,
 }) {
   return (
@@ -176,9 +177,21 @@ function CoachDashboardView({
                       ).toLocaleDateString()}`
                     : "Recently joined"}
                 </p>
-                <button className="coach-client-view" disabled>
-                  View Details (coming soon)
-                </button>
+                <div className="coach-client-actions">
+                  <button
+                    className="coach-client-view"
+                    onClick={() => alert(client.bio || client.goal || "No client bio available yet.")}
+                  >
+                    View Details 
+                  </button>
+
+                  <button
+                    className="coach-client-drop"
+                    onClick={() => onDropClient(client.user_id, client.first_name)}
+                  > 
+                    Drop Client
+                  </button> 
+                </div>
               </div>
             ))}
           </div>
