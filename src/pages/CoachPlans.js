@@ -45,7 +45,7 @@ function CoachPlans() {
 
   useEffect(() => {
     fetchPlans();
-  }, []);
+  }, [activeRole]);
 
   const handleCreate = async (e) => {
     e.preventDefault();

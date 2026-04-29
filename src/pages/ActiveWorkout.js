@@ -20,7 +20,6 @@ function ActiveWorkout() {
   const [timer, setTimer] = useState(0);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
-  const [workoutLogged, setWorkoutLogged] = useState(false);
   const [startTime] = useState(() => Date.now());
 
   const exercises = useMemo(() => {
@@ -154,7 +153,6 @@ function ActiveWorkout() {
       }
     }
 
-    setWorkoutLogged(true);
   }, [done, activeWorkout, exercises, startTime]);
 
   const handleDoneSet = () => {
