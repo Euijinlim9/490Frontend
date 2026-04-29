@@ -19,7 +19,6 @@ function Home() {
 
           <div className="hero-buttons">
             <button className="hero-primary">Get Started</button>
-            <button className="hero-secondary">Learn More</button>
           </div>
         </div>
       </div>
