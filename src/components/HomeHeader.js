@@ -31,15 +31,18 @@ function LandingHeader() {
         </div>
 
         <nav className="landing-header__nav">
-          <a href="#features" className="landing-header__link">
+          <button
+            className="landing-header__link"
+            onClick={() => navigate("/features")}
+          >
             Features
-          </a>
-          <a href="#how-it-works" className="landing-header__link">
+          </button>
+          <button
+            className="landing-header__link"
+            onClick={() => navigate("/how")}
+          >
             How It Works
-          </a>
-          <a href="#reviews" className="landing-header__link">
-            Reviews
-          </a>
+          </button>
         </nav>
 
         <div className="landing-header__actions">

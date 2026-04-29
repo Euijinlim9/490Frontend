@@ -1,7 +1,10 @@
 import HomeHeader from "../components/HomeHeader";
 import HomeFooter from "../components/HomeFooter";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="home-page">
       <HomeHeader />
@@ -18,7 +21,12 @@ function Home() {
           </p>
 
           <div className="hero-buttons">
-            <button className="hero-primary">Get Started</button>
+            <button 
+              className="hero-primary"
+              onClick={() => navigate("/login")}
+              >
+                Get Started
+                </button>
           </div>
         </div>
       </div>
