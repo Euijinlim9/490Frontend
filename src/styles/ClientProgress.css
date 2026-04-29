@@ -1,0 +1,110 @@
+.client-progress-page {
+  min-height: 100vh;
+  padding: 40px 32px 80px;
+  background: linear-gradient(180deg, #0d1117 0%, #111827 100%);
+  color: white;
+}
+
+.client-progress-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.client-progress-header {
+  margin-bottom: 32px;
+}
+
+.client-progress-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.client-progress-subtitle {
+  color: #9aa4b2;
+  font-size: 0.95rem;
+}
+
+.client-progress-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.client-card {
+  background: rgba(20, 24, 32, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.client-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: white;
+}
+
+.client-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.client-stat-box {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.client-stat-label {
+  font-size: 0.78rem;
+  color: #8a909a;
+  margin-bottom: 6px;
+}
+
+.client-stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.log-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.log-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.log-date {
+  font-size: 0.8rem;
+  color: #8a909a;
+}
+
+.empty-state {
+  color: #8a909a;
+  font-size: 0.9rem;
+  padding: 18px 0;
+}
+
+@media (max-width: 900px) {
+  .client-progress-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .client-stats {
+    grid-template-columns: 1fr;
+  }
+}

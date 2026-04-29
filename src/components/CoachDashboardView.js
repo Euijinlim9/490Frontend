@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import {
@@ -18,9 +18,9 @@ function CoachDashboardView({
   loading,
   onApprove,
   onReject,
+  onDropClient,
   getTimeAgo,
 }) {
-  const navigate = useNavigate();
   const { activeRole } = useContext(AuthContext);
   const [earnings, setEarnings] = useState(null);
   const [earningsLoading, setEarningsLoading] = useState(true);
@@ -28,6 +28,7 @@ function CoachDashboardView({
   useEffect(() => {
     const fetchEarnings = async () => {
       const token = localStorage.getItem("token");
+
       try {
         const res = await fetch(
           "http://localhost:4000/api/coach/plans/earnings",
@@ -38,7 +39,9 @@ function CoachDashboardView({
             },
           }
         );
+
         if (!res.ok) throw new Error();
+
         const data = await res.json();
         setEarnings(data);
       } catch {
@@ -47,6 +50,7 @@ function CoachDashboardView({
         setEarningsLoading(false);
       }
     };
+
     fetchEarnings();
   }, [activeRole]);
 
@@ -67,16 +71,19 @@ function CoachDashboardView({
             <span className="coach-stat-num">{pendingRequests.length}</span>
             <span className="coach-stat-lbl">Pending</span>
           </div>
+
           <div className="coach-stat-pill">
             <span className="coach-stat-num">{activeClients.length}</span>
             <span className="coach-stat-lbl">Active Clients</span>
           </div>
+
           <div className="coach-stat-pill">
             <span className="coach-stat-num">
               ${earningsLoading ? "—" : earnings?.monthTotal?.toFixed(0) ?? "0"}
             </span>
             <span className="coach-stat-lbl">This Month</span>
           </div>
+
           <div className="coach-stat-pill">
             <span className="coach-stat-num">
               ${earningsLoading ? "—" : earnings?.total?.toFixed(0) ?? "0"}
@@ -86,7 +93,6 @@ function CoachDashboardView({
         </div>
       </div>
 
-      {/* Earnings Widget */}
       <section className="coach-dash-section">
         <div className="coach-section-head">
           <h2>Earnings</h2>
@@ -104,11 +110,11 @@ function CoachDashboardView({
           </div>
         ) : (
           <div className="coach-earnings-grid">
-            {/* Bar chart */}
             <div className="coach-earnings-chart">
               <p className="coach-earnings-chart-title">
                 Revenue — Last 6 Months
               </p>
+
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart
                   data={earnings.monthly}
@@ -145,9 +151,9 @@ function CoachDashboardView({
               </ResponsiveContainer>
             </div>
 
-            {/* Per-plan breakdown */}
             <div className="coach-earnings-breakdown">
               <p className="coach-earnings-chart-title">By Plan</p>
+
               {earnings.byPlan.map((p) => (
                 <div key={p.title} className="coach-earnings-row">
                   <span className="coach-earnings-plan">{p.title}</span>
@@ -156,6 +162,7 @@ function CoachDashboardView({
                   </span>
                 </div>
               ))}
+
               <div className="coach-earnings-total-row">
                 <span>Total</span>
                 <span>${earnings.total.toFixed(2)}</span>
@@ -165,7 +172,6 @@ function CoachDashboardView({
         )}
       </section>
 
-      {/* Pending Requests */}
       <section className="coach-dash-section">
         <div className="coach-section-head">
           <h2>Pending Requests</h2>
@@ -193,6 +199,7 @@ function CoachDashboardView({
                   alt={req.client.first_name}
                   className="coach-req-avatar"
                 />
+
                 <div className="coach-req-body">
                   <div className="coach-req-top">
                     <div>
@@ -203,6 +210,7 @@ function CoachDashboardView({
                         Requested {getTimeAgo(req.requested_at)}
                       </p>
                     </div>
+
                     <div className="coach-req-actions">
                       <button
                         className="coach-btn-approve"
@@ -212,6 +220,7 @@ function CoachDashboardView({
                       >
                         Approve
                       </button>
+
                       <button
                         className="coach-btn-reject"
                         onClick={() =>
@@ -222,6 +231,7 @@ function CoachDashboardView({
                       </button>
                     </div>
                   </div>
+
                   <div className="coach-req-survey">
                     {req.client.goal && (
                       <div className="coach-req-field">
@@ -231,6 +241,7 @@ function CoachDashboardView({
                         </span>
                       </div>
                     )}
+
                     {req.client.type_workout && (
                       <div className="coach-req-field">
                         <span className="coach-req-field-label">
@@ -241,6 +252,7 @@ function CoachDashboardView({
                         </span>
                       </div>
                     )}
+
                     {req.client.current_activity && (
                       <div className="coach-req-field">
                         <span className="coach-req-field-label">Activity</span>
@@ -249,6 +261,7 @@ function CoachDashboardView({
                         </span>
                       </div>
                     )}
+
                     {req.client.coach_help && (
                       <div className="coach-req-field">
                         <span className="coach-req-field-label">
@@ -259,6 +272,7 @@ function CoachDashboardView({
                         </span>
                       </div>
                     )}
+
                     {!req.client.goal &&
                       !req.client.type_workout &&
                       !req.client.current_activity &&
@@ -275,7 +289,6 @@ function CoachDashboardView({
         )}
       </section>
 
-      {/* My Clients */}
       <section className="coach-dash-section">
         <div className="coach-section-head">
           <h2>My Clients</h2>
@@ -298,9 +311,11 @@ function CoachDashboardView({
                   alt={client.first_name}
                   className="coach-client-avatar"
                 />
+
                 <h4>
                   {client.first_name} {client.last_name}
                 </h4>
+
                 <p className="coach-client-since">
                   {client.start_date
                     ? `Client since ${new Date(
@@ -308,12 +323,24 @@ function CoachDashboardView({
                       ).toLocaleDateString()}`
                     : "Recently joined"}
                 </p>
-                <button
-                  className="coach-client-view"
-                  onClick={() => navigate(`/coach/clients/${client.user_id}`)}
-                >
-                  View Details
-                </button>
+
+                <div className="coach-client-actions">
+                  <Link
+                    to={`/coach/client/${client.user_id}`}
+                    className="coach-client-view"
+                  >
+                    View Details
+                  </Link>
+
+                  <button
+                    className="coach-client-drop"
+                    onClick={() =>
+                      onDropClient(client.user_id, client.first_name)
+                    }
+                  >
+                    Drop Client
+                  </button>
+                </div>
               </div>
             ))}
           </div>

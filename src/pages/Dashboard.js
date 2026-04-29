@@ -352,6 +352,52 @@ function Dashboard() {
     }
   };
 
+  const handleDropClient = async (clientUserId, clientName) => {
+    if (
+      !window.confirm(
+        `Drop ${clientName} as a client? This will end the relationship and cancel payment.`
+      )
+    ) { 
+      return; 
+    }
+
+    const token = localStorage.getItem("token"); 
+
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/coach/clients/${clientUserId}`, 
+        {
+          method: "DELETE", 
+          headers: {
+            Authorization: `Bearer ${token}`, 
+            "X-Active-Role": activeRole, 
+          },
+        }
+      ); 
+
+      if (!res.ok && res.status !== 204){
+        throw new Error("Failed to drop client"); 
+      }
+
+      const existingNotifications = JSON.parse(localStorage.getItem(`clientNotifications-${clientUserId}`)) || []; 
+
+      const newNotification = {
+        message: `${user?.first_name} ended the coaching relationship. Payment will be canceled.`,
+        date: new Date().toLocaleString,
+        read: false,
+      };
+
+      localStorage.setItem(`clientNotifications-${clientUserId}`, 
+        JSON.stringify([newNotification, ...existingNotifications])
+      );
+
+      fetchCoachData(); 
+    } catch (err) {
+      console.error(err); 
+      alert("Could not drop client. Try again.");
+    }
+  }; 
+
   const getTimeAgo = (dateString) => {
     const now = new Date();
     const then = new Date(dateString);
@@ -386,6 +432,18 @@ function Dashboard() {
         },
       });
       if (!res.ok && res.status !== 204) throw new Error("Failed to unhire");
+
+      const existingNotifications = JSON.parse(localStorage.getItem(`coachNotifications-${myCoach.coach.user_id}`)) || []; 
+
+      const newNotification = {
+        message: `${user?.first_name} ended the coaching relationship. Payment will be canceled.`, 
+        date: new Date().toLocaleString(),
+        read: false, 
+      }; 
+
+      localStorage.setItem(`coachNotification-${myCoach.coach.user_id}`, JSON.stringify([newNotification, ...existingNotifications])
+      ); 
+
       setMyCoach({ state: "none", coach: null });
     } catch (err) {
       console.error(err);
@@ -743,6 +801,7 @@ function Dashboard() {
           loading={coachDataLoading}
           onApprove={handleApproveRequest}
           onReject={handleRejectRequest}
+          onDropClient={handleDropClient}
           getTimeAgo={getTimeAgo}
         />
       ) : (
