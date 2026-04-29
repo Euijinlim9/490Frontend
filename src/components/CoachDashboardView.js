@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+
 function CoachDashboardView({
   user,
   pendingRequests,
@@ -178,12 +181,12 @@ function CoachDashboardView({
                     : "Recently joined"}
                 </p>
                 <div className="coach-client-actions">
-                  <button
+                  <Link
+                    to={`/coach/client/${client.user_id}`}
                     className="coach-client-view"
-                    onClick={() => alert(client.bio || client.goal || "No client bio available yet.")}
                   >
                     View Details 
-                  </button>
+                  </Link>
 
                   <button
                     className="coach-client-drop"

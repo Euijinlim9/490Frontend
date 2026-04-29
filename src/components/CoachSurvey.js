@@ -84,7 +84,7 @@ function CoachSurvey({ show, onClose }){
                         <option value="male-oriented">Only male clients</option>
                         <option value="female-oriented">Only female clients</option>
                         <option value="older-50">No clients over 50</option>
-                        <option value="younger-50">No client over 50</option>
+                        <option value="younger-50">No client younger 50</option>
                         <option value="extreme-cardio">No clients into extreme cardio. Running, half, full marathons, etc</option>
 
                     </select> 
