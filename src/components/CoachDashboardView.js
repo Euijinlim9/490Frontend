@@ -320,7 +320,7 @@ function CoachDashboardView({
                     onClick={() => navigate(`/coach/client/${client.user_id}`)}
                   >
                     View Details
-                </button>
+                </Link>
 
                   <button
                     className="coach-client-drop"
