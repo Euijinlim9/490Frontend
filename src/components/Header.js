@@ -19,14 +19,31 @@ function Header() {
   useEffect(() => {
     if (!user) return;
 
-    const notificationKey =
-      activeRole === "coach"
-        ? `coachNotifications-${user.user_id}`
-        : `clientNotifications-${user.user_id}`;
+    let cancelled = false;
 
-    const saved = JSON.parse(localStorage.getItem(notificationKey)) || [];
+    const fetchUnreadCount = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(
+          `http://localhost:4000/api/notifications/unread-count?for_role=${activeRole}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled)
+          setNotifications(Array(data.count).fill({ read: false }));
+      } catch (err) {
+        // silently ignore — bell badge isn't worth surfacing errors
+      }
+    };
 
-    setNotifications(saved);
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000); // poll every 30s
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [user, activeRole]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
