@@ -255,11 +255,11 @@
 }
 
 .health-icon {
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  width: 100%; 
-  margin: 14px 0 18px 0; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 14px 0 18px 0;
 }
 
 .health-value {
@@ -975,9 +975,9 @@
 .health-svg {
   width: 46px;
   height: 46px;
-  color: rgba(255,255,255,0.92);
-  display: block; 
-  overflow: visible; 
+  color: rgba(255, 255, 255, 0.92);
+  display: block;
+  overflow: visible;
 }
 
 .graph-tabs,
@@ -1011,32 +1011,32 @@
   color: white;
 }
 
-.delete-metric-btn{
-  margin-top: 8px; 
-  background: rgba(255, 80, 80, 0.12); 
-  color: #ff6b6b; 
-  border: 1px solid rgba(255, 80, 80, 0.3); 
-  border-radius: 999px; 
-  padding: 3px 6px; 
-  font-size: 8px; 
-  font-weight: 500; 
-  cursor: pointer; 
+.delete-metric-btn {
+  margin-top: 8px;
+  background: rgba(255, 80, 80, 0.12);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  border-radius: 999px;
+  padding: 3px 6px;
+  font-size: 8px;
+  font-weight: 500;
+  cursor: pointer;
 }
 
-.delete-metric-btn:hover{
-  background: rgba(255, 80, 80, 0.22); 
+.delete-metric-btn:hover {
+  background: rgba(255, 80, 80, 0.22);
 }
 
-.macro-date-controls{
-  display: flex; 
-  align-items: center; 
-  gap: 10px; 
+.macro-date-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.macro-date-controls button{
+.macro-date-controls button {
   background: rgba(255, 255, 255, 0.08);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.14); 
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
   width: 28px;
   height: 28px;
@@ -1044,11 +1044,135 @@
   font-size: 16px;
 }
 
-.macro-date-controls button:hover{
+.macro-date-controls button:hover {
   background: rgba(255, 255, 255, 0.16);
 }
 
-.macro-date-controls span{
-  color: #b7c0cc; 
-  font-size: 14px; 
+.macro-date-controls span {
+  color: #b7c0cc;
+  font-size: 14px;
+}
+.workout-coach {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.workout-coach-notes {
+  margin: 12px 0;
+  padding: 8px 12px;
+  background: rgba(108, 166, 255, 0.08);
+  border-left: 3px solid #6ca6ff;
+  font-size: 13px;
+  color: #ccc;
+  font-style: italic;
+  border-radius: 0 4px 4px 0;
+}
+
+.workout-empty,
+.workout-empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  width: 100%;
+}
+
+.workout-empty-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.workout-empty-state h4 {
+  margin: 0 0 6px 0;
+  color: #ccc;
+  font-size: 15px;
+}
+
+.workout-empty-state p {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+}
+
+.workout-empty-state .start-workout-btn {
+  display: inline-block;
+}
+
+.workout-completed-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Earnings widget */
+.coach-earnings-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .coach-earnings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.coach-earnings-chart {
+  background: #161920;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.coach-earnings-chart-title {
+  margin: 0 0 16px 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8a909a;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.coach-earnings-breakdown {
+  background: #161920;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.coach-earnings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+}
+
+.coach-earnings-plan {
+  color: #c8cdd4;
+}
+
+.coach-earnings-amount {
+  color: #fff;
+  font-weight: 600;
+}
+
+.coach-earnings-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 4px;
 }

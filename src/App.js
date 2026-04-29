@@ -32,10 +32,12 @@ import CoachApplications from "./pages/adminpages/CoachApplications";
 import ViewUsers from "./pages/adminpages/ViewUsers";
 import AdminExercise from "./pages/adminpages/AdminExercise";
 import UserReport from "./pages/adminpages/UserReports";
-import LogMeal from "./pages/LogMeal"; 
-import LogWorkout from "./pages/LogWorkout"; 
-import LogWellness from "./pages/LogWellness"; 
-import PremadeMeals from "./pages/PremadeMeals"; 
+import LogMeal from "./pages/LogMeal";
+import LogWorkout from "./pages/LogWorkout";
+import LogWellness from "./pages/LogWellness";
+import PremadeMeals from "./pages/PremadeMeals";
+import ClientDetail from "./pages/ClientDetail";
+import CoachPlans from "./pages/CoachPlans";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsService from "./pages/TermsService";
 import Features from "./pages/Features";
@@ -51,21 +53,30 @@ import ClientProgress from "./pages/ClientProgress";
 
 function App() {
   const location = useLocation();
-
-  const hideMainHeader = 
-    location.pathname === "/" || location.pathname === "/home" || location.pathname === "/signup" || location.pathname === "/login" || location.pathname === "/privacy" || location.pathname === "/terms" 
-    || location.pathname === "/features" || location.pathname === "/how" || location.pathname === "/pricing" || location.pathname === "/about" || location.pathname === "/careers" || location.pathname === "/contact";  
-
   const { activeRole } = useContext(AuthContext);
+
+  const hideMainHeader =
+    location.pathname === "/" ||
+    location.pathname === "/home" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/login" ||
+    location.pathname === "/privacy" ||
+    location.pathname === "/terms" ||
+    location.pathname === "/features" ||
+    location.pathname === "/how" ||
+    location.pathname === "/pricing" ||
+    location.pathname === "/about" ||
+    location.pathname === "/careers" ||
+    location.pathname === "/contact";
 
   return (
     <div className="body">
       {!hideMainHeader && (
-      <>
-      <Header />
-      {activeRole === "admin" && <AdminHeader />}
-      </>
-    )}
+        <>
+          <Header />
+          {activeRole === "admin" && <AdminHeader />}
+        </>
+      )}
 
       <div className="page-content">
         <Routes>
@@ -77,7 +88,12 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />
+          <Route path="/coach/plans" element={<CoachPlans />} />
           <Route path="/coach/:id" element={<CoachDetails />} />
+          <Route
+            path="/coach/clients/:clientUserId"
+            element={<ClientDetail />}
+          />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/workouts/custom" element={<CustomWorkout />} />
           <Route path="/workouts/premade" element={<PremadeWorkouts />} />
@@ -90,19 +106,13 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
-          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
-            {activeRole === "admin" && (
-              <>
-              <Route path="/admin/coachapp" element={<CoachApplications />} />
-              <Route path="/admin/viewusers" element={<ViewUsers />} />
-              <Route path="/admin/exercise" element={<AdminExercise />} />
-              <Route path="/admin/userreport" element={<UserReport />} />
-              </>
-            )}
-
+          <Route
+            path="/test-survey"
+            element={<ClientSurvey show={true} onClose={() => {}} />}
+          />
           <Route path="/log-meal" element={<LogMeal />} />
-          <Route path="/log-workout" element={<LogWorkout />} /> 
-          <Route path="/log-wellness" element={<LogWellness />} /> 
+          <Route path="/log-workout" element={<LogWorkout />} />
+          <Route path="/log-wellness" element={<LogWellness />} />
           <Route path="/premade-meals" element={<PremadeMeals />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsService />} />
@@ -117,6 +127,14 @@ function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/coach/client/:clientUserId" element={<ClientProgress />} />
 
+          {activeRole === "admin" && (
+            <>
+              <Route path="/admin/coachapp" element={<CoachApplications />} />
+              <Route path="/admin/viewusers" element={<ViewUsers />} />
+              <Route path="/admin/exercise" element={<AdminExercise />} />
+              <Route path="/admin/userreport" element={<UserReport />} />
+            </>
+          )}
         </Routes>
       </div>
     </div>

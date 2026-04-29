@@ -5,7 +5,10 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Link, useNavigate } from "react-router-dom";
+
+import { WorkoutContext } from "../context/WorkoutContext";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
 import CoachDashboardView from "../components/CoachDashboardView";
@@ -20,6 +23,10 @@ import {
 
 function Dashboard() {
   const { user, activeRole } = useContext(AuthContext);
+  const { setActiveWorkout } = useContext(WorkoutContext);
+  const [subscription, setSubscription] = useState(null);
+  const [subLoading, setSubLoading] = useState(true);
+  const navigate = useNavigate();
 
   const [myCoach, setMyCoach] = useState({ state: "loading", coach: null });
 
@@ -41,12 +48,126 @@ function Dashboard() {
     }
   }, [activeRole]);
 
+  const fetchMySubscription = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:4000/api/client/subscription", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Active-Role": activeRole,
+        },
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setSubscription(data);
+    } catch {
+      setSubscription(null);
+    } finally {
+      setSubLoading(false);
+    }
+  }, [activeRole]);
+
+  useEffect(() => {
+    if (activeRole === "client") fetchMySubscription();
+  }, [activeRole, fetchMySubscription]);
+
+  const handleCancelSubscription = async () => {
+    if (
+      !window.confirm(
+        "Cancel your subscription? You'll keep access until the end date."
+      )
+    )
+      return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/subscriptions/${subscription.subscription_id}/cancel`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
+        }
+      );
+      if (!res.ok) throw new Error();
+      fetchMySubscription();
+    } catch {
+      alert("Could not cancel. Please try again.");
+    }
+  };
+
   useEffect(() => {
     if (activeRole === "client") {
       fetchMyCoach();
     }
   }, [activeRole, fetchMyCoach]);
 
+  // Today's assigned workout (from coach)
+  const [todayAssignment, setTodayAssignment] = useState(null);
+  const [todayLoading, setTodayLoading] = useState(true);
+
+  const fetchTodayAssignment = useCallback(async () => {
+    if (activeRole !== "client") return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(
+        "http://localhost:4000/api/client/my-assigned-workouts",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+
+      // Filter to today's date
+      const todayStr = new Date().toISOString().split("T")[0];
+      const todays = (data.data || []).find((a) => a.due_date === todayStr);
+      setTodayAssignment(todays || null);
+    } catch (err) {
+      console.error(err);
+      setTodayAssignment(null);
+    } finally {
+      setTodayLoading(false);
+    }
+  }, [activeRole]);
+
+  useEffect(() => {
+    if (activeRole === "client") {
+      fetchTodayAssignment();
+    }
+  }, [activeRole, fetchTodayAssignment]);
+
+  const handleStartAssignedWorkout = (assignment) => {
+    const w = assignment.Workout;
+
+    if (!w) return;
+
+    const workoutForActive = {
+      id: w.workout_id,
+      assignmentId: assignment.assigned_workout_id,
+      name: w.title,
+      estimated_minutes: w.estimated_minutes,
+      exercises: (w.Exercises || []).map((ex) => ({
+        exercise_id: ex.exercise_id,
+        name: ex.name,
+        sets: ex.workout_exercise?.sets,
+        reps: ex.workout_exercise?.reps,
+        breakTime: ex.workout_exercise?.rest_seconds || 10,
+      })),
+    };
+
+    if (workoutForActive.exercises.length === 0) {
+      alert("This workout has no exercises yet. Ask your coach to add some.");
+      return;
+    }
+
+    setActiveWorkout(workoutForActive);
+    navigate("/workouts/active");
+  };
   const handleCancelRequest = async () => {
     if (!window.confirm("Cancel your request to this coach?")) return;
     const token = localStorage.getItem("token");
@@ -71,15 +192,6 @@ function Dashboard() {
     mealPath: "/logs",
   };
 
-  const todaysWorkout = {
-    title: "",
-    level: "",
-    duration: "",
-    caloriesBurn: "",
-    streak: "",
-    image: "",
-  };
-
   const [wellness, setWellness] = useState({
     sleepHours: 0,
     waterCurrent: 0,
@@ -101,9 +213,9 @@ function Dashboard() {
   const [weightInput, setWeightInput] = useState("");
   const [weightData, setWeightData] = useState([]);
   const [stepData, setStepData] = useState([]);
-  const [mealChartData, setMealChartData] = useState([]); 
-  const [workoutChartData, setWorkoutChartData] = useState([]); 
-  const [selectedMacroDate, setSelectedMacroDate] = useState(new Date()); 
+  const [mealChartData, setMealChartData] = useState([]);
+  const [workoutChartData, setWorkoutChartData] = useState([]);
+  const [selectedMacroDate, setSelectedMacroDate] = useState(new Date());
 
   const [selectedMetric, setSelectedMetric] = useState("weight");
   const [selectedTimeView, setSelectedTimeView] = useState("daily");
@@ -182,15 +294,18 @@ function Dashboard() {
       );
       if (!res.ok) throw new Error("Failed to approve");
 
-      const existingNotifications = JSON.parse(localStorage.getItem(`clientNotifications-${clientUserId}`)) || []; 
+      const existingNotifications =
+        JSON.parse(
+          localStorage.getItem(`clientNotifications-${clientUserId}`)
+        ) || [];
 
-      const newNotification = { 
-        message: `${user?.first_name} accepted your coaching request.`, 
+      const newNotification = {
+        message: `${user?.first_name} accepted your coaching request.`,
         date: new Date().toLocaleString(),
         read: false,
-      }; 
+      };
       localStorage.setItem(
-        `clientNotifications-${clientUserId}`, 
+        `clientNotifications-${clientUserId}`,
         JSON.stringify([newNotification, ...existingNotifications])
       );
 
@@ -216,15 +331,18 @@ function Dashboard() {
         }
       );
       if (!res.ok && res.status !== 204) throw new Error("Failed to reject");
-      const existingNotifications = JSON.parse(localStorage.getItem(`clientNotifications-${clientUserId}`)) || []; 
+      const existingNotifications =
+        JSON.parse(
+          localStorage.getItem(`clientNotifications-${clientUserId}`)
+        ) || [];
 
-      const newNotification = { 
-        message: `${user?.first_name} rejected your coaching request.`, 
+      const newNotification = {
+        message: `${user?.first_name} rejected your coaching request.`,
         date: new Date().toLocaleString(),
         read: false,
-      }; 
+      };
       localStorage.setItem(
-        `clientNotifications-${clientUserId}`, 
+        `clientNotifications-${clientUserId}`,
         JSON.stringify([newNotification, ...existingNotifications])
       );
       fetchCoachData();
@@ -459,25 +577,25 @@ function Dashboard() {
     #6ca6ff ${proteinPercent + fiberPercent + carbsPercent}% 100%
   )`;
 
-  const formatDay = (date) => new Date(date).toLocaleDateString(); 
+  const formatDay = (date) => new Date(date).toLocaleDateString();
 
   const groupByDay = useCallback((items, dateKey, valueKey) => {
-  const grouped = {}; 
+    const grouped = {};
 
-  items.forEach((item) => {
-    if(!item[dateKey]) return; 
+    items.forEach((item) => {
+      if (!item[dateKey]) return;
 
-    const day = formatDay(item[dateKey]); 
-    grouped[day] = (grouped[day] || 0) + (Number(item[valueKey]) || 0); 
-  }); 
+      const day = formatDay(item[dateKey]);
+      grouped[day] = (grouped[day] || 0) + (Number(item[valueKey]) || 0);
+    });
 
-  return Object.entries(grouped).map(([day, value]) => ({
-    day, 
-    value,
-  }));
- }, []); 
+    return Object.entries(grouped).map(([day, value]) => ({
+      day,
+      value,
+    }));
+  }, []);
 
- const chartData = useMemo(() => {
+  const chartData = useMemo(() => {
     const groupedByDay = {};
 
     weightData.forEach((entry) => {
@@ -495,11 +613,11 @@ function Dashboard() {
   }, [weightData]);
 
   const stepChartData = stepData.map((entry) => ({
-    day: formatDay(entry.label), 
-    value: Number(entry.value) || 0, 
+    day: formatDay(entry.label),
+    value: Number(entry.value) || 0,
   }));
 
-  const calorieChartData = mealChartData; 
+  const calorieChartData = mealChartData;
 
   const volumeChartData = workoutChartData;
 
@@ -567,105 +685,111 @@ function Dashboard() {
   };
 
   const saveWellnessField = (field) => {
-    const value = Number(wellnessInputs[field]) || 0; 
+    const value = Number(wellnessInputs[field]) || 0;
 
     setWellness((prev) => ({
       ...prev,
-      [field]: value, 
-    })); 
+      [field]: value,
+    }));
 
-    if (field === "stepLog"){
-      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || []; 
-      const today = new Date().toLocaleDateString(); 
+    if (field === "stepLog") {
+      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
+      const today = new Date().toLocaleDateString();
 
       const filteredSteps = savedSteps.filter(
-        (entry) => new Date(entry.label).toLocaleDateString() !== today); 
-      
+        (entry) => new Date(entry.label).toLocaleDateString() !== today
+      );
+
       const newEntry = {
         label: new Date().toISOString(),
-        value, 
-      }; 
+        value,
+      };
 
-      const updatedSteps = [...filteredSteps, newEntry]; 
+      const updatedSteps = [...filteredSteps, newEntry];
 
-      localStorage.setItem("stepData", JSON.stringify(updatedSteps)); 
-      setStepData(updatedSteps); 
+      localStorage.setItem("stepData", JSON.stringify(updatedSteps));
+      setStepData(updatedSteps);
     }
     setEditingCard(null);
-  }; 
+  };
 
   useEffect(() => {
-    const savedSteps = JSON.parse(localStorage.getItem("stepData")) || []; 
-    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || []; 
-    const savedWorkouts = JSON.parse(localStorage.getItem("loggedWorkouts")) || []; 
+    const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
+    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
+    const savedWorkouts =
+      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
 
-    setStepData(savedSteps); 
+    setStepData(savedSteps);
 
     setMealChartData(groupByDay(savedMeals, "date", "calories"));
     setWorkoutChartData(groupByDay(savedWorkouts, "date", "duration"));
-  }, [groupByDay]); 
+  }, [groupByDay]);
 
- const deleteTodayMetric = (field) => {
-  const today = new Date().toLocaleDateString(); 
+  const deleteTodayMetric = (field) => {
+    const today = new Date().toLocaleDateString();
 
-  setWellness((prev) => ({
-    ...prev, 
-    [field]: 0, 
-  })); 
+    setWellness((prev) => ({
+      ...prev,
+      [field]: 0,
+    }));
 
-  if (field === "stepLog"){
-    const savedSteps = JSON.parse(localStorage.getItem("stepData")) || []; 
+    if (field === "stepLog") {
+      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
 
-    const updatedSteps = savedSteps.filter(
-      (entry) => new Date(entry.label).toLocaleDateString() !== today ); 
+      const updatedSteps = savedSteps.filter(
+        (entry) => new Date(entry.label).toLocaleDateString() !== today
+      );
 
-    localStorage.setItem("stepData", JSON.stringify(updatedSteps)); 
-    setStepData(updatedSteps); 
-  }
-
-  const savedWellness = JSON.parse(localStorage.getItem("loggedWellness")) || []; 
-
-  const updatedWellness = savedWellness.filter( (entry) => entry.date !== today); 
-
-  localStorage.setItem("loggedWellness", JSON.stringify(updatedWellness)); 
- }; 
-
- const changeMacroDay = (amount) => {
-  setSelectedMacroDate((prevDate) => {
-    const newDate = new Date(prevDate); 
-    newDate.setDate(newDate.getDate() + amount); 
-    return newDate; 
-  }); 
- };
-
- const selectedMacroDateText = 
-  selectedMacroDate.toLocaleDateString() === new Date().toLocaleDateString() ? "Today" : selectedMacroDate.toLocaleDateString(); 
-
-  const navigate = useNavigate(); 
-
-  useEffect(() => {
-    const today = new Date().toLocaleDateString(); 
-
-    const lastCheckinDate = localStorage.getItem("lastDailyCheckin"); 
-
-    if(lastCheckinDate !== today) {
-      navigate("/daily-checkin"); 
+      localStorage.setItem("stepData", JSON.stringify(updatedSteps));
+      setStepData(updatedSteps);
     }
-  }, [navigate]); 
+
+    const savedWellness =
+      JSON.parse(localStorage.getItem("loggedWellness")) || [];
+
+    const updatedWellness = savedWellness.filter(
+      (entry) => entry.date !== today
+    );
+
+    localStorage.setItem("loggedWellness", JSON.stringify(updatedWellness));
+  };
+
+  const changeMacroDay = (amount) => {
+    setSelectedMacroDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setDate(newDate.getDate() + amount);
+      return newDate;
+    });
+  };
+
+  const selectedMacroDateText =
+    selectedMacroDate.toLocaleDateString() === new Date().toLocaleDateString()
+      ? "Today"
+      : selectedMacroDate.toLocaleDateString();
 
   useEffect(() => {
-    const today = new Date(); 
+    const today = new Date().toLocaleDateString();
 
-    const isSunday = today.getDay() === 0; 
+    const lastCheckinDate = localStorage.getItem("lastDailyCheckin");
+
+    if (lastCheckinDate !== today) {
+      navigate("/daily-checkin");
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const today = new Date();
+
+    const isSunday = today.getDay() === 0;
 
     const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
-    const lastWeeklyCheckin = localStorage.getItem("lastWeeklyCheckin"); 
+    const lastWeeklyCheckin = localStorage.getItem("lastWeeklyCheckin");
 
-    if (isSunday && lastWeeklyCheckin !== thisWeek){
-      navigate("/weekly-checkin"); 
+    if (isSunday && lastWeeklyCheckin !== thisWeek) {
+      navigate("/weekly-checkin");
     }
-  }, [navigate]); 
+  }, [navigate]);
 
   return (
     <div className="dashboard-page">
@@ -781,33 +905,166 @@ function Dashboard() {
               </section>
             )}
 
+            {activeRole === "client" && (
+              <section className="dashboard-section">
+                <div className="section-title">My Subscription</div>
+                <div className="my-coach-card">
+                  {subLoading && (
+                    <div className="my-coach-loading">Loading...</div>
+                  )}
+
+                  {!subLoading && !subscription && (
+                    <div className="my-coach-empty">
+                      <div className="my-coach-empty-icon">💳</div>
+                      <div className="my-coach-empty-text">
+                        <h4>No active subscription.</h4>
+                        <p>Browse a coach's profile and subscribe to a plan.</p>
+                      </div>
+                      <Link to="/coach" className="my-coach-cta">
+                        Browse Coaches →
+                      </Link>
+                    </div>
+                  )}
+
+                  {!subLoading &&
+                    subscription &&
+                    (() => {
+                      const end = new Date(subscription.end_date);
+                      const today = new Date();
+                      const daysLeft = Math.max(
+                        0,
+                        Math.ceil((end - today) / 86400000)
+                      );
+                      return (
+                        <div className="my-coach-active">
+                          <div className="my-coach-info">
+                            <div className="my-coach-name-row">
+                              <h4 className="my-coach-name">
+                                {subscription.coach?.first_name}{" "}
+                                {subscription.coach?.last_name}
+                              </h4>
+                              <span
+                                className={`my-coach-status-pill ${subscription.status}`}
+                              >
+                                {subscription.status.charAt(0).toUpperCase() +
+                                  subscription.status.slice(1)}
+                              </span>
+                            </div>
+                            <p className="my-coach-specialty">
+                              {subscription.coachingPlan?.title}
+                            </p>
+                            <p className="my-coach-hint">
+                              {subscription.status === "cancelled"
+                                ? `Access until ${new Date(
+                                    subscription.end_date
+                                  ).toLocaleDateString()}`
+                                : `${daysLeft} day${
+                                    daysLeft !== 1 ? "s" : ""
+                                  } remaining`}
+                            </p>
+                          </div>
+                          <div className="my-coach-actions">
+                            <Link
+                              to={`/coach/${subscription.coach_id}`}
+                              className="my-coach-btn-secondary"
+                            >
+                              View Coach
+                            </Link>
+                            {subscription.status === "active" && (
+                              <button
+                                onClick={handleCancelSubscription}
+                                className="my-coach-btn-danger"
+                              >
+                                Cancel Plan
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                </div>
+              </section>
+            )}
+
             <section className="dashboard-section">
               <div className="section-title">Today's Workout</div>
               <div className="dashboard-card workout-card">
-                <div className="workout-image"></div>
+                {todayLoading ? (
+                  <div className="workout-empty">Loading...</div>
+                ) : todayAssignment ? (
+                  <>
+                    <div className="workout-image"></div>
+                    <div className="workout-info">
+                      <div className="workout-header-row">
+                        <div>
+                          <div className="workout-title">
+                            {todayAssignment.Workout?.title || "Workout"}
+                          </div>
+                          {todayAssignment.coach && (
+                            <div className="workout-coach">
+                              From {todayAssignment.coach.first_name}{" "}
+                              {todayAssignment.coach.last_name}
+                            </div>
+                          )}
+                        </div>
+                        <span className="workout-level">Today</span>
+                      </div>
 
-                <div className="workout-info">
-                  <div className="workout-header-row">
-                    <div>
-                      <div className="workout-title">{todaysWorkout.title}</div>
+                      <div className="workout-meta">
+                        {todayAssignment.Workout?.estimated_minutes && (
+                          <span>
+                            {todayAssignment.Workout.estimated_minutes} min
+                          </span>
+                        )}
+                        {todayAssignment.Workout?.description && (
+                          <span>{todayAssignment.Workout.description}</span>
+                        )}
+                      </div>
+
+                      {todayAssignment.coach_notes && (
+                        <div className="workout-coach-notes">
+                          "{todayAssignment.coach_notes}"
+                        </div>
+                      )}
+
+                      <div className="workout-footer">
+                        {todayAssignment.status === "completed" ? (
+                          <div className="workout-completed-pill">
+                            ✓ Completed
+                            {todayAssignment.completed_at &&
+                              ` at ${new Date(
+                                todayAssignment.completed_at
+                              ).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}`}
+                          </div>
+                        ) : (
+                          <button
+                            className="start-workout-btn"
+                            onClick={() =>
+                              handleStartAssignedWorkout(todayAssignment)
+                            }
+                          >
+                            Start Workout
+                          </button>
+                        )}
+                        <Link to="/calendar" className="streak-text">
+                          View calendar →
+                        </Link>
+                      </div>
                     </div>
-                    <span className="workout-level">{todaysWorkout.level}</span>
-                  </div>
-
-                  <div className="workout-meta">
-                    <span>{todaysWorkout.duration} min</span>
-                    <span>{todaysWorkout.caloriesBurn} kcal</span>
-                  </div>
-
-                  <div className="workout-footer">
-                    <Link to="/workouts" className="start-workout-btn">
-                      Start Workout
+                  </>
+                ) : (
+                  <div className="workout-empty-state">
+                    <div className="workout-empty-icon">📭</div>
+                    <h4>No workout assigned for today</h4>
+                    <p>Check your calendar for upcoming workouts.</p>
+                    <Link to="/calendar" className="start-workout-btn">
+                      View Calendar
                     </Link>
-                    <span className="streak-text">
-                      {todaysWorkout.streak} day streak
-                    </span>
                   </div>
-                </div>
+                )}
               </div>
             </section>
 
@@ -899,12 +1156,12 @@ function Dashboard() {
                       {wellness.sleepHours} <span>hours</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("sleepHours")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
 
@@ -946,12 +1203,12 @@ function Dashboard() {
                       {wellness.waterCurrent} <span>ounces</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("waterCurrent")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
 
@@ -993,12 +1250,12 @@ function Dashboard() {
                       {wellness.heartLog} <span>bpm</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("heartLog")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
 
@@ -1060,12 +1317,12 @@ function Dashboard() {
                       {wellness.stepLog} <span>steps</span>
                     </p>
                   )}
-                  <button 
+                  <button
                     type="button"
                     className="delete-metric-btn"
                     onClick={() => deleteTodayMetric("stepLog")}
-                  > 
-                  Delete Today
+                  >
+                    Delete Today
                   </button>
                 </div>
               </div>
@@ -1078,15 +1335,15 @@ function Dashboard() {
                 <div className="widget-header">
                   <h4>Macros</h4>
 
-                  <div className="macro-date-controls"> 
+                  <div className="macro-date-controls">
                     <button type="button" onClick={() => changeMacroDay(-1)}>
                       &lt;
                     </button>
                     <span>{selectedMacroDateText}</span>
-                    <button type="button" onClick={() => changeMacroDay(1)}> 
-                      &gt; 
+                    <button type="button" onClick={() => changeMacroDay(1)}>
+                      &gt;
                     </button>
-                    </div> 
+                  </div>
                 </div>
 
                 <div className="macro-donut-wrap">

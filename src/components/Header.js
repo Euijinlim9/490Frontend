@@ -4,8 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import "../styles/Header.css";
 
 function Header() {
-  const { user, logout, activeRole, setActiveRole } =
-    useContext(AuthContext);
+  const { user, logout, activeRole, setActiveRole } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -71,13 +70,14 @@ function Header() {
             </Link>
           </>
         )}
-
         {activeRole === "coach" && (
           <>
             <Link to="/workouts" className="nav-btn">
               Workouts
             </Link>
-
+            <Link to="/coach/plans" className="nav-btn">
+              Plans
+            </Link>
             <Link to="/calendar" className="nav-btn">
               Schedule
             </Link>
@@ -207,9 +207,7 @@ function Header() {
                 <div
                   className="dropdown-item"
                   onClick={() => {
-                    setActiveRole(
-                      activeRole === "coach" ? "client" : "coach"
-                    );
+                    setActiveRole(activeRole === "coach" ? "client" : "coach");
                     setShowDropdown(false);
                   }}
                 >

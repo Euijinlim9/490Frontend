@@ -46,9 +46,6 @@
   gap: 16px;
 }
 
-/* ============================================
-     Header card — cover + avatar + info + stats
-     ============================================ */
 .cp-header-card {
   background: #161920;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -208,9 +205,6 @@
   color: #fff;
 }
 
-/* ============================================
-     Content cards
-     ============================================ */
 .cp-card {
   background: #161920;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -249,9 +243,6 @@
   font-size: 0.85rem;
 }
 
-/* ============================================
-     Section headers (Packages tab)
-     ============================================ */
 .cp-section-header {
   padding: 12px 4px 4px;
 }
@@ -414,9 +405,6 @@
   cursor: not-allowed;
 }
 
-/* ============================================
-     Session booking card
-     ============================================ */
 .cp-booking-card {
   background: #161920;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -520,9 +508,6 @@
   cursor: not-allowed;
 }
 
-/* ============================================
-     Empty states
-     ============================================ */
 .cp-empty {
   text-align: center;
   padding: 60px 20px;
@@ -549,27 +534,138 @@
   line-height: 1.5;
 }
 
-.cp-review-form{
-  display: flex; 
-  flex-direction: column; 
-  gap: 14px; 
-  margin-bottom: 28px; 
+/* ============================================
+   Subscribe Modal
+   ============================================ */
+.cp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
 }
 
-.cp-review-input{
-  width: 100%; 
-  box-sizing: border-box; 
-  min-height: 90px; 
+.cp-modal {
+  background: #161920;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 32px;
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cp-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: #8a909a;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cp-modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.cp-modal-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.cp-modal-plan-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6ca6ff;
+  background: rgba(108, 166, 255, 0.08);
+  border: 1px solid rgba(108, 166, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+
+.cp-modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.cp-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.cp-modal-row span {
+  color: #8a909a;
+}
+
+.cp-modal-row strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.cp-modal-desc {
+  margin: 0;
+  color: #8a909a;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.cp-modal-confirm-btn {
+  width: 100%;
+  padding: 13px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: #6ca6ff;
+  color: #0d0f14;
+  border: none;
+  border-radius: 10px;
+}
+.cp-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.cp-review-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 90px;
   resize: vertical;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08); 
-  border-radius: 12px; 
-  padding: 14px 16px; 
-  resize: none; 
-  color: #fff; 
-  font-size: 0.92rem; 
-  outline: none; 
-  transition: border 0.15s ease, background 0.15s ease; 
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  resize: none;
+  color: #fff;
+  font-size: 0.92rem;
+  outline: none;
+  transition: border 0.15s ease, background 0.15s ease;
 }
 
 .cp-review-input:focus {
@@ -609,6 +705,31 @@
   transition: background 0.15s ease, transform 0.15s ease;
 }
 
+.cp-modal-confirm-btn:hover:not(:disabled) {
+  background: #5a95ee;
+  transform: translateY(-1px);
+}
+
+.cp-modal-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cp-modal-disclaimer {
+  margin: 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #4a505a;
+}
+
+/* plan card description */
+.cp-program-desc {
+  margin: 0;
+  color: #8a909a;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  flex: 1;
+}
 .cp-review-btn:hover {
   background: #e6e6e6;
   transform: translateY(-1px);
@@ -673,7 +794,7 @@
   gap: 14px;
 }
 
-.cp-report-select{
+.cp-report-select {
   width: 100%;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
