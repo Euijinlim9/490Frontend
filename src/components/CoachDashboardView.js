@@ -18,6 +18,7 @@ function CoachDashboardView({
   loading,
   onApprove,
   onReject,
+  onDropClient, 
   getTimeAgo,
 }) {
   const navigate = useNavigate();
@@ -308,12 +309,22 @@ function CoachDashboardView({
                       ).toLocaleDateString()}`
                     : "Recently joined"}
                 </p>
-                <button
-                  className="coach-client-view"
-                  onClick={() => navigate(`/coach/clients/${client.user_id}`)}
-                >
-                  View Details
+
+                <div className="coach-client-actions">
+                  <button
+                    className="coach-client-view"
+                    onClick={() => navigate(`/coach/client/${client.user_id}`)}
+                  >
+                    View Details
                 </button>
+
+                  <button
+                    className="coach-client-drop"
+                    onClick={() => onDropClient(client.user_id, client.first_name)}
+                  >
+                    Drop Client
+                  </button>
+                </div>
               </div>
             ))}
           </div>
