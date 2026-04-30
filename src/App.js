@@ -49,6 +49,49 @@ function App() {
       <Header />
       </>
     )}
+import LogMeal from "./pages/LogMeal";
+import LogWorkout from "./pages/LogWorkout";
+import LogWellness from "./pages/LogWellness";
+import PremadeMeals from "./pages/PremadeMeals";
+import CoachPlans from "./pages/CoachPlans";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsService from "./pages/TermsService";
+import Features from "./pages/Features";
+import Pricing from "./pages/Pricing";
+import About from "./pages/About";
+import HowItWorks from "./pages/HowItWorks";
+import Contact from "./pages/Contact";
+import Careers from "./pages/Careers";
+import WeeklyCheckIn from "./pages/WeeklyCheckIn";
+import DailyCheckIns from "./pages/DailyCheckIns";
+import Notifications from "./pages/Notifications";
+import ClientProgress from "./pages/ClientProgress";
+
+function App() {
+  const location = useLocation();
+  const { activeRole } = useContext(AuthContext);
+
+  const hideMainHeader =
+    location.pathname === "/" ||
+    location.pathname === "/home" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/login" ||
+    location.pathname === "/privacy" ||
+    location.pathname === "/terms" ||
+    location.pathname === "/features" ||
+    location.pathname === "/how" ||
+    location.pathname === "/pricing" ||
+    location.pathname === "/about" ||
+    location.pathname === "/careers" ||
+    location.pathname === "/contact";
+
+  return (
+    <div className="body">
+      {!hideMainHeader && (
+        <>
+          <Header />
+        </>
+      )}
 
       <div className="page-content">
         <Routes>
@@ -60,6 +103,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<Coach />} />
+          <Route path="/coach/plans" element={<CoachPlans />} />
           <Route path="/coach/:id" element={<CoachDetails />} />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/workouts/custom" element={<CustomWorkout />} />
@@ -74,20 +118,41 @@ function App() {
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
           <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
-            {/*{activeRole === "admin" && (
-              <> */}
+          <Route
+            path="/test-survey"
+            element={<ClientSurvey show={true} onClose={() => {}} />}
+          />
+          <Route path="/log-meal" element={<LogMeal />} />
+          <Route path="/log-workout" element={<LogWorkout />} />
+          <Route path="/log-wellness" element={<LogWellness />} />
+          <Route path="/premade-meals" element={<PremadeMeals />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsService />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/how" element={<HowItWorks />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/weekly-checkin" element={<WeeklyCheckIn />} />
+          <Route path="/daily-checkin" element={<DailyCheckIns />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route
+            path="/coach/client/:clientUserId"
+            element={<ClientProgress />}
+          />
               <Route path="/admin/coachapp" element={<CoachApplications />} />
               <Route path="/admin/viewusers" element={<ViewUsers />} />
               <Route path="/admin/exercise" element={<AdminExercise />} />
               <Route path="/admin/userreport" element={<UserReport />} />
               <Route path="/admin/admindash" element={<AdminDashboard />} />
-              {/*</>
-            )} */}
 
           <Route path="/log-meal" element={<LogMeal />} />
           <Route path="/log-workout" element={<LogWorkout />} /> 
           <Route path="/log-wellness" element={<LogWellness />} /> 
           <Route path="/premade-meals" element={<PremadeMeals />} />
+            </>
+          )}{" "}
         </Routes>
       </div>
     </div>

@@ -71,12 +71,16 @@ function PremadeWorkouts() {
     name: w.title,
     isPublic: true,
     estimated_minutes: w.estimated_minutes,
-    exercises: (w.Exercises || []).map((ex) => ({
-      name: ex.name,
-      sets: ex.workout_exercise?.sets,
-      reps: ex.workout_exercise?.reps,
-      breakTime: ex.workout_exercise?.rest_seconds || 10,
-    })),
+    exercises: (w.Exercises || []).map((ex) => {
+      console.log("DEBUG single exercise:", ex);
+      return {
+        exercise_id: ex.exercise_id,
+        name: ex.name,
+        sets: ex.workout_exercise?.sets,
+        reps: ex.workout_exercise?.reps,
+        breakTime: ex.workout_exercise?.rest_seconds || 10,
+      };
+    }),
   }));
 
   const ExerciseList = ({ exercises }) => (

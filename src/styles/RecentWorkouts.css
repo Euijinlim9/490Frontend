@@ -86,3 +86,59 @@
   color: #cfd6de;
   text-align: center;
 }
+
+.meal-card,
+.recent-workout-card {
+  position: relative;
+}
+
+.delete-log-btn {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 80, 80, 0.35);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-log-btn:hover {
+  background: rgba(255, 80, 80, 0.25);
+}
+
+.recent-workout-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+  color: #c7d0da;
+  font-size: 13px;
+}
+
+.recent-workout-divider {
+  opacity: 0.4;
+}
+
+.recent-workout-date {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #8d98a7;
+}
+
+.recent-workout-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.recent-workout-minutes {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #6ca6ff;
+  font-weight: 500;
+}

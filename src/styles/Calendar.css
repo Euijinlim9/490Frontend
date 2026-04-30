@@ -349,3 +349,94 @@
 .modal-close-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
+
+/* Status badges on calendar */
+.cal-status-assigned {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.cal-status-completed {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.cal-status-skipped {
+  background: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+}
+
+/* Upcoming workouts list */
+.cal-event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.cal-event-title {
+  color: #e5e5e5;
+}
+
+.cal-event-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* Modal — assignment details */
+.modal-assignments {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.modal-assignment {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-assignment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.modal-assignment-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e5e5e5;
+}
+
+.modal-assignment-desc {
+  margin: 4px 0 8px 0;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.modal-assignment-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.modal-coach-notes {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(108, 166, 255, 0.08);
+  border-left: 2px solid #6ca6ff;
+  font-size: 13px;
+  color: #ccc;
+  font-style: italic;
+  border-radius: 0 4px 4px 0;
+}
