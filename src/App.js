@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
+import { useContext } from "react";
 
 import Header from "./components/Header";
 
@@ -30,25 +31,6 @@ import ViewUsers from "./pages/adminpages/ViewUsers";
 import AdminExercise from "./pages/adminpages/AdminExercise";
 import UserReport from "./pages/adminpages/UserReports";
 import AdminDashboard from "./pages/adminpages/AdminDashboard";
-import LogMeal from "./pages/LogMeal"; 
-import LogWorkout from "./pages/LogWorkout"; 
-import LogWellness from "./pages/LogWellness"; 
-import PremadeMeals from "./pages/PremadeMeals"; 
-
-function App() {
-  const location = useLocation();
-
-  const hideHeader = location.pathname === "/";
-  const hideHeader2 = location.pathname === "/signup";
-  const hideHeader3 = location.pathname === "/login";
-
-  return (
-    <div className="body">
-      {!hideHeader && !hideHeader2 && !hideHeader3 && (
-      <>
-      <Header />
-      </>
-    )}
 import LogMeal from "./pages/LogMeal";
 import LogWorkout from "./pages/LogWorkout";
 import LogWellness from "./pages/LogWellness";
@@ -66,6 +48,7 @@ import WeeklyCheckIn from "./pages/WeeklyCheckIn";
 import DailyCheckIns from "./pages/DailyCheckIns";
 import Notifications from "./pages/Notifications";
 import ClientProgress from "./pages/ClientProgress";
+import { AuthContext } from "./context/AuthContext";
 
 function App() {
   const location = useLocation();
@@ -117,7 +100,10 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
-          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
+          <Route
+            path="/test-survey"
+            element={<ClientSurvey show={true} onClose={() => {}} />}
+          />
           <Route
             path="/test-survey"
             element={<ClientSurvey show={true} onClose={() => {}} />}
@@ -141,18 +127,16 @@ function App() {
             path="/coach/client/:clientUserId"
             element={<ClientProgress />}
           />
-              <Route path="/admin/coachapp" element={<CoachApplications />} />
-              <Route path="/admin/viewusers" element={<ViewUsers />} />
-              <Route path="/admin/exercise" element={<AdminExercise />} />
-              <Route path="/admin/userreport" element={<UserReport />} />
-              <Route path="/admin/admindash" element={<AdminDashboard />} />
+          <Route path="/admin/coachapp" element={<CoachApplications />} />
+          <Route path="/admin/viewusers" element={<ViewUsers />} />
+          <Route path="/admin/exercise" element={<AdminExercise />} />
+          <Route path="/admin/userreport" element={<UserReport />} />
+          <Route path="/admin/admindash" element={<AdminDashboard />} />
 
           <Route path="/log-meal" element={<LogMeal />} />
-          <Route path="/log-workout" element={<LogWorkout />} /> 
-          <Route path="/log-wellness" element={<LogWellness />} /> 
+          <Route path="/log-workout" element={<LogWorkout />} />
+          <Route path="/log-wellness" element={<LogWellness />} />
           <Route path="/premade-meals" element={<PremadeMeals />} />
-            </>
-          )}{" "}
         </Routes>
       </div>
     </div>
