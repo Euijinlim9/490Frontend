@@ -1,0 +1,121 @@
+.reports-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.reports-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.reports-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reports-table th {
+    text-align: left;
+    font-weight: 600;
+    color: #777;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.reports-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.report-modal{
+    background: rgb(204, 204, 204);
+    width: 550px;
+    max-width: 100%;
+    border-radius: 5px;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.severity-critical {
+    background: #ffe5e5;
+    color: #d10000;
+}
+
+.severity-high {
+    background: #fff3e0;
+    color: #ff8c00;
+}
+
+.severity-medium {
+    background: #fff3e0;
+    color: #1efb38;
+}
+
+.severity-low {
+    background: #eee;
+    color: #555;
+}
+
+.status-open {
+    background: #ffecec;
+}
+
+.status-under_review {
+    background: #fff8dc;
+}
+
+.status-resolved {
+    background: #e6ffe6;
+}
+
+.status-dismissed {
+    background: #eee;
+}
+
+.viewreport-btn{
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.06),
+        rgba(255, 255, 255, 0.025)
+        );
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    color: white;
+}
+
+.font-style{
+    color:white;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.report-back-btn{
+    background-color:#747474;
+    font-size: 20px;
+    border:none;
+    border-radius: 5px;
+}
+
+.report-btn-footer{
+    justify-content: right;
+    display:flex;
+    border-top: 1px;
+    padding: 10px 10px;
+    gap:10px;
+}
+
+.report-header h2{
+    text-align: center;
+    color:rgb(255, 255, 255);
+    font-family: Arial, Helvetica, sans-serif;
+}

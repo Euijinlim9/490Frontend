@@ -9,8 +9,9 @@ function Header() {
   const navigate = useNavigate();
 
   const [showDropdown, setShowDropdown] = useState(false);
-  const [notifications, setNotifications] = useState([]);
 
+  //const effectiveRole = activeRole || user?.role || "client"; 
+  const [notifications, setNotifications] = useState([]);
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -63,6 +64,23 @@ function Header() {
         <Link to="/dashboard" className="nav-btn">
           Dashboard
         </Link>
+
+        {activeRole === "admin" && (
+          <>
+            <Link to="/admin/coachapp" className="nav-btn">
+              Coach Applications
+            </Link>
+            <Link to="/admin/viewusers" className="nav-btn">
+            View All Accounts
+            </Link>
+            <Link to="/admin/exercise" className="nav-btn">
+              Exercises
+            </Link>
+            <Link to="/admin/userreport" className="nav-btn">
+              User Reports
+            </Link>
+          </>
+        )}
 
         {activeRole === "client" && (
           <>
