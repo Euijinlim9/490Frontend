@@ -461,6 +461,9 @@ async function runTests() {
     await testRoute(driver, "/profile", "Profile page");
     await testRoute(driver, "/recent-meals", "Recent Meals page");
     await testRoute(driver, "/recent-workouts", "Recent Workouts page");
+    await testRoute(driver, "/notifications", "Alerts page");
+
+
 
     console.log("All UI tests passed!");
   } catch (err) {
