@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import AssignWorkoutModal from "../components/AssignWorkoutModal";
 import "../styles/ClientProgress.css";
 import {
   LineChart,
@@ -25,56 +26,61 @@ function ClientProgress() {
     stress: [],
     motivation: [],
   });
+  const [assignedWorkouts, setAssignedWorkouts] = useState([]);
+  const [showAssignModal, setShowAssignModal] = useState(false);
 
-  useEffect(() => {
+  const fetchClientData = useCallback(async () => {
     const token = localStorage.getItem("token");
-
-    const fetchClientData = async () => {
-      try {
-        const clientRes = await fetch(
-          `http://localhost:4000/api/coach/clients/${clientUserId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Active-Role": "coach",
-            },
-          }
-        );
-
-        const workoutRes = await fetch(
-          `http://localhost:4000/api/coach/clients/${clientUserId}/workouts/logs`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Active-Role": "coach",
-            },
-          }
-        );
-
-        const clientData = await clientRes.json();
-        const workoutData = await workoutRes.json();
-
-        const workouts = workoutData.data || [];
-
-        setClient(clientData);
-        setWorkoutLogs(workouts);
-
-        const workoutChartData = workouts.map((log) => ({
-          day: new Date(log.date).toLocaleDateString(),
-          value: 1,
-        }));
-
-        setGraphData((prev) => ({
-          ...prev,
-          workouts: workoutChartData,
-        }));
-      } catch (err) {
-        console.error("Failed to load client progress:", err);
-      }
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "X-Active-Role": "coach",
     };
 
-    fetchClientData();
+    try {
+      const [clientRes, workoutRes, assignedRes] = await Promise.all([
+        fetch(`http://localhost:4000/api/coach/clients/${clientUserId}`, {
+          headers,
+        }),
+        fetch(
+          `http://localhost:4000/api/coach/clients/${clientUserId}/workouts/logs`,
+          { headers }
+        ),
+        fetch(
+          `http://localhost:4000/api/coach/clients/${clientUserId}/workouts/assigned`,
+          { headers }
+        ),
+      ]);
+
+      const clientData = await clientRes.json();
+      const workoutData = await workoutRes.json();
+      const assignedData = assignedRes.ok
+        ? await assignedRes.json()
+        : { data: [] };
+
+      const workouts = workoutData.data || [];
+      const assignments = assignedData.data || [];
+
+      setClient(clientData);
+      setWorkoutLogs(workouts);
+      setAssignedWorkouts(assignments);
+
+      const workoutChartData = workouts.map((log) => ({
+        day: new Date(log.date).toLocaleDateString(),
+        value: 1,
+      }));
+
+      setGraphData((prev) => ({
+        ...prev,
+        workouts: workoutChartData,
+      }));
+    } catch (err) {
+      console.error("Failed to load client progress:", err);
+    }
   }, [clientUserId]);
+
+  useEffect(() => {
+    fetchClientData();
+  }, [fetchClientData]);
 
   const graphOptions = {
     workouts: {
@@ -110,6 +116,31 @@ function ClientProgress() {
   };
 
   const currentGraph = graphOptions[selectedMetric];
+  const handleUnassign = async (assignmentId) => {
+    if (!window.confirm("Remove this assignment?")) return;
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/coach/assignments/${assignmentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": "coach",
+          },
+        }
+      );
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to remove assignment");
+      }
+      setAssignedWorkouts((prev) =>
+        prev.filter((a) => a.assigned_workout_id !== assignmentId)
+      );
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   if (!client) {
     return <div className="client-progress-page">Loading...</div>;
@@ -263,7 +294,68 @@ function ClientProgress() {
               </div>
             )}
           </section>
+          <section className="client-card">
+            <div className="client-card-header-row">
+              <h2 className="client-card-title">Assigned Workouts</h2>
+              <button
+                type="button"
+                className="cp-btn cp-btn-primary"
+                onClick={() => setShowAssignModal(true)}
+              >
+                + Assign Workout
+              </button>
+            </div>
 
+            {assignedWorkouts.length === 0 ? (
+              <p className="empty-state">
+                No workouts assigned yet. Click "Assign Workout" to get started.
+              </p>
+            ) : (
+              <div className="logs-list">
+                {assignedWorkouts.map((a) => {
+                  const workout = a.Workout || {};
+                  return (
+                    <div
+                      key={a.assigned_workout_id}
+                      className="log-card cp-assigned-card"
+                    >
+                      <div className="cp-assigned-info">
+                        <p className="log-title">
+                          {workout.title || "Workout"}
+                          <span
+                            className={`cp-status-badge cp-status-${a.status}`}
+                          >
+                            {a.status}
+                          </span>
+                        </p>
+                        <p className="log-date">
+                          {a.due_date
+                            ? `Due ${new Date(a.due_date).toLocaleDateString()}`
+                            : "No due date"}
+                          {a.assigned_at &&
+                            ` · Assigned ${new Date(
+                              a.assigned_at
+                            ).toLocaleDateString()}`}
+                        </p>
+                        {a.coach_notes && (
+                          <p className="cp-assigned-notes">{a.coach_notes}</p>
+                        )}
+                      </div>
+                      {a.status === "assigned" && (
+                        <button
+                          type="button"
+                          className="cp-btn cp-btn-ghost"
+                          onClick={() => handleUnassign(a.assigned_workout_id)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
           <section className="client-card">
             <h2 className="client-card-title">Workout Logs</h2>
 
@@ -285,12 +377,20 @@ function ClientProgress() {
 
           <section className="client-card">
             <h2 className="client-card-title">Diet Logs</h2>
-            <p className="empty-state">
-              Needs backend meal-log endpoint.
-            </p>
+            <p className="empty-state">Needs backend meal-log endpoint.</p>
           </section>
         </div>
       </div>
+      {showAssignModal && (
+        <AssignWorkoutModal
+          clientUserId={clientUserId}
+          onClose={() => setShowAssignModal(false)}
+          onAssigned={() => {
+            setShowAssignModal(false);
+            fetchClientData();
+          }}
+        />
+      )}
     </div>
   );
 }
