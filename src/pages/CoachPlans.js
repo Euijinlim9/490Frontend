@@ -26,7 +26,7 @@ function CoachPlans() {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token()}`,
     "X-Active-Role": activeRole,
-  });
+  }), [activeRole];
 
   const fetchPlans = useCallback(async () => {
     setLoading(true);
