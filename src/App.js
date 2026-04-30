@@ -48,11 +48,9 @@ import WeeklyCheckIn from "./pages/WeeklyCheckIn";
 import DailyCheckIns from "./pages/DailyCheckIns";
 import Notifications from "./pages/Notifications";
 import ClientProgress from "./pages/ClientProgress";
-import { AuthContext } from "./context/AuthContext";
 
 function App() {
   const location = useLocation();
-  const { activeRole } = useContext(AuthContext);
 
   const hideMainHeader =
     location.pathname === "/" ||

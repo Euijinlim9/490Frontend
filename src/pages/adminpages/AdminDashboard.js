@@ -102,7 +102,7 @@ function AdminDashboard(){
             );
             const data = await res.json();
             
-            const formatted = (data || []).map((item) => ({
+            const formatted = (data?.map ? data : []).map((item) => ({
                 name: item.date,
                 revenue: Number(item.revenue),
             }));
@@ -195,7 +195,7 @@ function AdminDashboard(){
                         <ResponsiveContainer width="100%" height={260}>
                             <LineChart data={engagementData}
                             margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
-                                <XAxis dataKey="date" />
+                                <XAxis dataKey="name" />
                                 <YAxis />
                                 <Tooltip />
                                 <Line
