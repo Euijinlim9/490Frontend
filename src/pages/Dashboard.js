@@ -828,15 +828,6 @@ function Dashboard() {
         stress: Number(entry.stress) || 0, 
         motivation: Number(entry.motivation) || 0,
       })); 
-    
-      const userWeekly = weeklyCheckins
-        .filter((entry) => entry.userId === user.user_id)
-        .map((entry) => ({
-          day: entry.date, 
-          weight: Number(entry.weight) || 0, 
-          energy: Number(entry.energy) || 0, 
-          stress: Number(entry.stress) || 0, 
-      })); 
 
       setDailySurveyChartData(userDaily); 
   }, [user]); 
