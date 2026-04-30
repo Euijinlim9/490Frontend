@@ -353,6 +353,18 @@ function Dashboard() {
         throw new Error("Failed to drop client");
       }
 
+      const existingNotifications = JSON.parse(localStorage.getItem(`clientNotifications-${clientUserId}`)) || []; 
+
+      const newNotification = {
+        message: `${user?.first_name} ended the coaching relationship. Payment will be canceled.`,
+        date: new Date().toLocaleString(),
+        read: false,
+      };
+
+      localStorage.setItem(`clientNotifications-${clientUserId}`, 
+        JSON.stringify([newNotification, ...existingNotifications])
+      );
+
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -782,16 +794,7 @@ function Dashboard() {
         energy: Number(entry.energy) || 0,
         stress: Number(entry.stress) || 0,
         motivation: Number(entry.motivation) || 0,
-      }));
-
-    const userWeekly = weeklyCheckins
-      .filter((entry) => entry.userId === user.user_id)
-      .map((entry) => ({
-        day: entry.date,
-        weight: Number(entry.weight) || 0,
-        energy: Number(entry.energy) || 0,
-        stress: Number(entry.stress) || 0,
-      }));
+      })); 
 
     setDailySurveyChartData(userDaily);
   }, [user]);
