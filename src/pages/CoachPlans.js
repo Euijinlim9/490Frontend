@@ -41,7 +41,7 @@ function CoachPlans() {
     } finally {
       setLoading(false);
     }
-  }, [activeRole, headers]);
+  }, [headers]);
 
   useEffect(() => {
     fetchPlans();
