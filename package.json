@@ -15,7 +15,8 @@
     "recharts": "^3.8.1",
     "selenium-webdriver": "^4.43.0",
     "socket.io-client": "^4.8.3",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yaml": "^2.8.3"
   },
   "scripts": {
     "start": "react-scripts start",

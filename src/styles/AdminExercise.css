@@ -1,0 +1,177 @@
+.exercise-admin-page{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.exercise-admin-container{
+    display:flex;
+    gap: 20px;
+    padding: 20px;
+}
+
+.exercise-admin-header{
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.exercise-admin-header h2{
+    text-align: center;
+    color:white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.admin-left-container{
+    width: 280px;
+    background: linear-gradient(135deg, rgba(76,76,76,0.2), rgba(0,0,0,0.2));
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.admin-right-container{
+    flex: 1;
+    background-image: linear-gradient(rgba(76, 76, 76, 0.1));
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+h2{
+    text-align: left;
+}
+
+.add-exercise-group{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.add-exercise-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.add-exercise-group input {
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(183, 182, 182, 0.05);
+  color: #666666;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.add-exercise-btn{
+    margin-left:40px;
+    margin-top: 20px;
+    padding: 12px 32px;
+    background-color: #4a9eff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.edit-exercise-btn{
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    color: white;
+    margin-right: 10px;
+    padding: 10px 16px;
+    font-size:14px;
+}
+
+.delete-exercise-btn{
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: red;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    color: white;
+    padding: 10px 16px;
+    font-size:14px;
+}
+
+.exercise-badge{
+    display: inline-block;
+    background: #b8b8b8;
+    color: #303030;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.edit-footer{
+    display:flex;
+    padding: 10px 10px;
+    gap:10px;
+    margin-left:330px;
+    padding: 12px 0;
+}
+
+.modal-btn2{
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.save-change-btn{
+    background: #4a9eff;
+    color: white;
+    border: none;
+}
+
+.cancel-btn{
+    background: red;
+    color: white;
+    border: none;
+
+}
+
+.modal h2{
+    color:black;
+    text-align: center;
+}
+
+.modal label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-left:10px;
+}
+
+.modal input {
+  padding: 14px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.121);
+  color: #333333;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  margin-bottom: 10px;
+  width:535px;
+  margin-left:5px;
+}

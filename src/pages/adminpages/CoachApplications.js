@@ -9,40 +9,51 @@ function CoachApplication(){
         const token = localStorage.getItem("token");
         const fetchData = async () => {
             try{
-                const [coachInfo, qualInfo, certInfo] = await Promise.all([
-                    fetch("http://localhost:4000/api/coach",{
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                    fetch("http://localhost:4000/api/qualifications",{
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                    fetch("http://localhost:4000/api/certifications",{
-                        headers: { Authorization: `Bearer ${token}` },
-                    }),
-                ]);
-                const coaches = await coachInfo.json();
-                const qualifications = await qualInfo.json();
-                const certifications = await certInfo.json();
-                const merged = coaches.map((coach) => {
-                    const qualification = qualifications.find(
-                        (q) => q.coach_id === coach.user_id
-                    );
-                    const coachCerts = certifications.filter(
-                        (c) => c.coach_id === coach.user_id
-                    );
-                    return {
-                        ...coach,
-                        ...qualification,
-                        certifications: coachCerts,
-                    };
-                });
-                setCoaches(merged);
-            } catch (err) {
-                console.error("No available Information", err);
+                const rest = await fetch(
+                    "http://localhost:4000/admin/pending?role=coach",
+                    {
+                        headers: {Authorization: `Bearer ${token}`},
+                    }
+                );
+                const data = await rest.json();
+                if (!rest.ok){
+                    throw new Error(data.message || "Failed to fetch pending coaches");
+                }
+                setCoaches(data.pending);
+            } catch (err){
+                console.error("No Available Information", err);
             }
         };
         fetchData();
     }, []);
+
+    const handleApprove = async (userId, approved) => {
+        const token = localStorage.getItem("token");
+        try{
+            const res = await fetch(
+                `http://localhost:4000/admin/users/${userId}/approve`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({approved}),
+                }
+            );
+            const data = await res.json();
+
+            if (!res.ok){
+                throw new Error(data.message || "Failed to update approval");
+            }
+            setCoaches((prev) =>
+                prev.filter((c) => c.user_id !== userId)
+            );
+            setSelectedCoach(null);
+        }catch (err) {
+            console.error("Error updating coach approval:", err);
+        }
+    };
 
     return(
     <div className="coach-app-container">
@@ -58,10 +69,10 @@ function CoachApplication(){
                         VIEW
                     </button>
                     <div className="btn-footer">
-                        <button className="accept-btn">
+                        <button className="accept-btn" onClick={() => handleApprove(coach.user_id, true)}>
                             ACCEPT
                             </button>
-                            <button className="reject-btn" type="button">
+                            <button className="reject-btn" type="button" onClick={() => handleApprove(coach.user_id, false)}>
                                 REJECT
                             </button>
             </div>
@@ -78,7 +89,7 @@ function CoachApplication(){
                         <p>Email: {selectedCoach.email}</p>
                         <p>Phone Number: {selectedCoach.phone}</p>
                         <h5>Certifications:</h5>
-                        {selectedCoach.certifications?.map((c, i) => (
+                        {selectedCoach.Coach?.CoachCertifications?.map((c, i) => (
                             <div key={c.certification_id}>
                                 <p>Status: {c.status}</p>
                                 <a href={c.document_url}
@@ -90,10 +101,10 @@ function CoachApplication(){
                         ))}
                     </div>
                     <div className="btn-footer">
-                        <button className="accept-btn">
+                        <button className="accept-btn" onClick={() => handleApprove(selectedCoach.user_id, true)}>
                             ACCEPT
                         </button>
-                        <button className="reject-btn" type="button">
+                        <button className="reject-btn" type="button" onClick={() => handleApprove(selectedCoach.user_id, false)}>
                             REJECT
                         </button>
             </div>

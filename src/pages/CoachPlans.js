@@ -22,11 +22,11 @@ function CoachPlans() {
   const [error, setError] = useState(null);
 
   const token = () => localStorage.getItem("token");
-  const headers = () => ({
+  const headers = (() => ({
     "Content-Type": "application/json",
     Authorization: `Bearer ${token()}`,
     "X-Active-Role": activeRole,
-  });
+  }), [activeRole]);
 
   const fetchPlans = useCallback(async () => {
     setLoading(true);
@@ -41,7 +41,7 @@ function CoachPlans() {
     } finally {
       setLoading(false);
     }
-  }, [activeRole]);
+  }, [headers]);
 
   useEffect(() => {
     fetchPlans();
