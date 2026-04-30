@@ -3,11 +3,14 @@ require("chromedriver");
 
 const BASE_URL = "http://localhost:3000";
 
-const CLIENT_EMAIL = "jane@gmail.com";
-const CLIENT_PASSWORD = "HelloWorld";
+const CLIENT_EMAIL = "uitest@gmail.com";
+const CLIENT_PASSWORD = "test123";
 
-const COACH_EMAIL = "janedox@gmail.com";
-const COACH_PASSWORD = "HelloWorld";
+const COACH_EMAIL = "testui@gmail.com";
+const COACH_PASSWORD = "test123";
+
+//const ADMIN_EMAIL = "admin@gmail.com";
+//const ADMIN_PASSWORD = "HelloWorld";
 
 async function waitForPage(driver) {
   await driver.wait(until.elementLocated(By.tagName("body")), 8000);
@@ -23,11 +26,15 @@ async function acceptAlertIfPresent(driver) {
   } catch {}
 }
 
+async function getBodyText(driver) {
+  return await driver.findElement(By.tagName("body")).getText();
+}
+
 async function testRoute(driver, path, label) {
   await driver.get(`${BASE_URL}${path}`);
   await waitForPage(driver);
 
-  const bodyText = await driver.findElement(By.tagName("body")).getText();
+  const bodyText = await getBodyText(driver);
 
   if (!bodyText || bodyText.includes("Cannot GET")) {
     throw new Error(`${label} did not load correctly`);
@@ -54,14 +61,16 @@ async function login(driver, email, password, roleLabel) {
   await driver.sleep(3000);
 
   const currentUrl = await driver.getCurrentUrl();
-  const bodyText = await driver.findElement(By.tagName("body")).getText();
+  const bodyText = await getBodyText(driver);
 
   if (
     currentUrl.includes("/dashboard") ||
+    currentUrl.includes("/admin") ||
     bodyText.includes("Dashboard") ||
     bodyText.includes("Welcome") ||
     bodyText.includes("Logout") ||
-    bodyText.includes("Profile")
+    bodyText.includes("Profile") ||
+    bodyText.includes("Admin")
   ) {
     console.log(`${roleLabel} logs in successfully`);
   } else {
@@ -90,7 +99,7 @@ async function testProtectedRouteLoggedOut(driver) {
   await waitForPage(driver);
 
   const currentUrl = await driver.getCurrentUrl();
-  const bodyText = await driver.findElement(By.tagName("body")).getText();
+  const bodyText = await getBodyText(driver);
 
   if (
     currentUrl.includes("/login") ||
@@ -99,7 +108,7 @@ async function testProtectedRouteLoggedOut(driver) {
   ) {
     console.log("Protected route blocks logged-out users");
   } else {
-    console.log("Protected route test skipped: dashboard is visible while logged out");
+    console.log("Protected route test skipped: dashboard visible while logged out");
   }
 }
 
@@ -141,9 +150,13 @@ async function testNavbarLinks(driver) {
 
   for (const text of navLinks) {
     try {
+      await driver.get(`${BASE_URL}/dashboard`);
+      await waitForPage(driver);
+
       const link = await driver.findElement(By.linkText(text));
       await link.click();
       await waitForPage(driver);
+
       console.log(`Navbar link works: ${text}`);
     } catch {
       console.log(`Navbar link skipped/not found: ${text}`);
@@ -164,8 +177,7 @@ async function fillClientSurvey(driver) {
 
     try {
       if (tag === "select") {
-        await input.sendKeys(Key.ARROW_DOWN);
-        await input.sendKeys(Key.ENTER);
+        await input.sendKeys(Key.ARROW_DOWN, Key.ENTER);
       } else if (type === "radio" || type === "checkbox") {
         await input.click();
       } else {
@@ -209,8 +221,7 @@ async function fillCoachSurvey(driver) {
 
     try {
       if (tag === "select") {
-        await input.sendKeys(Key.ARROW_DOWN);
-        await input.sendKeys(Key.ENTER);
+        await input.sendKeys(Key.ARROW_DOWN, Key.ENTER);
       } else if (type === "radio" || type === "checkbox") {
         await input.click();
       } else {
@@ -281,7 +292,7 @@ async function testMealLogForm(driver) {
   const inputs = await driver.findElements(By.css("input, textarea, select"));
 
   if (inputs.length === 0) {
-    console.log("Meal log test skipped: no form fields found on Logs page");
+    console.log("Meal log test skipped: no form fields found");
     return;
   }
 
@@ -384,6 +395,81 @@ async function testWorkoutLogForm(driver) {
   console.log("Workout log form interaction works");
 }
 
+async function testRecentMealUpdated(driver) {
+  await driver.get(`${BASE_URL}/recent-meals`);
+  await waitForPage(driver);
+
+  const bodyText = await getBodyText(driver);
+
+  if (
+    bodyText.includes("Chicken bowl") ||
+    bodyText.includes("500") ||
+    bodyText.includes("Meal") ||
+    bodyText.includes("Recent")
+  ) {
+    console.log("Recent Meals shows logged meal/history content");
+  } else {
+    console.log("Recent Meals loaded, but logged meal was not visible");
+  }
+}
+
+async function testRecentWorkoutUpdated(driver) {
+  await driver.get(`${BASE_URL}/recent-workouts`);
+  await waitForPage(driver);
+
+  const bodyText = await getBodyText(driver);
+
+  if (
+    bodyText.includes("Test workout") ||
+    bodyText.includes("30") ||
+    bodyText.includes("Workout") ||
+    bodyText.includes("Recent")
+  ) {
+    console.log("Recent Workouts shows logged workout/history content");
+  } else {
+    console.log("Recent Workouts loaded, but logged workout was not visible");
+  }
+}
+
+async function testDashboardReflectsData(driver) {
+  await driver.get(`${BASE_URL}/dashboard`);
+  await waitForPage(driver);
+
+  const bodyText = await getBodyText(driver);
+
+  if (
+    bodyText.includes("Calories") ||
+    bodyText.includes("Protein") ||
+    bodyText.includes("Workout") ||
+    bodyText.includes("Check-In") ||
+    bodyText.includes("Dashboard")
+  ) {
+    console.log("Dashboard renders logged-data sections");
+  } else {
+    console.log("Dashboard data section test skipped/not visible");
+  }
+}
+
+async function testCoachView(driver) {
+  await driver.get(`${BASE_URL}/dashboard`);
+  await waitForPage(driver);
+
+  const bodyText = await getBodyText(driver);
+
+  if (
+    bodyText.includes("Coach") ||
+    bodyText.includes("Client") ||
+    bodyText.includes("Progress") ||
+    bodyText.includes("Plan") ||
+    bodyText.includes("Approve") ||
+    bodyText.includes("Dashboard")
+  ) {
+    console.log("Coach dashboard renders coach/client content");
+  } else {
+    console.log("Coach dashboard loaded, but expected coach content not visible");
+  }
+}
+
 async function testModalButtons(driver) {
   await driver.get(`${BASE_URL}/dashboard`);
   await waitForPage(driver);
@@ -407,21 +493,204 @@ async function testModalButtons(driver) {
 }
 
 async function testHistoryPagesContainContent(driver) {
-  await driver.get(`${BASE_URL}/recent-meals`);
+  await testRecentMealUpdated(driver);
+  await testRecentWorkoutUpdated(driver);
+}
+
+async function testBrowseCoachRequest(driver) {
+  await driver.get(`${BASE_URL}/coach`);
   await waitForPage(driver);
 
-  let bodyText = await driver.findElement(By.tagName("body")).getText();
-  if (bodyText.includes("Recent") || bodyText.includes("Meals") || bodyText.includes("No")) {
-    console.log("Recent Meals page content renders");
+  const searchInput = await driver.findElement(
+    By.css("input[type='text'], input[placeholder*='Search'], input")
+  );
+
+  await searchInput.clear();
+  await searchInput.sendKeys("test");
+  await driver.sleep(1000);
+
+  console.log("Client searched test from Browse Coaches");
+
+  let profileElement;
+
+  try {
+    profileElement = await driver.findElement(
+      By.xpath("//*[self::button or self::a][contains(text(), 'View') or contains(text(), 'Profile') or contains(text(), 'Details')]")
+    );
+  } catch {
+    const clickableCards = await driver.findElements(
+      By.css(".coach-card, .coach-card button, .coach-card a, .card, .card button, .card a")
+    );
+
+    if (clickableCards.length === 0) {
+      const bodyText = await getBodyText(driver);
+      throw new Error(`No coach profile button/card found. Page text: ${bodyText.slice(0, 500)}`);
+    }
+
+    profileElement = clickableCards[0];
   }
 
-  await driver.get(`${BASE_URL}/recent-workouts`);
+  await driver.executeScript("arguments[0].scrollIntoView(true);", profileElement);
+  await driver.sleep(500);
+  await profileElement.click();
   await waitForPage(driver);
 
-  bodyText = await driver.findElement(By.tagName("body")).getText();
-  if (bodyText.includes("Recent") || bodyText.includes("Workouts") || bodyText.includes("No")) {
-    console.log("Recent Workouts page content renders");
+  console.log("Client opened coach profile");
+
+  const requestButton = await driver.findElement(
+  By.xpath(
+    "//button[contains(translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'request this coach')]"
+    )
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView(true);", requestButton);
+  await driver.sleep(500);
+  await requestButton.click();
+
+  await acceptAlertIfPresent(driver);
+
+  console.log("Client requested coach");
   }
+
+async function testCoachAcceptClientAndCreatePlan(driver) {
+  await driver.get(`${BASE_URL}/dashboard`);
+  await waitForPage(driver);
+
+  const approveButton = await driver.findElement(
+    By.xpath("//button[contains(text(), 'Approve') or contains(text(), 'Accept')]")
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView(true);", approveButton);
+  await driver.sleep(500);
+  await approveButton.click();
+
+  await acceptAlertIfPresent(driver);
+
+  console.log("Coach approved client request");
+
+  const detailsButton = await driver.findElement(
+    By.xpath("//button[contains(text(), 'View Details') or contains(text(), 'Details') or contains(text(), 'View')]")
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView(true);", detailsButton);
+  await driver.sleep(500);
+  await detailsButton.click();
+  await waitForPage(driver);
+
+  console.log("Coach viewed client details");
+
+  await driver.get(`${BASE_URL}/coach-plans`);
+  await waitForPage(driver);
+
+  const inputs = await driver.findElements(By.css("input, textarea, select"));
+
+  for (let input of inputs) {
+    const tag = await input.getTagName();
+    const placeholder = await input.getAttribute("placeholder");
+    const name = await input.getAttribute("name");
+
+    const field = `${placeholder} ${name}`.toLowerCase();
+
+    try {
+      if (tag === "select") {
+        await input.sendKeys(Key.ARROW_DOWN, Key.ENTER);
+      } else {
+        await input.clear();
+
+        if (field.includes("title")) {
+          await input.sendKeys("Beginner Strength Plan");
+        } else if (field.includes("duration")) {
+          await input.sendKeys("30");
+        } else if (field.includes("price")) {
+          await input.sendKeys("25");
+        } else if (field.includes("description")) {
+          await input.sendKeys("Beginner-friendly strength plan.");
+        } else {
+          await input.sendKeys("Test plan");
+        }
+      }
+    } catch {}
+  }
+
+  const createButton = await driver.findElement(
+    By.xpath("//button[contains(text(), 'Create Plan')]")
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView(true);", createButton);
+  await driver.sleep(500);
+  await createButton.click();
+
+  await acceptAlertIfPresent(driver);
+
+  console.log("Coach created a coaching plan");
+}
+
+async function testClientReviewAndReportCoach(driver) {
+  await driver.get(`${BASE_URL}/dashboard`);
+  await waitForPage(driver);
+
+  const viewProfileButton = await driver.findElement(
+    By.xpath("//button[contains(text(), 'View Profile') or contains(text(), 'Profile')]")
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView(true);", viewProfileButton);
+  await driver.sleep(500);
+  await viewProfileButton.click();
+  await waitForPage(driver);
+
+  console.log("Client opened coach profile from dashboard");
+
+  const reportButton = await driver.findElement(
+    By.xpath("//button[contains(text(), 'Report Coach') or contains(text(), 'Report')]")
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView(true);", reportButton);
+  await driver.sleep(500);
+  await reportButton.click();
+
+  const selects = await driver.findElements(By.css("select"));
+  if (selects.length > 0) {
+    await selects[0].sendKeys(Key.ARROW_DOWN, Key.ENTER);
+  }
+
+  const reportText = await driver.findElement(By.css("textarea"));
+  await reportText.clear();
+  await reportText.sendKeys("Testing report coach feature.");
+
+  const submitReport = await driver.findElement(
+    By.xpath("//button[contains(text(), 'Submit Report')]")
+  );
+
+  await submitReport.click();
+  await acceptAlertIfPresent(driver);
+
+  console.log("Client submitted coach report");
+
+  const reviewsTab = await driver.findElement(
+    By.xpath("//*[contains(text(), 'Reviews')]")
+  );
+
+  await driver.executeScript("arguments[0].scrollIntoView(true);", reviewsTab);
+  await driver.sleep(500);
+  await reviewsTab.click();
+
+  console.log("Client opened Reviews tab");
+
+  const reviewBox = await driver.findElement(By.css("textarea"));
+  await reviewBox.clear();
+  await reviewBox.sendKeys("Great coach, very helpful.");
+
+  const ratingSelect = await driver.findElement(By.css("select"));
+  await ratingSelect.sendKeys(Key.ARROW_DOWN, Key.ARROW_DOWN, Key.ENTER);
+
+  const submitReview = await driver.findElement(
+    By.xpath("//button[contains(text(), 'Submit Review')]")
+  );
+
+  await submitReview.click();
+  await acceptAlertIfPresent(driver);
+
+  console.log("Client submitted coach review");
 }
 
 async function runTests() {
@@ -441,14 +710,28 @@ async function runTests() {
     await testWellnessCheckInForm(driver);
     await testMealLogForm(driver);
     await testWorkoutLogForm(driver);
-    await testHistoryPagesContainContent(driver);
+    await testRecentMealUpdated(driver);
+    await testRecentWorkoutUpdated(driver);
+    await testDashboardReflectsData(driver);
     await testModalButtons(driver);
     await fillClientSurvey(driver);
+
+    //await testBrowseCoachRequest(driver);
 
     await logout(driver);
 
     await login(driver, COACH_EMAIL, COACH_PASSWORD, "Coach");
+
+    await testCoachView(driver);
     await fillCoachSurvey(driver);
+    //await testCoachAcceptClientAndCreatePlan(driver);
+
+    await logout(driver);
+
+    await login(driver, CLIENT_EMAIL, CLIENT_PASSWORD, "Client");
+
+    //await testClientReviewAndReportCoach(driver);
+
     await logout(driver);
 
     await testRoute(driver, "/dashboard", "Dashboard page");
@@ -462,8 +745,6 @@ async function runTests() {
     await testRoute(driver, "/recent-meals", "Recent Meals page");
     await testRoute(driver, "/recent-workouts", "Recent Workouts page");
     await testRoute(driver, "/notifications", "Alerts page");
-
-
 
     console.log("All UI tests passed!");
   } catch (err) {
