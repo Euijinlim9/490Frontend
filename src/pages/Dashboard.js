@@ -103,9 +103,9 @@ function Dashboard() {
     }
   }, [activeRole, fetchMyCoach]);
 
-  // Today's assigned workout (from coach)
   const [todayAssignment, setTodayAssignment] = useState(null);
   const [todayLoading, setTodayLoading] = useState(true);
+  const [weekWorkouts, setWeekWorkouts] = useState([]);
 
   const fetchTodayAssignment = useCallback(async () => {
     if (activeRole !== "client") return;
@@ -123,13 +123,27 @@ function Dashboard() {
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
 
-      // Filter to today's date
       const todayStr = new Date().toISOString().split("T")[0];
       const todays = (data.data || []).find((a) => a.due_date === todayStr);
       setTodayAssignment(todays || null);
+
+      const now = new Date();
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setHours(23, 59, 59, 999);
+      const thisWeek = (data.data || []).filter((a) => {
+        if (!a.due_date) return false;
+        const d = new Date(a.due_date + "T00:00:00");
+        return d >= startOfWeek && d <= endOfWeek;
+      }).sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+      setWeekWorkouts(thisWeek);
     } catch (err) {
       console.error(err);
       setTodayAssignment(null);
+      setWeekWorkouts([]);
     } finally {
       setTodayLoading(false);
     }
@@ -217,7 +231,6 @@ function Dashboard() {
   const [workoutChartData, setWorkoutChartData] = useState([]);
   const [selectedMacroDate, setSelectedMacroDate] = useState(new Date());
   const [dailySurveyChartData, setDailySurveyChartData] = useState([]);
-  //const [weeklySurveyChartData, setWeeklySurveyChartData] = useState([]);
 
   const [selectedMetric, setSelectedMetric] = useState("weight");
   const [selectedTimeView, setSelectedTimeView] = useState("daily");
@@ -993,6 +1006,50 @@ function Dashboard() {
                 </div>
               </section>
             )}
+
+            <section className="dashboard-section">
+              <div className="section-title">This Week's Workouts</div>
+              <div className="dashboard-card week-grid-card">
+                {(() => {
+                  const today = new Date();
+                  const startOfWeek = new Date(today);
+                  startOfWeek.setDate(today.getDate() - today.getDay());
+                  const days = Array.from({ length: 7 }, (_, i) => {
+                    const d = new Date(startOfWeek);
+                    d.setDate(startOfWeek.getDate() + i);
+                    return d;
+                  });
+                  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                  return (
+                    <div className="week-day-row">
+                      {days.map((d, i) => {
+                        const key = d.toISOString().split("T")[0];
+                        const isToday = d.toDateString() === today.toDateString();
+                        const isPast = d < new Date(today.toDateString());
+                        const workouts = weekWorkouts.filter((a) => a.due_date === key);
+                        return (
+                          <div key={i} className={`week-day-cell ${isToday ? "week-day-today" : ""} ${isPast && !isToday ? "week-day-past" : ""}`}>
+                            <span className="week-day-label">{DAYS[i]}</span>
+                            <span className={`week-day-num ${isToday ? "week-day-num-today" : ""}`}>{d.getDate()}</span>
+                            <div className="week-day-workouts">
+                              {workouts.length === 0 ? (
+                                <span className="week-day-empty">—</span>
+                              ) : (
+                                workouts.map((a) => (
+                                  <span key={a.assigned_workout_id} className={`week-day-pill ${a.status === "completed" ? "pill-done" : "pill-scheduled"}`}>
+                                    {a.Workout?.title || "Workout"}
+                                  </span>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </div>
+            </section>
 
             <section className="dashboard-section">
               <div className="section-title">Today's Workout</div>
