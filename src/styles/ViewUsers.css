@@ -1,0 +1,61 @@
+.viewusers-page {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.viewusers-card {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+.viewusers-card h3{
+    display:flex;
+    justify-content: center;
+}
+
+.viewusers-card h4{
+    color:rgb(255, 255, 255);
+    display:flex;
+    justify-content: center;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.btn-footer2{
+    display:flex;
+    border-top: 1px;
+    padding: 10px 10px;
+    gap:10px;
+    margin-left:300px;
+}
+
+p{
+    margin-left: 10px;
+}
+
+h5{
+    margin-left: 10px;;
+}
+
+a{
+    margin-left: 10px;
+}
+
+h2{
+    text-align: center;
+}
