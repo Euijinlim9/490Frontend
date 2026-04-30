@@ -806,7 +806,7 @@ function Dashboard() {
 
     const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
-    const lastWeeklyCheckin = localStorage.getItem(`lastWeeklyCheckin-${user.user_id}`);
+    //const lastWeeklyCheckin = localStorage.getItem(`lastWeeklyCheckin-${user.user_id}`);
 
     if (isSunday && lastWeeklyCheckin !== thisWeek) {
       navigate("/weekly-checkin");
