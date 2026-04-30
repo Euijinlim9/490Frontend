@@ -36,7 +36,6 @@ import LogMeal from "./pages/LogMeal";
 import LogWorkout from "./pages/LogWorkout";
 import LogWellness from "./pages/LogWellness";
 import PremadeMeals from "./pages/PremadeMeals";
-import ClientDetail from "./pages/ClientDetail";
 import CoachPlans from "./pages/CoachPlans";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsService from "./pages/TermsService";
@@ -90,10 +89,6 @@ function App() {
           <Route path="/coach" element={<Coach />} />
           <Route path="/coach/plans" element={<CoachPlans />} />
           <Route path="/coach/:id" element={<CoachDetails />} />
-          <Route
-            path="/coach/clients/:clientUserId"
-            element={<ClientDetail />}
-          />
           <Route path="/workouts" element={<Workouts />} />
           <Route path="/workouts/custom" element={<CustomWorkout />} />
           <Route path="/workouts/premade" element={<PremadeWorkouts />} />
@@ -137,10 +132,6 @@ function App() {
               <Route path="/admin/userreport" element={<UserReport />} />
             </>
           )}{" "}
-          <Route
-            path="/coach/client/:clientUserId"
-            element={<ClientProgress />}
-          />
         </Routes>
       </div>
     </div>

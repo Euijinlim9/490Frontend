@@ -216,8 +216,8 @@ function Dashboard() {
   const [mealChartData, setMealChartData] = useState([]);
   const [workoutChartData, setWorkoutChartData] = useState([]);
   const [selectedMacroDate, setSelectedMacroDate] = useState(new Date());
-  const [dailySurveyChartData, setDailySurveyChartData] = useState([]); 
-  //const [weeklySurveyChartData, setWeeklySurveyChartData] = useState([]); 
+  const [dailySurveyChartData, setDailySurveyChartData] = useState([]);
+  //const [weeklySurveyChartData, setWeeklySurveyChartData] = useState([]);
 
   const [selectedMetric, setSelectedMetric] = useState("weight");
   const [selectedTimeView, setSelectedTimeView] = useState("daily");
@@ -296,21 +296,6 @@ function Dashboard() {
       );
       if (!res.ok) throw new Error("Failed to approve");
 
-      const existingNotifications =
-        JSON.parse(
-          localStorage.getItem(`clientNotifications-${clientUserId}`)
-        ) || [];
-
-      const newNotification = {
-        message: `${user?.first_name} accepted your coaching request.`,
-        date: new Date().toLocaleString(),
-        read: false,
-      };
-      localStorage.setItem(
-        `clientNotifications-${clientUserId}`,
-        JSON.stringify([newNotification, ...existingNotifications])
-      );
-
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -333,20 +318,7 @@ function Dashboard() {
         }
       );
       if (!res.ok && res.status !== 204) throw new Error("Failed to reject");
-      const existingNotifications =
-        JSON.parse(
-          localStorage.getItem(`clientNotifications-${clientUserId}`)
-        ) || [];
 
-      const newNotification = {
-        message: `${user?.first_name} rejected your coaching request.`,
-        date: new Date().toLocaleString(),
-        read: false,
-      };
-      localStorage.setItem(
-        `clientNotifications-${clientUserId}`,
-        JSON.stringify([newNotification, ...existingNotifications])
-      );
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -359,26 +331,26 @@ function Dashboard() {
       !window.confirm(
         `Drop ${clientName} as a client? This will end the relationship and cancel payment.`
       )
-    ) { 
-      return; 
+    ) {
+      return;
     }
 
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
 
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/clients/${clientUserId}`, 
+        `http://localhost:4000/api/coach/clients/${clientUserId}`,
         {
-          method: "DELETE", 
+          method: "DELETE",
           headers: {
-            Authorization: `Bearer ${token}`, 
-            "X-Active-Role": activeRole, 
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": activeRole,
           },
         }
-      ); 
+      );
 
-      if (!res.ok && res.status !== 204){
-        throw new Error("Failed to drop client"); 
+      if (!res.ok && res.status !== 204) {
+        throw new Error("Failed to drop client");
       }
 
       const existingNotifications = JSON.parse(localStorage.getItem(`clientNotifications-${clientUserId}`)) || []; 
@@ -393,12 +365,12 @@ function Dashboard() {
         JSON.stringify([newNotification, ...existingNotifications])
       );
 
-      fetchCoachData(); 
+      fetchCoachData();
     } catch (err) {
-      console.error(err); 
+      console.error(err);
       alert("Could not drop client. Try again.");
     }
-  }; 
+  };
 
   const getTimeAgo = (dateString) => {
     const now = new Date();
@@ -434,17 +406,6 @@ function Dashboard() {
         },
       });
       if (!res.ok && res.status !== 204) throw new Error("Failed to unhire");
-
-      const existingNotifications = JSON.parse(localStorage.getItem(`coachNotifications-${myCoach.coach.user_id}`)) || []; 
-
-      const newNotification = {
-        message: `${user?.first_name} ended the coaching relationship. Payment will be canceled.`, 
-        date: new Date().toLocaleString(),
-        read: false, 
-      }; 
-
-      localStorage.setItem(`coachNotification-${myCoach.coach.user_id}`, JSON.stringify([newNotification, ...existingNotifications])
-      ); 
 
       setMyCoach({ state: "none", coach: null });
     } catch (err) {
@@ -649,23 +610,23 @@ function Dashboard() {
       xKey: "day",
     },
     dailyEnergy: {
-      title: "Daily Energy", 
-      data: dailySurveyChartData, 
-      dataKey: "energy", 
+      title: "Daily Energy",
+      data: dailySurveyChartData,
+      dataKey: "energy",
       xKey: "day",
     },
     dailyStress: {
-      title: "Daily Stress", 
-      data: dailySurveyChartData, 
-      dataKey: "stress", 
+      title: "Daily Stress",
+      data: dailySurveyChartData,
+      dataKey: "stress",
       xKey: "day",
-    }, 
+    },
     dailyMotivation: {
-      title: "Daily Motivation", 
-      data: dailySurveyChartData, 
-      dataKey: "motivation", 
-      xKey: "day", 
-    }, 
+      title: "Daily Motivation",
+      data: dailySurveyChartData,
+      dataKey: "motivation",
+      xKey: "day",
+    },
   };
 
   const currentGraph = metricConfigs[selectedMetric];
@@ -791,10 +752,12 @@ function Dashboard() {
     if (!user || !activeRole) return;
 
     const today = new Date().toLocaleDateString();
-    const lastCheckinDate = localStorage.getItem(`lastDailyCheckin-${user.user_id}`);
+    const lastCheckinDate = localStorage.getItem(
+      `lastDailyCheckin-${user.user_id}`
+    );
 
-    if(activeRole === "client" && lastCheckinDate !== today){
-      navigate("/daily-checkin"); 
+    if (activeRole === "client" && lastCheckinDate !== today) {
+      navigate("/daily-checkin");
     }
   }, [navigate, user, activeRole]);
 
@@ -806,7 +769,9 @@ function Dashboard() {
 
     const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
-    const lastWeeklyCheckin = localStorage.getItem(`lastWeeklyCheckin-${user.user_id}`);
+    const lastWeeklyCheckin = localStorage.getItem(
+      `lastWeeklyCheckin-${user.user_id}`
+    );
 
     if (isSunday && lastWeeklyCheckin !== thisWeek) {
       navigate("/weekly-checkin");
@@ -814,21 +779,25 @@ function Dashboard() {
   }, [navigate, user, activeRole]);
 
   useEffect(() => {
-    if (!user) return; 
+    if (!user) return;
 
-    const dailyCheckins = JSON.parse(localStorage.getItem("DailyCheckIns")) || []; 
+    const dailyCheckins =
+      JSON.parse(localStorage.getItem("DailyCheckIns")) || [];
 
-    const userDaily = dailyCheckins 
+    const weeklyCheckins =
+      JSON.parse(localStorage.getItem("weeklyCheckins")) || [];
+
+    const userDaily = dailyCheckins
       .filter((entry) => entry.userId === user.user_id)
       .map((entry) => ({
-        day: entry.date, 
-        energy: Number(entry.energy) || 0, 
-        stress: Number(entry.stress) || 0, 
+        day: entry.date,
+        energy: Number(entry.energy) || 0,
+        stress: Number(entry.stress) || 0,
         motivation: Number(entry.motivation) || 0,
       })); 
 
-      setDailySurveyChartData(userDaily); 
-  }, [user]); 
+    setDailySurveyChartData(userDaily);
+  }, [user]);
 
   return (
     <div className="dashboard-page">
@@ -1460,7 +1429,7 @@ function Dashboard() {
                     Workouts
                   </button>
 
-                  <button 
+                  <button
                     type="button"
                     className={selectedMetric === "dailyEnergy" ? "active" : ""}
                     onClick={() => setSelectedMetric("dailyEnergy")}
@@ -1474,16 +1443,17 @@ function Dashboard() {
                     onClick={() => setSelectedMetric("dailyStress")}
                   >
                     Stress
-                  </button> 
+                  </button>
 
                   <button
                     type="button"
-                    className={selectedMetric === "dailyMotivation" ? "active" : ""}
+                    className={
+                      selectedMetric === "dailyMotivation" ? "active" : ""
+                    }
                     onClick={() => setSelectedMetric("dailyMotivation")}
-                  > 
+                  >
                     Motivation
                   </button>
-
                 </div>
 
                 <div className="time-tabs">
