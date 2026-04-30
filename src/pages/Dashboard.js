@@ -296,21 +296,6 @@ function Dashboard() {
       );
       if (!res.ok) throw new Error("Failed to approve");
 
-      const existingNotifications =
-        JSON.parse(
-          localStorage.getItem(`clientNotifications-${clientUserId}`)
-        ) || [];
-
-      const newNotification = {
-        message: `${user?.first_name} accepted your coaching request.`,
-        date: new Date().toLocaleString(),
-        read: false,
-      };
-      localStorage.setItem(
-        `clientNotifications-${clientUserId}`,
-        JSON.stringify([newNotification, ...existingNotifications])
-      );
-
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -333,20 +318,7 @@ function Dashboard() {
         }
       );
       if (!res.ok && res.status !== 204) throw new Error("Failed to reject");
-      const existingNotifications =
-        JSON.parse(
-          localStorage.getItem(`clientNotifications-${clientUserId}`)
-        ) || [];
 
-      const newNotification = {
-        message: `${user?.first_name} rejected your coaching request.`,
-        date: new Date().toLocaleString(),
-        read: false,
-      };
-      localStorage.setItem(
-        `clientNotifications-${clientUserId}`,
-        JSON.stringify([newNotification, ...existingNotifications])
-      );
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -422,22 +394,6 @@ function Dashboard() {
         },
       });
       if (!res.ok && res.status !== 204) throw new Error("Failed to unhire");
-
-      const existingNotifications =
-        JSON.parse(
-          localStorage.getItem(`coachNotifications-${myCoach.coach.user_id}`)
-        ) || [];
-
-      const newNotification = {
-        message: `${user?.first_name} ended the coaching relationship. Payment will be canceled.`,
-        date: new Date().toLocaleString(),
-        read: false,
-      };
-
-      localStorage.setItem(
-        `coachNotification-${myCoach.coach.user_id}`,
-        JSON.stringify([newNotification, ...existingNotifications])
-      );
 
       setMyCoach({ state: "none", coach: null });
     } catch (err) {

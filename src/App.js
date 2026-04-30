@@ -132,10 +132,6 @@ function App() {
               <Route path="/admin/userreport" element={<UserReport />} />
             </>
           )}{" "}
-          <Route
-            path="/coach/client/:clientUserId"
-            element={<ClientProgress />}
-          />
         </Routes>
       </div>
     </div>
