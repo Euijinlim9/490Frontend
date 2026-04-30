@@ -6,8 +6,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
-  CartesianGrid
+  ResponsiveContainer
 } from "recharts";
 import "../../styles/Dashboard.css";
 import "../../styles/AdminDashboard.css";

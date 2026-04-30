@@ -47,6 +47,7 @@ import WeeklyCheckIn from "./pages/WeeklyCheckIn";
 import DailyCheckIns from "./pages/DailyCheckIns";
 import Notifications from "./pages/Notifications";
 import ClientProgress from "./pages/ClientProgress";
+import AdminRole from "./components/AdminRole";
 
 function App() {
   const location = useLocation();
@@ -117,11 +118,33 @@ function App() {
             path="/coach/client/:clientUserId"
             element={<ClientProgress />}
           />
-          <Route path="/admin/coachapp" element={<CoachApplications />} />
-          <Route path="/admin/viewusers" element={<ViewUsers />} />
-          <Route path="/admin/exercise" element={<AdminExercise />} />
-          <Route path="/admin/userreport" element={<UserReport />} />
-          <Route path="/admin/admindash" element={<AdminDashboard />} />
+
+          {/*admin routes*/}
+          <Route path="/admin/coachapp" element={
+            <AdminRole>
+              <CoachApplications />
+            </AdminRole>} 
+          />
+          <Route path="/admin/viewusers" element={
+            <AdminRole>
+              <ViewUsers />
+            </AdminRole>} 
+          />
+          <Route path="/admin/exercise" element={
+            <AdminRole>
+              <AdminExercise />
+            </AdminRole>} 
+            />
+          <Route path="/admin/userreport" element={
+            <AdminRole>
+              <UserReport />
+            </AdminRole>} 
+            />
+          <Route path="/admin/admindash" element={
+            <AdminRole>
+              <AdminDashboard />
+            </AdminRole>} 
+            />
 
           <Route path="/log-meal" element={<LogMeal />} />
           <Route path="/log-workout" element={<LogWorkout />} /> 
