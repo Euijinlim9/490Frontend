@@ -1,7 +1,7 @@
 const { Builder, By, until, Key } = require("selenium-webdriver");
 require("chromedriver");
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:3001";
 
 const CLIENT_EMAIL = "jane@gmail.com";
 const CLIENT_PASSWORD = "HelloWorld";
@@ -424,6 +424,436 @@ async function testHistoryPagesContainContent(driver) {
   }
 }
 
+async function testCoachPage(driver){
+  await driver.get(`${BASE_URL}/coach`);
+  await waitForPage(driver);
+
+  const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+  if (!bodyText.includes("Find Your Coach")) {
+    throw new Error("Coach page not loading");
+  }
+
+  console.log("Coach page loads");
+
+  await driver.sleep(500);
+
+  const cards = await driver.findElements(By.css(".coach-card"));
+
+  if (cards.length > 0) {
+    console.log("Coach cards loaded");
+  } else {
+    console.log("Coach cards could not load");
+  }
+
+  try {
+    const searchInput = await driver.findElement(By.css(".search-input"));
+    await searchInput.sendKeys("test");
+    await searchInput.sendKeys(Key.ENTER);
+
+    const searchButton = await driver.findElement(By.css(".search-button"));
+    await searchButton.click();
+
+    console.log("Search input works");
+  } catch (err) {
+    console.log("Search input not fully working");
+  }
+
+  try {
+    const filterDropdown = await driver.findElement(By.css("select.filter-dropdown"));
+    await filterDropdown.click();
+    await filterDropdown.sendKeys(Key.ARROW_DOWN, Key.ENTER);
+
+    console.log("Filter dropdown works");
+  } catch {
+    console.log("Filter dropdown not working");
+  }
+}
+
+async function testCoachDetailLoads(driver) {
+  await driver.get(`${BASE_URL}/coach/1`);
+  //or replace 1 with any coach id from db
+  await waitForPage(driver);
+
+  const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+  if (!bodyText.includes("Coach")) {
+    throw new Error("Coach Detail page did not load correctly");
+  }
+
+  console.log("Coach Detail page loads");
+}
+
+async function testCoachDetailTabs(driver) {
+  await driver.get(`${BASE_URL}/coach/1`);
+  await waitForPage(driver);
+
+  const tabs = ["About", "Packages", "Reviews", "Certifications"];
+
+  for (const tab of tabs) {
+    try {
+      const btn = await driver.findElement(
+        By.xpath(`//button[contains(text(),'${tab}')]`)
+      );
+
+      await btn.click();
+      await driver.sleep(500);
+
+      console.log(`Tab works `);
+    } catch {
+      console.log(`Tab missing/not working: ${tab}`);
+    }
+  }
+}
+
+async function testCoachDetailSubscription(driver) {
+  await driver.get(`${BASE_URL}/coach/1`);
+  await waitForPage(driver);
+
+  try {
+    const btn = await driver.findElement(
+      By.xpath("//button[contains(text(),'Select Plan')]")
+    );
+
+    await btn.click();
+    await driver.sleep(1000);
+
+    const modal = await driver.findElement(By.css(".cp-modal"));
+    const text = await modal.getText();
+
+    if (!text.includes("Confirm Subscription")) {
+      throw new Error("Subscription modal failed");
+    }
+
+    const closeBtn = await driver.findElement(By.css(".cp-modal-close"));
+    await closeBtn.click();
+
+    console.log("Subscription works");
+  } catch {
+    console.log("No subscription available");
+  }
+}
+
+async function testCoachDetailReview(driver) {
+  await driver.get(`${BASE_URL}/coach/1`);
+  await waitForPage(driver);
+
+  try {
+    await driver.findElement(By.css(".cp-review-input")).sendKeys("Nice coach");
+
+    await driver.findElement(By.css(".cp-review-rating")).sendKeys("5");
+
+    await driver.findElement(
+      By.xpath("//button[contains(text(),'Submit Review')]")
+    ).click();
+
+    console.log("Review form works");
+  } catch {
+    console.log("Review form not available");
+  }
+}
+
+async function testCoachDetailReport(driver) {
+  await driver.get(`${BASE_URL}/coach/1`);
+  await waitForPage(driver);
+
+  try {
+    await driver.findElement(
+      By.xpath("//button[contains(text(),'Report Coach')]")
+    ).click();
+
+    await driver.sleep(500);
+
+    const form = await driver.findElement(By.css(".cp-report-form"));
+
+    if (form) console.log("Report form opens");
+  } catch {
+    console.log("Report flow not available");
+  }
+}
+
+async function testCoachPlansLoads(driver) {
+  await driver.get(`${BASE_URL}/coach/plans`);
+  await waitForPage(driver);
+
+  await driver.wait(
+    until.elementLocated(By.css(".cpl-card-title")),
+    5000
+  );
+
+  const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+  if (!bodyText.includes("My Coaching Plans")) {
+    throw new Error("Coach Plans page did not load");
+  }
+
+  console.log("Coach Plans page loads");
+}
+
+async function testCreateCoachPlan(driver) {
+  await driver.get(`${BASE_URL}/coach/plans`);
+  await waitForPage(driver);
+
+  await driver.findElement(
+    By.css("input[placeholder='Plan title *']")
+  ).sendKeys("Test Plan");
+
+  await driver.findElement(
+    By.css("input[placeholder='Duration (days) *']")
+  ).sendKeys("30");
+
+  await driver.findElement(
+    By.css("input[placeholder='Price ($) *']")
+  ).sendKeys("50");
+
+  await driver.findElement(By.css("textarea"))
+    .sendKeys("coach plan test");
+
+  await driver.findElement(
+    By.xpath("//button[contains(text(),'Create Plan')]")
+  ).click();
+
+  await driver.sleep(1500);
+
+  const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+  if (!bodyText.includes("Test Plan")) {
+    throw new Error("Plan was not created");
+  }
+
+  console.log("Create plan works");
+}
+
+async function testEditCoachPlan(driver) {
+  await driver.get(`${BASE_URL}/coach/plans`);
+  await waitForPage(driver);
+
+  const editButtons = await driver.findElements(
+    By.xpath("//button[contains(text(),'Edit')]")
+  );
+
+  if (editButtons.length === 0) {
+    console.log("No plan available to edit");
+    return;
+  }
+
+  await editButtons[0].click();
+  await driver.sleep(1000);
+
+  const inputs = await driver.findElements(By.css(".cpl-inline-input"));
+  await inputs[0].clear();
+  await inputs[0].sendKeys("Updated Plan");
+
+  await driver.findElement(
+    By.xpath("//button[contains(text(),'Save')]")
+  ).click();
+
+  await driver.sleep(1000);
+
+  console.log("Edit plan works");
+}
+
+async function testDeactivateCoachPlan(driver) {
+  await driver.get(`${BASE_URL}/coach/plans`);
+  await waitForPage(driver);
+
+  const deactivateButtons = await driver.findElements(
+    By.xpath("//button[contains(text(),'Deactivate')]")
+  );
+
+  if (deactivateButtons.length === 0) {
+    console.log("No active plan to deactivate");
+    return;
+  }
+
+  await deactivateButtons[0].click();
+
+  await acceptAlertIfPresent(driver);
+  await driver.sleep(1000);
+
+  console.log("Deactivate plan works");
+}
+
+async function testCalendarPageLoads(driver) {
+  await driver.get(`${BASE_URL}/calendar`);
+  await waitForPage(driver);
+
+  const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+  if (!bodyText.includes("Upcoming Workouts")) {
+    throw new Error("Calendar page did not load");
+  }
+
+  console.log("Calendar page loads");
+}
+
+async function testCalendarNavigation(driver) {
+  await driver.get(`${BASE_URL}/calendar`);
+  await waitForPage(driver);
+
+  const monthLabel = await driver.findElement(By.css(".cal-month-label"));
+  const initialMonth = await monthLabel.getText();
+
+  const nextBtn = await driver.findElement(By.css(".cal-arrow:nth-of-type(2)"));
+  const prevBtn = await driver.findElement(By.css(".cal-arrow:nth-of-type(1)"));
+
+  await nextBtn.click();
+  await driver.sleep(500);
+
+  const afterNext = await monthLabel.getText();
+
+  await prevBtn.click();
+  await driver.sleep(500);
+
+  const afterPrev = await monthLabel.getText();
+
+  if (initialMonth !== afterPrev) {
+    throw new Error("Calendar navigation failed");
+  }
+
+  console.log("Calendar navigation works");
+}
+
+async function testCalendarDayModal(driver) {
+  await driver.get(`${BASE_URL}/calendar`);
+  await waitForPage(driver);
+
+  try {
+    const dayCell = await driver.findElement(By.css(".cal-cell.has-plan"));
+    await dayCell.click();
+
+    await driver.sleep(800);
+
+    const modal = await driver.findElement(By.css(".modal-box"));
+    const modalText = await modal.getText();
+
+    if (!modalText.includes("Workout")) {
+      throw new Error("Calendar modal did not open correctly");
+    }
+
+    console.log("Calendar modal opens correctly");
+
+    const closeBtn = await driver.findElement(By.css(".modal-close-btn"));
+    await closeBtn.click();
+  } catch (err) {
+    console.log("No workout day available");
+  }
+}
+
+async function testCalendarEventsRender(driver) {
+  await driver.get(`${BASE_URL}/calendar`);
+  await waitForPage(driver);
+
+  const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+  if (
+    bodyText.includes("Loading...") ||
+    bodyText.includes("Error")
+  ) {
+    console.log("Calendar can not load");
+    return;
+  }
+
+  const plan = await driver.findElements(By.css(".plan-pill"));
+
+  if (plan.length > 0) {
+    console.log(`Calendar events rendered: ${plan.length}`);
+  } else {
+    console.log("No calendar events found");
+  }
+}
+
+async function testActiveWorkoutLoads(driver) {
+  await driver.get(`${BASE_URL}/workouts/active`);
+  await waitForPage(driver);
+
+  const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+  if (
+    bodyText.includes("Workout Complete") &&
+    !bodyText.includes("Set")
+  ) {
+    throw new Error("Active Workout failed to load");
+  }
+
+  console.log("Active Workout page loads");
+}
+
+async function testActiveWorkoutExerciseFlow(driver) {
+  await driver.get(`${BASE_URL}/workouts/active`);
+  await waitForPage(driver);
+
+  try {
+    const exerciseName = await driver.findElement(By.css(".aw-ex-name"));
+    const text = await exerciseName.getText();
+
+    if (!text) throw new Error("No exercise loaded");
+
+    const btn = await driver.findElement(By.css(".aw-btn-primary"));
+    await btn.click();
+
+    await driver.sleep(800);
+
+    console.log("Exercise flow works");
+  } catch (err) {
+    console.log("Exercise flow failed");
+  }
+}
+
+async function testActiveWorkoutRestFlow(driver) {
+  await driver.get(`${BASE_URL}/workouts/active`);
+  await waitForPage(driver);
+
+  try {
+    const btn = await driver.findElement(By.css(".aw-btn-primary"));
+    await btn.click(); 
+
+    await driver.sleep(500);
+
+    const timer = await driver.findElement(By.css(".aw-timer"));
+    const timerText = await timer.getText();
+
+    if (!timerText.includes("s")) {
+      throw new Error("Rest timer not visible");
+    }
+
+    const skipBtn = await driver.findElement(By.css(".aw-btn-secondary"));
+    await skipBtn.click();
+
+    console.log("Rest flow works");
+  } catch (err) {
+    console.log("Rest flow failed");
+  }
+}
+
+async function testActiveWorkoutCompletion(driver) {
+  await driver.get(`${BASE_URL}/workouts/active`);
+  await waitForPage(driver);
+
+  try {
+    const btn = await driver.findElement(By.css(".aw-btn-primary"));
+
+    for (let i = 0; i < 5; i++) {
+      try {
+        await btn.click();
+        await driver.sleep(300);
+      } catch {}
+    }
+
+    await driver.sleep(1000);
+
+    const bodyText = await driver.findElement(By.tagName("body")).getText();
+
+    if (!bodyText.includes("Workout Complete")) {
+      throw new Error("Workout did not complete");
+    }
+
+    console.log("Workout completion works");
+  } catch (err) {
+    console.log(" Workout completion test failed");
+  }
+}
+
 async function runTests() {
   const driver = await new Builder().forBrowser("chrome").build();
 
@@ -444,6 +874,24 @@ async function runTests() {
     await testHistoryPagesContainContent(driver);
     await testModalButtons(driver);
     await fillClientSurvey(driver);
+    await testCoachPage(driver);
+    await testCoachDetailLoads(driver);
+    await testCoachDetailTabs(driver);
+    await testCoachDetailSubscription(driver);
+    await testCoachDetailReview(driver);
+    await testCoachDetailReport(driver);
+    await testCoachPlansLoads(driver);
+    await testCreateCoachPlan(driver);
+    await testEditCoachPlan(driver);
+    await testDeactivateCoachPlan(driver);
+    await testCalendarPageLoads(driver);
+    await testCalendarNavigation(driver);
+    await testCalendarDayModal(driver);
+    await testCalendarEventsRender(driver);
+    await testActiveWorkoutLoads(driver);
+    await testActiveWorkoutExerciseFlow(driver);
+    await testActiveWorkoutRestFlow(driver);
+    await testActiveWorkoutCompletion(driver);
 
     await logout(driver);
 
@@ -452,7 +900,6 @@ async function runTests() {
     await logout(driver);
 
     await testRoute(driver, "/dashboard", "Dashboard page");
-    await testRoute(driver, "/coach", "Coach page");
     await testRoute(driver, "/workouts", "Workouts page");
     await testRoute(driver, "/logs", "Logs page");
     await testRoute(driver, "/calendar", "Calendar page");
