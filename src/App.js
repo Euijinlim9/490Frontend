@@ -34,25 +34,6 @@ import LogMeal from "./pages/LogMeal";
 import LogWorkout from "./pages/LogWorkout"; 
 import LogWellness from "./pages/LogWellness"; 
 import PremadeMeals from "./pages/PremadeMeals"; 
-
-function App() {
-  const location = useLocation();
-
-  const hideHeader = location.pathname === "/";
-  const hideHeader2 = location.pathname === "/signup";
-  const hideHeader3 = location.pathname === "/login";
-
-  return (
-    <div className="body">
-      {!hideHeader && !hideHeader2 && !hideHeader3 && (
-      <>
-      <Header />
-      </>
-    )}
-import LogMeal from "./pages/LogMeal";
-import LogWorkout from "./pages/LogWorkout";
-import LogWellness from "./pages/LogWellness";
-import PremadeMeals from "./pages/PremadeMeals";
 import CoachPlans from "./pages/CoachPlans";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsService from "./pages/TermsService";
@@ -69,7 +50,6 @@ import ClientProgress from "./pages/ClientProgress";
 
 function App() {
   const location = useLocation();
-  const { activeRole } = useContext(AuthContext);
 
   const hideMainHeader =
     location.pathname === "/" ||
@@ -87,11 +67,7 @@ function App() {
 
   return (
     <div className="body">
-      {!hideMainHeader && (
-        <>
-          <Header />
-        </>
-      )}
+      {!hideMainHeader && <Header />}
 
       <div className="page-content">
         <Routes>
@@ -141,18 +117,17 @@ function App() {
             path="/coach/client/:clientUserId"
             element={<ClientProgress />}
           />
-              <Route path="/admin/coachapp" element={<CoachApplications />} />
-              <Route path="/admin/viewusers" element={<ViewUsers />} />
-              <Route path="/admin/exercise" element={<AdminExercise />} />
-              <Route path="/admin/userreport" element={<UserReport />} />
-              <Route path="/admin/admindash" element={<AdminDashboard />} />
+          <Route path="/admin/coachapp" element={<CoachApplications />} />
+          <Route path="/admin/viewusers" element={<ViewUsers />} />
+          <Route path="/admin/exercise" element={<AdminExercise />} />
+          <Route path="/admin/userreport" element={<UserReport />} />
+          <Route path="/admin/admindash" element={<AdminDashboard />} />
 
           <Route path="/log-meal" element={<LogMeal />} />
           <Route path="/log-workout" element={<LogWorkout />} /> 
           <Route path="/log-wellness" element={<LogWellness />} /> 
           <Route path="/premade-meals" element={<PremadeMeals />} />
-            </>
-          )}{" "}
+          {" "}
         </Routes>
       </div>
     </div>
