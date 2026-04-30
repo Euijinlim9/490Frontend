@@ -385,7 +385,7 @@ function Dashboard() {
 
       const newNotification = {
         message: `${user?.first_name} ended the coaching relationship. Payment will be canceled.`,
-        date: new Date().toLocaleString,
+        date: new Date().toLocaleString(),
         read: false,
       };
 
@@ -806,7 +806,7 @@ function Dashboard() {
 
     const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
-    //const lastWeeklyCheckin = localStorage.getItem(`lastWeeklyCheckin-${user.user_id}`);
+    const lastWeeklyCheckin = localStorage.getItem(`lastWeeklyCheckin-${user.user_id}`);
 
     if (isSunday && lastWeeklyCheckin !== thisWeek) {
       navigate("/weekly-checkin");
@@ -817,8 +817,6 @@ function Dashboard() {
     if (!user) return; 
 
     const dailyCheckins = JSON.parse(localStorage.getItem("DailyCheckIns")) || []; 
-
-    const weeklyCheckins = JSON.parse(localStorage.getItem("weeklyCheckins")) || []; 
 
     const userDaily = dailyCheckins 
       .filter((entry) => entry.userId === user.user_id)
