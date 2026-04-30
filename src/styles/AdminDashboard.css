@@ -1,3 +1,8 @@
+.dashboard-page h1{
+  color:white;
+  margin-bottom: 50px;
+}
+
 .payment-card {
   width: 100%;
   padding: 20px;
@@ -34,4 +39,136 @@
 h2{
   color:rgb(255, 255, 255);
   font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.admin-dashboard-section{
+  margin-bottom: 24px;
+  flex: 1;
+}
+
+.admin-dashboard-layout{
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.admin-dashboard-left,
+.admin-dashboard-right{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-badge{
+    display: inline-block;
+    background: #b8b8b8;
+    color: #303030;
+    padding: 1px 20px;
+    border-radius: 20px;
+    font-size: 15spx;
+    font-weight: 600;
+    width: 200px;
+    margin-bottom: 10px;
+}
+
+.dashboard-badge h3{
+  color:black;
+  text-align: left;
+}
+
+.dashboard-badge p{
+  text-align: left;
+}
+
+.stats-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.025)
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  color: white;
+  flex: 1;
+  padding: 20px;
+  border-radius: 16px;
+  color: white;
+  font-weight: 600;
+  position: relative;
+}
+
+.stat-card h1 {
+  font-size: 25px;
+  margin-bottom: 6px;
+}
+
+.stat-card p {
+  font-size: 14px;
+  opacity: 0.8;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+}
+.stat-link {
+  text-decoration: none;   /* removes underline */
+  color: inherit;          /* uses parent text color */
+  display: block;          /* makes whole card clickable */
+}
+
+.user-engage-section{
+  display: "flex";
+  gap: "10px";
+  margin-bottom: "10px";
+}
+
+.stat-btn.active {
+  background: #4f46e5;
+  color: white;
+  border: 1px solid transparent;
+}
+
+.admin-dash-chart {
+  width: 600px;
+  height: 260px;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.admin-dash-paychart{
+  width: 600px;
+  height: 260px;
+  margin-top: 70px;
+  padding: 12px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
