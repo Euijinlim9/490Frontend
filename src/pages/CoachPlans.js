@@ -1,6 +1,12 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/CoachPlans.css";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 
 const EMPTY_FORM = {
   title: "",
@@ -22,17 +28,20 @@ function CoachPlans() {
   const [error, setError] = useState(null);
 
   const token = () => localStorage.getItem("token");
-  const headers = (() => ({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token()}`,
-    "X-Active-Role": activeRole,
-  }), [activeRole]);
+  const headers = useMemo(
+    () => ({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token()}`,
+      "X-Active-Role": activeRole,
+    }),
+    [activeRole]
+  );
 
   const fetchPlans = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("http://localhost:4000/api/coach/plans", {
-        headers: headers(),
+        headers,
       });
       const data = await res.json();
       setPlans(data);
@@ -53,7 +62,7 @@ function CoachPlans() {
     try {
       const res = await fetch("http://localhost:4000/api/coach/plans", {
         method: "POST",
-        headers: headers(),
+        headers,
         body: JSON.stringify({
           ...form,
           plan_duration: Number(form.plan_duration),
@@ -91,7 +100,7 @@ function CoachPlans() {
         `http://localhost:4000/api/coach/plans/${planId}`,
         {
           method: "PATCH",
-          headers: headers(),
+          headers,
           body: JSON.stringify({
             ...editForm,
             plan_duration: Number(editForm.plan_duration),
@@ -122,7 +131,7 @@ function CoachPlans() {
         `http://localhost:4000/api/coach/plans/${planId}`,
         {
           method: "DELETE",
-          headers: headers(),
+          headers,
         }
       );
       if (!res.ok) throw new Error();
