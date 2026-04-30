@@ -706,8 +706,25 @@
   line-height: 1.5;
   flex: 1;
 }
+
+.cp-review-btn {
+  display: block;
+  width: 260px;
+  margin: 18px auto 0;
+  padding: 14px 24px;
+  background: #6ca6ff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
 .cp-review-btn:hover {
-  background: #e6e6e6;
+  background: #5b95f2;
   transform: translateY(-1px);
 }
 
