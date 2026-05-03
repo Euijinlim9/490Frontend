@@ -339,6 +339,12 @@
 
 .cw-form-row .cw-form-group {
   flex: 1;
+  min-width: 0;
+}
+
+.cw-form-row .cw-form-group input {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .cw-add-btn {
