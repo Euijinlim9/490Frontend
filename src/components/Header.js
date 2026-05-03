@@ -68,7 +68,7 @@ function Header() {
         {activeRole === "admin" && (
           <>
             <Link to="/admin/coachapp" className="nav-btn">
-              Coach Applications
+              Applications
             </Link>
             <Link to="/admin/viewusers" className="nav-btn">
             View All Accounts
