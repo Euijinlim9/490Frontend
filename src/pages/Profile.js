@@ -9,6 +9,7 @@ function Profile() {
   const[qualifications, setQualifications] = useState([]);
   const [certifications, setCertifications] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const[modalAvail, setModalAvail] = useState(false);
   const[type, setType] = useState("qualification");
   const[file, setFile]=useState(null);
   const[qualForm, setQualForm] = useState({
@@ -17,7 +18,40 @@ function Profile() {
     field_of_study: "",
     year_completed: "",
   });
+  const [timeRules, setTimeRules] = useState([]);
+  const [startTime, setStartTime]=useState("09:00");
+  const daysofWeek = ["S", "M", "T", "W", "TH", "F", "S"];
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const blanks = Array(firstDay).fill(null);
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const cells = [...blanks, ...days];
+  const weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const months = ["January","February","March","April","May","June",
+  "July","August","September","October","November","December"];
+  const [duration, setDuration] = useState(60);
+  const dayMap = {
+  0: "Sunday",
+  1: "Monday",
+  2: "Tuesday",
+  3: "Wednesday",
+  4: "Thursday",
+  5: "Friday",
+  6: "Saturday",
+};
 
+  const [activeDays, setActiveDays] = useState(new Set([1, 2, 3, 4, 5]));
+ 
+  const toggleDay = (i) => {
+    setActiveDays((prev) => {
+      const next = new Set(prev);
+      next.has(i) ? next.delete(i) : next.add(i);
+      return next;
+    });
+  };
  
   useEffect(() => {
   if (!modalOpen) return;
@@ -46,7 +80,7 @@ function Profile() {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { user, setUser, logout, activeRole } = useContext(AuthContext);
+  const { user, setUser, logout } = useContext(AuthContext); //add activeRole
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -98,6 +132,7 @@ function Profile() {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) return; //delete
 
       // Save basic profile
       const res = await fetch("http://localhost:4000/api/profile", {
@@ -150,6 +185,7 @@ function Profile() {
   const handleDeleteAccount = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) return; //delete
       const res = await fetch("http://localhost:4000/auth/delete-account", {
         method: "POST",
         headers: {
@@ -199,20 +235,121 @@ function Profile() {
   setModalOpen(false);
 };
 
-  //if (!user) return <p>Loading ...</p>;
-  if (!user) return <p>Loading...</p>;
+const generateTimes = (interval = 30) => {
+  const times = [];
+
+  for (let h = 0; h < 24; h++) {
+    for (let m = 0; m < 60; m += interval) {
+      const hour24 = h;
+      const minute = String(m).padStart(2, "0");
+
+      const period = hour24 >= 12 ? "PM" : "AM";
+      const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+
+      times.push({
+        label: `${hour12}:${minute} ${period}`,
+        value: `${String(hour24).padStart(2, "0")}:${minute}`,
+      });
+    }
+    }
+
+  return times;
+};
+
+  const timeOptions = generateTimes(30);
+
+  const addRule = () => {
+    const startIndex = timeOptions.findIndex(t => t.value === startTime);
+    const endIndex = startIndex + duration / 30;
+
+    const end = timeOptions[endIndex]?.value;
+
+    if (!end) {
+      alert("Invalid duration");
+    return;
+  }
+
+  const newRule = Array.from(activeDays).map((day) => ({
+    id: crypto.randomUUID(),
+    dayOfWeek: Number(day),
+    startTime,
+    endTime: end,
+    duration,
+  }));
+
+  setTimeRules((prev) => [...prev, ...newRule]);
+};
+
+const formatTime = (time24) => {
+  if (!time24) return "";
+
+  const [hourStr, minute] = time24.split(":");
+  let hour = Number(hourStr);
+
+  const period = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+
+  return `${hour}:${minute} ${period}`;
+};
+
+const hasAvailability = (day) => {
+  const date = new Date(currentYear, currentMonth, day);
+  const dayOfWeek = date.getDay();
+  return timeRules.some((rule) => Number(rule.dayOfWeek) === dayOfWeek);
+};
+
+    useEffect(() => {
+      if (modalAvail) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+
+      return () => {
+        document.body.style.overflow = "auto";
+      };
+  }, [modalAvail]);
+
+  const prevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(y => y - 1);
+    } else {
+      setCurrentMonth(m => m - 1);
+    }
+  };
+
+  const nextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(y => y + 1);
+    } else {
+      setCurrentMonth(m => m + 1);
+    }
+  };
+
+  const handleDeleteRule = (id) => {
+  setTimeRules((prev) => prev.filter((rule) => rule.id !== id));
+};
+
+  const isToday = (day) =>
+    day === today.getDate() &&
+    currentMonth === today.getMonth() &&
+    currentYear === today.getFullYear();
+
+  if (!user) return <p>Loading ...</p>;
 
   return (
     <div className="profile-page">
       <div className="container-left">
         <div className="profile-text">Profile Settings</div>
-        {user.profile_pic ? (
+        {user?.profile_pic ? (
           <img src={user.profile_pic} alt="Profile" className="avatar" />
         ) : (
           <img src={userimg} alt="" className="avatar" />
         )}
         <div className="profile-name">
-          {user.first_name} {user.last_name}
+          {user?.first_name || "First"} {user?.last_name || "Last"}
         </div>
         {activeRole === "coach" && <div className="profile-badge">Coach</div>}
         <button className="upload-btn">Upload new image</button>
@@ -280,7 +417,7 @@ function Profile() {
 
         <div className="input-group email-group">
           <label htmlFor="email">Email</label>
-          <input id="email" type="text" defaultValue={user.email} disabled />
+          <input id="email" type="text" defaultValue={user?.email || ""} disabled />
         </div>
 
         <div className="input-group phone-group">
@@ -357,8 +494,122 @@ function Profile() {
               </select>
             </div>
 
+            <div className="profile-btn-footer">
+            <button className="save-btn" onClick={() => setModalAvail(true)}>
+              Manage Coaching Availability
+            </button>
+
             <button className="save-btn" onClick={() => setModalOpen(true)}>
-              Update Qualifications</button>
+              Update Qualifications
+            </button>
+            </div>
+
+              {/*modal for coaching availability*/}
+              {modalAvail &&(
+              <div className="modal-container">
+                <div className="modal-availability">
+                  <div className="modal-header">
+                    <h2>Update Your Coaching Availability</h2>
+                  </div>
+                  <div className="avail-content">
+                  <div className="modal-left avail-left-container">
+                  <div className="date-container">
+                    <div className="date-box">
+                      <label>Start Time</label>
+                      <select value={startTime} onChange={(e) => setStartTime(e.target.value)}>
+                        {timeOptions.map((t) => (
+                          <option key={t.value} value={t.value}>{t.label}</option>
+                          ))}
+                          </select>
+                          </div>
+                          
+                          <div className="date-box">
+                          <label>End Time</label>
+                          <select value={endTime} onChange={(e) => setEndTime(e.target.value)}>
+                            {timeOptions
+                            .filter((t) => t.value > startTime) // prevents invalid times
+                            .map((t) => (
+                            <option key={t.value} value={t.value}>{t.label}</option>
+                            ))}
+                            </select>
+                            </div>
+                            </div>
+                              <div className="weekday-row">
+                                <label>Select Available Days</label>
+                                <div className="day-btn">
+                                {daysofWeek.map((d, i) => (
+                                  <button
+                                    key={i}
+                                    className={activeDays.has(i) ? "day active" : "day"}
+                                    onClick={() => toggleDay(i)}>
+                                      {d}</button>
+                                    ))}
+                                    </div>
+                                    </div>
+                                    <div className="duration-box">
+                                      <label>Set Session Duration:</label>
+                                        <select value={duration} onChange={(e) => setDuration(Number(e.target.value))}>
+                                          <option value={30}>30 minutes</option>
+                                          <option value={60}>60 minutes</option>
+                                          <option value={90}>90 minutes</option>
+                                          <option value={120}>120 minutes</option>
+                                          </select>
+                                    </div>
+                            <button className="save-btn avail-btn" onClick={addRule}>Add Availability</button>
+                            <div className="rules-list">
+                              {timeRules.length === 0 ? (
+                                <p>No availability added yet</p>
+                              ):(
+                              timeRules.map((r) => (
+                                <div key={r.id} className="rule-item">
+                                  <div className="rule-header">
+                                  <h3>{dayMap[r.dayOfWeek]}: {formatTime(r.startTime)} to {formatTime(r.endTime)}</h3>
+                                  <button className="rule-item-btn" onClick={() => handleDeleteRule(r.id)}>
+                                    Delete
+                                    </button>
+                                  </div>
+                                  <h4>Session Duration: {r.duration} minutes</h4>
+                                </div>
+                              )
+                                ))}
+                                </div>
+                                </div>
+
+                                <div className="modal-right">
+                                  <div className="calendar-panel">
+                                    <div className="cal-header">
+                                      <button onClick={prevMonth}>‹</button>
+                                      <h3>{months[currentMonth]} {currentYear}</h3>
+                                      <button onClick={nextMonth}>›</button>
+                                      </div>
+                                      <div className="cal-weekdays">
+                                        {weekdays.map(d => (
+                                          <div key={d}>{d}</div>
+                                          ))}
+                                          </div>
+                                          <div className="cal-grid">
+                                            {cells.map((day, i) => (
+                                              <div
+                                              key={i}
+                                              className={`cal-cell 
+                                              ${!day ? "empty" : ""} 
+                                              ${isToday(day) ? "today" : ""}
+                                              ${day && hasAvailability(day) ? "available" : ""}`}>
+                                                {day}
+                                                </div>
+                                              ))}
+                                              </div>
+                                              </div>
+                                              <button className="delete-btn" onClick={() => setModalAvail(false)}>
+                                                Close
+                                              </button>
+                                </div>
+                  </div>
+                  </div>
+                  </div>   
+            )}
+
+
               {modalOpen && (
             <div className="modal-container">
               {/* modal pops up when coach tries to update qualifications/certification */}
