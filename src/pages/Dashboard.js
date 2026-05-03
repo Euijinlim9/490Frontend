@@ -106,6 +106,7 @@ function Dashboard() {
   const [todayAssignment, setTodayAssignment] = useState(null);
   const [todayLoading, setTodayLoading] = useState(true);
   const [weekWorkouts, setWeekWorkouts] = useState([]);
+  const [weekPersonalEvents, setWeekPersonalEvents] = useState([]);
 
   const fetchTodayAssignment = useCallback(async () => {
     if (activeRole !== "client") return;
@@ -140,6 +141,19 @@ function Dashboard() {
         return d >= startOfWeek && d <= endOfWeek;
       }).sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
       setWeekWorkouts(thisWeek);
+
+      const calRes = await fetch("http://localhost:4000/api/calendar", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (calRes.ok) {
+        const calData = await calRes.json();
+        const thisWeekPersonal = (calData.data || []).filter((e) => {
+          if (!e.date) return false;
+          const d = new Date(e.date + "T00:00:00");
+          return d >= startOfWeek && d <= endOfWeek;
+        });
+        setWeekPersonalEvents(thisWeekPersonal);
+      }
     } catch (err) {
       console.error(err);
       setTodayAssignment(null);
@@ -1027,19 +1041,27 @@ function Dashboard() {
                         const isToday = d.toDateString() === today.toDateString();
                         const isPast = d < new Date(today.toDateString());
                         const workouts = weekWorkouts.filter((a) => a.due_date === key);
+                        const personal = weekPersonalEvents.filter((e) => e.date === key);
                         return (
                           <div key={i} className={`week-day-cell ${isToday ? "week-day-today" : ""} ${isPast && !isToday ? "week-day-past" : ""}`}>
                             <span className="week-day-label">{DAYS[i]}</span>
                             <span className={`week-day-num ${isToday ? "week-day-num-today" : ""}`}>{d.getDate()}</span>
                             <div className="week-day-workouts">
-                              {workouts.length === 0 ? (
+                              {workouts.length === 0 && personal.length === 0 ? (
                                 <span className="week-day-empty">—</span>
                               ) : (
-                                workouts.map((a) => (
-                                  <span key={a.assigned_workout_id} className={`week-day-pill ${a.status === "completed" ? "pill-done" : "pill-scheduled"}`}>
-                                    {a.Workout?.title || "Workout"}
-                                  </span>
-                                ))
+                                <>
+                                  {workouts.map((a) => (
+                                    <span key={a.assigned_workout_id} className={`week-day-pill ${a.status === "completed" ? "pill-done" : "pill-scheduled"}`}>
+                                      {a.Workout?.title || "Workout"}
+                                    </span>
+                                  ))}
+                                  {personal.map((e) => (
+                                    <span key={e.calendar_event_id} className="week-day-pill" style={{ background: e.color, color: "white" }}>
+                                      {e.text}
+                                    </span>
+                                  ))}
+                                </>
                               )}
                             </div>
                           </div>
