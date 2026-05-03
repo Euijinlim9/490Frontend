@@ -19,8 +19,7 @@ function Profile() {
     year_completed: "",
   });
   const [timeRules, setTimeRules] = useState([]);
-  const [startTime, setStartTime]=useState("9:00");
-  const [endTime, setEndTime] =useState("22:00");
+  const [startTime, setStartTime]=useState("09:00");
   const daysofWeek = ["S", "M", "T", "W", "TH", "F", "S"];
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -43,7 +42,6 @@ function Profile() {
   5: "Friday",
   6: "Saturday",
 };
-  const activeRole = "coach"; //delete
 
   const [activeDays, setActiveDays] = useState(new Set([1, 2, 3, 4, 5]));
  
@@ -59,7 +57,6 @@ function Profile() {
   if (!modalOpen) return;
 
   const token = localStorage.getItem("token");
-  if (!token) return; //delete
 
   const fetchData = async () => {
     const [qRes, cRes] = await Promise.all([
@@ -340,7 +337,7 @@ const hasAvailability = (day) => {
     currentMonth === today.getMonth() &&
     currentYear === today.getFullYear();
 
-  //if (!user) return <p>Loading ...</p>;
+  if (!user) return <p>Loading ...</p>;
 
   return (
     <div className="profile-page">
@@ -603,6 +600,9 @@ const hasAvailability = (day) => {
                                               ))}
                                               </div>
                                               </div>
+                                              <button className="delete-btn" onClick={() => setModalAvail(false)}>
+                                                Close
+                                              </button>
                                 </div>
                   </div>
                   </div>
