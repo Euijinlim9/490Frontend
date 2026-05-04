@@ -460,7 +460,7 @@ function CustomWorkout() {
             </div>
 
             <div className="cw-form-row">
-              <div className="cw-form-group">
+              <div className="cw-form-group small">
                 <label>Sets</label>
                 <input
                   name="sets"
@@ -471,7 +471,7 @@ function CustomWorkout() {
                   onChange={handleChange}
                 />
               </div>
-              <div className="cw-form-group">
+              <div className="cw-form-group small">
                 <label>Reps</label>
                 <input
                   name="reps"
@@ -482,7 +482,7 @@ function CustomWorkout() {
                   onChange={handleChange}
                 />
               </div>
-              <div className="cw-form-group">
+              <div className="cw-form-group small">
                 <label>Rest (sec)</label>
                 <input
                   name="breakTime"
