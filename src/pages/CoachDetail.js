@@ -523,7 +523,7 @@ function CoachDetail() {
         {activeTab === "reviews" && (
           <div className="cp-card">
             <h3 className="cp-card-title">Client Reviews</h3>
-            {activeRole === "client" && !isSelf && (
+            {canReview && (
               <form className="cp-review-form" onSubmit={handleReviewSubmit}>
                 <textarea
                   placeholder="Write your review here..."
