@@ -28,6 +28,7 @@ function CoachDetail() {
   const [reviews, setReviews] = useState([]);
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState("");
+  const [myCoachId, setMyCoachId] = useState(null); 
 
   // Report
   const [showReportForm, setShowReportForm] = useState(false);
@@ -46,7 +47,7 @@ function CoachDetail() {
           return;
         }
         if (!res.ok) throw new Error("Failed to load coach");
-        const data = await res.json();
+        const data = await res.json(); 
         setCoach(data);
       } catch (err) {
         setError("Could not load coach. Please try again.");
@@ -95,6 +96,7 @@ function CoachDetail() {
         }
         const data = await res.json();
         setMyCoachState(data.state);
+        setMyCoachId(data.coach?.user_id); 
       } catch {
         /* silent */
       }
@@ -233,6 +235,12 @@ function CoachDetail() {
     );
 
   const isSelf = user && coach && user.user_id === coach.user_id;
+
+  const canReview = activeRole === "client" && 
+  !isSelf && 
+  myCoachState === "active" && 
+  Number(myCoachId) === Number(coach.user_id); 
+
   const hasPlans = plans.length > 0;
   const canSubscribe = activeRole === "client" && !isSelf;
   const canRequest =
@@ -291,7 +299,7 @@ function CoachDetail() {
                   </p>
                 </div>
                 {headerButton}
-                {activeRole === "client" && !isSelf && (
+                {canReview && (
                   <button
                     className="cp-report-btn"
                     onClick={() => setShowReportForm((prev) => !prev)}
