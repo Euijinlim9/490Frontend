@@ -324,6 +324,10 @@
   box-sizing: border-box;
 }
 
+.cw-form-group.small input{
+  width:160px;
+}
+
 .cw-form-group input::placeholder {
   color: #888;
 }
