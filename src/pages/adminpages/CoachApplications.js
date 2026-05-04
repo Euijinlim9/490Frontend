@@ -4,13 +4,16 @@ import "../../styles/CoachApplication.css";
 function CoachApplication(){
     const[coaches, setCoaches] = useState([]);
     const [selectedCoach, setSelectedCoach] = useState(null);
+    const [query, setQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filter, setFilter] = useState([]);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
         const fetchData = async () => {
             try{
                 const rest = await fetch(
-                    "http://localhost:4000/admin/pending?role=coach",
+                    "http://localhost:4000/admin/pending?role",
                     {
                         headers: {Authorization: `Bearer ${token}`},
                     }
@@ -55,9 +58,72 @@ function CoachApplication(){
         }
     };
 
+    const handleSearch = () => {
+    setSearchQuery(query);
+};
+
+    const filterCoach = coaches.filter((c) => {
+    if (!searchQuery) return true;
+
+    const search = searchQuery.toLowerCase();
+    const name = `${c.first_name || ""} ${c.last_name || ""}`.toLowerCase();
+    const status = (c.role === "coach" ?
+        c.Coach?.is_approved : c.Nutritionist?.is_approved) ? "approved" : "pending";
+    const role = (c.role || "").toLowerCase();
+
+    if (filter === "name") {
+      return name.includes(search);
+    }
+
+    if (filter === "status") {
+      return status.includes(search);
+    }
+
+    if (filter === "role") {
+      return role.includes(search);
+    }
+
+    return (
+      name.includes(search) ||
+      status.includes(search) ||
+      role.includes(search)
+    );
+  });
+
     return(
     <div className="coach-app-container">
-        {coaches.map((coach) => (
+        <div className="report-header">
+            <h2>Pending Applications</h2>
+                    <div className="search-container">
+                    <input
+                    type="text"
+                    placeholder="Search Applications"
+                    className="search-input"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSearch();
+                    }}
+                    />
+                    
+                    <select
+                    className="filter-dropdown"
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                    >
+          <option value="" disabled>
+            Filter
+          </option>
+          <option value="name">Name</option>
+          <option value="status">Status</option>
+          <option value="role">Role</option>
+        </select>
+        <button className="search-button" onClick={handleSearch}>
+          Search
+        </button>
+            </div>
+        </div>
+        {filterCoach.map((coach) => (
           <div
             key={coach.user_id}
             className="coach-app-card"
@@ -86,6 +152,7 @@ function CoachApplication(){
                     </div>
                     <div className="modal-content">
                         <p>Name: {selectedCoach.first_name} {selectedCoach.last_name}</p>
+                        <p>Role: {selectedCoach.role}</p>
                         <p>Email: {selectedCoach.email}</p>
                         <p>Phone Number: {selectedCoach.phone}</p>
                         <h5>Certifications:</h5>

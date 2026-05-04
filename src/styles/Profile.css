@@ -98,7 +98,6 @@
   margin-bottom: 20px;
   width: 100%;
 }
-
 .input-group label {
   font-size: 12px;
   color: #ccc;
@@ -140,7 +139,7 @@
 }
 
 .email-group {
-  width: 100%;
+  width: 450px;
 }
 
 .goals {
@@ -310,21 +309,27 @@
 }
 
 .modal{
-  background: rgb(204, 204, 204);
+  background: linear-gradient(to bottom, #0b1220, #141d2c);
   width: 550px;
   max-width: 100%;
   border-radius: 5px;
+  overflow-y: auto; 
+  max-height:90vh;
 }
 
 .modal-header{
   display:flex;
-  background: rgb(173, 173, 173);
+  background: linear-gradient(to top, #0b1220, #141d2c);
   color:rgb(0, 0, 0);
   padding: 20px 15px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  justify-content: space-between;
+  justify-content: center;
   align-items:center;
+}
+
+.modal-header h2{
+  color:#000000;
 }
 
 .modal input,
@@ -348,12 +353,28 @@
   padding: 15px;
 }
 
+.avail-content{
+  align-items:flex-start;
+  display: flex;
+  gap: 12px;
+  padding: 15px;
+}
+
 .modal-footer{
   display:flex;
   border-top: 1px;
   padding: 20px 15px;
   justify-content: flex-end;
   gap:10px;
+}
+
+.modal-availability{
+  background: rgb(204, 204, 204);
+  width: 1150px;
+  max-width: 100%;
+  border-radius: 5px;
+  overflow-y: auto; 
+  max-height: 100vh;
 }
 
 .modal-footer .modal-btns{
@@ -382,3 +403,308 @@
   gap: 50px;
 }
 
+.profile-btn-footer{
+  display: flex;
+  gap: 10px;
+}
+
+.modal-left{
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 30px;
+}
+
+.modal-right {
+  flex: 1;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.date-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  width: 400px;
+  margin-left: 20px;
+  background: white;
+  border-radius: 10px;
+}
+
+.date-box {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.date-box select {
+  margin-top:10px;
+  width: 150px;
+  border-color:#a9a9a9;
+}
+
+.date-box label{
+  font-size: 18px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.weekday-row {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.weekday-row label{
+  margin-left:20px;
+  margin-top:20px;
+}
+
+.day-btn{
+  display: flex;
+  gap:10px;
+  margin: 0 0;
+  margin-left: 20px;
+  margin-bottom:20px;
+}
+
+.day {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  border: none;
+  background: #eaeaea;
+  cursor: pointer;
+  margin-top:20px;
+  margin-bottom: 20px;
+}
+
+.day.active {
+  background: #2bb3a3;
+  color: white;
+}
+
+.save-btn.avail-btn{
+  margin-left: 20px;
+  background-color:#2bb3a3;
+}
+
+.duration-box {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  width: 380px;
+  background-color:white;
+  margin-left:20px;
+}
+
+.duration-box select {
+  margin-top:10px;
+  width: 200px;
+  border-color:#a9a9a9;
+}
+
+.duration-box label{
+  font-size: 18px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  margin-right: 20px;
+}
+
+.rule-item{
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  width: 380px;
+  background-color:white;
+  margin-left:20px;
+  margin-top:20px;
+  height: 80px;
+}
+
+.rule-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.rule-item-btn{
+  width: 50px;
+  background-color: #ff4e4e;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  padding: 5px 0;
+  margin: 5px 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-right {
+  flex: 1;
+}
+
+.calendar-panel {
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 10px;
+  height: 100%;
+  width: 100%;
+  max-width:650px;
+  margin-left:100px;
+  margin-top:14px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.calendar-cell {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 50px;
+  min-width: 50px;
+}
+
+.calendar-cell.available {
+  background-color: #2bb3a3;
+  color: white;
+  font-weight: bold;
+  border: 2px solid #1e8f83;
+}
+
+.calendar-header {
+  font-weight: bold;
+  font-size:20px;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  text-align: center;
+  display: flex;
+}
+
+.calendar-header button{
+  padding: 10px 18px;
+  background-color: #2bb3a3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.calendar-weekdays {
+  background: #2bb3a3;
+  color: white;
+  padding: 4px;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding-bottom: 6px;
+}
+
+.modal-left.avail-left-container{
+  margin-left:100px;
+}
+
+.date-box select{
+  color:#000000;
+}
+
+.duration-box select{
+  color:black;
+}
+
+.avail-delete-btn{
+  width: 100px;
+  background-color: #ff3b3b;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  padding: 10px 0;
+  margin: 5px 0;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 30px;
+}
+
+.avail-btn-footer{
+  display:flex;
+  justify-content: flex-end;
+}
+
+.input-group2 {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.input-group2 label {
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 6px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.input-group2 input[type="text"]{
+  width:500px;
+}
+
+.avail-card{
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 10px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.upload-zone-filename {
+  font-size: 12px;
+  color: #2bb3a3;
+  margin-top: 6px;
+}
+
+.cert-status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.cert-status.pending {
+  margin-top: 10px;
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffdb6f;
+  width:40px;
+}
+.cert-status.approved {
+  background: rgba(43, 179, 163, 0.2);
+  color: #2bb3a3;
+}
+.cert-status.rejected {
+  background: rgba(255, 80, 80, 0.2);
+  color: #ff5050;
+}

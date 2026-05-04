@@ -324,6 +324,10 @@
   box-sizing: border-box;
 }
 
+.cw-form-group.small input{
+  width:160px;
+}
+
 .cw-form-group input::placeholder {
   color: #888;
 }
@@ -339,6 +343,12 @@
 
 .cw-form-row .cw-form-group {
   flex: 1;
+  min-width: 0;
+}
+
+.cw-form-row .cw-form-group input {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .cw-add-btn {

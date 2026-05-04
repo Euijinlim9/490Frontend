@@ -1,8 +1,3 @@
-/* What is Context?
-Context is React's built-in way to share data across your entire app without passing props at every level. Think of it like a global variable, but managed properly by React.
-You create a "Provider" that holds the data and wraps your app. Any component inside that wrapper can access the data directly — no props needed.
-*/
-
 import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
@@ -23,7 +18,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Fetch user info thorugh the JWT Token
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
@@ -51,15 +45,12 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     };
 
-    // Call the function
     fetchUser();
   }, []);
 
   const logout = () => {
-    // remove the token from localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("activeRole");
-    // clean the UI
     setUser(null);
     setActiveRoleState(null);
   };
