@@ -67,11 +67,7 @@ function App() {
 
   return (
     <div className="body">
-      {!hideMainHeader && (
-        <>
-          <Header />
-        </>
-      )}
+      {!hideMainHeader && <Header />}
 
       <div className="page-content">
         <Routes>
