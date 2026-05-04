@@ -4,8 +4,8 @@
   padding: 30px 20px;
   color: white;
   box-sizing: border-box;
-  align-items: stretch;
-  flex: 1;
+  align-items: flex-start;
+  height: calc(100vh - 80px);
 }
 
 .calendar-events-panel {
@@ -18,7 +18,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden;
+  height: 100%;
 }
 
 .panel-title {
@@ -37,6 +38,9 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }
 
 .event-group {
@@ -71,6 +75,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
 .cal-header {
@@ -120,6 +126,7 @@
   grid-auto-rows: 1fr;
   gap: 8px;
   flex: 1;
+  overflow: hidden;
 }
 
 .cal-cell {
@@ -135,7 +142,7 @@
   padding: 6px;
   box-sizing: border-box;
   overflow: hidden;
-  min-height: 80px;
+  min-height: 0;
 }
 
 .cal-cell:hover {
@@ -176,6 +183,8 @@
   flex-direction: column;
   gap: 2px;
   width: 100%;
+  flex: 1;
+  overflow: hidden;
 }
 
 .plan-pill {
