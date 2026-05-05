@@ -16,11 +16,14 @@ function Coach() {
   useEffect(() => {
     const fetchCoaches = async () => {
       const token = localStorage.getItem("token");
+
       try {
         const res = await fetch("http://localhost:4000/api/coaches", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         if (!res.ok) throw new Error("Failed to load coaches");
+
         const data = await res.json();
         setCoaches(data.data || []);
       } catch (err) {
@@ -34,15 +37,43 @@ function Coach() {
     fetchCoaches();
   }, []);
 
+  const nutritionists = [
+    {
+      user_id: "nutritionist-1",
+      first_name: "Alex",
+      last_name: "Rivers",
+      profile_pic: null,
+      Coach: {
+        specialization: "Vegan",
+        bio: "Helps with plant-based diets and balanced meal planning.",
+        experience_years: 4,
+        price: 30,
+        is_verified: true,
+      },
+    },
+    {
+      user_id: "nutritionist-2",
+      first_name: "Maya",
+      last_name: "Chen",
+      profile_pic: null,
+      Coach: {
+        specialization: "Low Calorie",
+        bio: "Focuses on macros, performance meals, and recovery nutrition.",
+        experience_years: 6,
+        price: 45,
+        is_verified: true,
+      },
+    },
+  ];
+
   const handleSearch = () => {
     setSearchQuery(query);
   };
 
-  // TODO: wire up nutritionist endpoint when backend supports it
-  const filteredCoaches = coaches.filter((coach) => {
-    // Role filter — only coaches for now; nutritionist returns empty until backend is ready
-    if (roleFilter === "nutritionist") return false;
+  const usersToShow =
+    roleFilter === "nutritionist" ? nutritionists : coaches;
 
+  const filteredCoaches = usersToShow.filter((coach) => {
     if (!searchQuery) return true;
 
     const search = searchQuery.toLowerCase();
@@ -70,13 +101,19 @@ function Coach() {
       <div className="coach-page-header">
         <h1>Find Your Coach</h1>
         <p>
-          Browse our verified coaches and find the perfect match for your goals.
+          Browse our verified coaches and nutritionists to find the perfect
+          match for your goals.
         </p>
       </div>
+
       <div className="search-container">
         <input
           type="text"
-          placeholder="Search Coach"
+          placeholder={
+            roleFilter === "nutritionist"
+              ? "Search Nutritionist"
+              : "Search Coach"
+          }
           className="search-input"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -90,17 +127,19 @@ function Coach() {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
-          <option value="" disabled>
-            Filter
-          </option>
-          <option value="name">Coach Name</option>
+          <option value="">Filter</option>
+          <option value="name">Name</option>
           <option value="specialty">Specialty</option>
         </select>
 
         <select
           className="filter-dropdown"
           value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
+          onChange={(e) => {
+            setRoleFilter(e.target.value);
+            setSearchQuery("");
+            setQuery("");
+          }}
         >
           <option value="coach">Coach</option>
           <option value="nutritionist">Nutritionist</option>
@@ -111,22 +150,27 @@ function Coach() {
         </button>
       </div>
 
-      {loading && <p className="coach-status">Loading coaches...</p>}
-      {error && <p className="coach-status error">{error}</p>}
+      {loading && roleFilter === "coach" && (
+        <p className="coach-status">Loading coaches...</p>
+      )}
+
+      {error && roleFilter === "coach" && (
+        <p className="coach-status error">{error}</p>
+      )}
 
       {!loading && !error && filteredCoaches.length === 0 && (
-        <p className="coach-status">
-          {roleFilter === "nutritionist"
-            ? "Nutritionist browsing is coming soon."
-            : "No coaches match your search."}
-        </p>
+        <p className="coach-status">No results match your search.</p>
       )}
 
       <div className="coach-container">
         {filteredCoaches.map((coach) => (
           <Link
             key={coach.user_id}
-            to={`/coach/${coach.user_id}`}
+            to={
+              roleFilter === "nutritionist"
+                ? "/coach"
+                : `/coach/${coach.user_id}`
+            }
             className="coach-card"
           >
             <img
@@ -134,16 +178,20 @@ function Coach() {
               alt={coach.first_name}
               className="avatar"
             />
+
             <h3>
               {coach.first_name} {coach.last_name}
               {coach.Coach?.is_verified && (
                 <span className="verified-badge">✓</span>
               )}
             </h3>
+
             <p className="coach-specialty">
               {coach.Coach?.specialization || "General Coaching"}
             </p>
+
             <p>{coach.Coach?.bio || "No bio available yet."}</p>
+
             <div className="coach-card-footer">
               <span>{coach.Coach?.experience_years || 0} yrs</span>
               <span className="coach-price">
