@@ -383,3 +383,221 @@
   color: #fca5a5;
   font-size: 0.85rem;
 }
+
+/* Photo section header */
+.cp-photos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cp-photos-header .client-card-title {
+  margin-bottom: 0;
+}
+
+.cp-photos-filter {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cp-filter-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cfd6de;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.cp-filter-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cp-filter-pill.active {
+  background: rgba(108, 166, 255, 0.15);
+  border-color: rgba(108, 166, 255, 0.4);
+  color: #6ca6ff;
+}
+
+.cp-photos-date-range {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.cp-photos-date-range label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #8a909a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cp-date-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  color-scheme: dark;
+}
+
+.cp-date-input:focus {
+  border-color: #6ca6ff;
+}
+
+/* Photo grid (already exists, replace if conflicting) */
+.cp-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.cp-photo-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cp-photo-card:hover {
+  border-color: rgba(108, 166, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.cp-photo-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  background: #0a0d12;
+}
+
+.cp-photo-date {
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  color: #8a909a;
+  text-align: center;
+}
+
+/* Pagination */
+.cp-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.cp-page-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cfd6de;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.cp-page-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.cp-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cp-page-info {
+  font-size: 0.85rem;
+  color: #8a909a;
+}
+
+/* Lightbox */
+.cp-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: cp-fade-in 0.2s;
+  cursor: zoom-out;
+  padding: 40px;
+}
+
+.cp-lightbox-image {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+  cursor: default;
+}
+
+.cp-lightbox-meta {
+  margin-top: 16px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: default;
+}
+
+.cp-lightbox-close {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all 0.15s;
+}
+
+.cp-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 600px) {
+  .cp-photos-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cp-photos-date-range {
+    width: 100%;
+  }
+  .cp-photos-date-range label {
+    flex: 1;
+  }
+}

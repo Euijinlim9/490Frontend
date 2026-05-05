@@ -1134,7 +1134,7 @@ function Dashboard() {
                   return (
                     <div className="week-day-row">
                       {days.map((d, i) => {
-                        const key = d.toISOString().split("T")[0];
+                        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                         const isToday = d.toDateString() === today.toDateString();
                         const isPast = d < new Date(today.toDateString());
                         const workouts = weekWorkouts.filter((a) => a.due_date === key);

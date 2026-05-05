@@ -30,10 +30,10 @@ import ViewUsers from "./pages/adminpages/ViewUsers";
 import AdminExercise from "./pages/adminpages/AdminExercise";
 import UserReport from "./pages/adminpages/UserReports";
 import AdminDashboard from "./pages/adminpages/AdminDashboard";
-import LogMeal from "./pages/LogMeal"; 
-import LogWorkout from "./pages/LogWorkout"; 
-import LogWellness from "./pages/LogWellness"; 
-import PremadeMeals from "./pages/PremadeMeals"; 
+import LogMeal from "./pages/LogMeal";
+import LogWorkout from "./pages/LogWorkout";
+import LogWellness from "./pages/LogWellness";
+import PremadeMeals from "./pages/PremadeMeals";
 import CoachPlans from "./pages/CoachPlans";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsService from "./pages/TermsService";
@@ -48,6 +48,7 @@ import DailyCheckIns from "./pages/DailyCheckIns";
 import Notifications from "./pages/Notifications";
 import ClientProgress from "./pages/ClientProgress";
 import AdminRole from "./components/AdminRole";
+import WorkoutPhotos from "./pages/WorkoutPhotos";
 
 function App() {
   const location = useLocation();
@@ -94,7 +95,11 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
-          <Route path="/test-survey" element={<ClientSurvey show={true} onClose={() => {}} />} />
+          <Route path="/workout-photos" element={<WorkoutPhotos />} />
+          <Route
+            path="/test-survey"
+            element={<ClientSurvey show={true} onClose={() => {}} />}
+          />
           <Route
             path="/test-survey"
             element={<ClientSurvey show={true} onClose={() => {}} />}
@@ -120,37 +125,51 @@ function App() {
           />
 
           {/*admin routes*/}
-          <Route path="/admin/coachapp" element={
-            <AdminRole>
-              <CoachApplications />
-            </AdminRole>} 
+          <Route
+            path="/admin/coachapp"
+            element={
+              <AdminRole>
+                <CoachApplications />
+              </AdminRole>
+            }
           />
-          <Route path="/admin/viewusers" element={
-            <AdminRole>
-              <ViewUsers />
-            </AdminRole>} 
+          <Route
+            path="/admin/viewusers"
+            element={
+              <AdminRole>
+                <ViewUsers />
+              </AdminRole>
+            }
           />
-          <Route path="/admin/exercise" element={
-            <AdminRole>
-              <AdminExercise />
-            </AdminRole>} 
-            />
-          <Route path="/admin/userreport" element={
-            <AdminRole>
-              <UserReport />
-            </AdminRole>} 
-            />
-          <Route path="/admin/admindash" element={
-            <AdminRole>
-              <AdminDashboard />
-            </AdminRole>} 
-            />
+          <Route
+            path="/admin/exercise"
+            element={
+              <AdminRole>
+                <AdminExercise />
+              </AdminRole>
+            }
+          />
+          <Route
+            path="/admin/userreport"
+            element={
+              <AdminRole>
+                <UserReport />
+              </AdminRole>
+            }
+          />
+          <Route
+            path="/admin/admindash"
+            element={
+              <AdminRole>
+                <AdminDashboard />
+              </AdminRole>
+            }
+          />
 
           <Route path="/log-meal" element={<LogMeal />} />
-          <Route path="/log-workout" element={<LogWorkout />} /> 
-          <Route path="/log-wellness" element={<LogWellness />} /> 
+          <Route path="/log-workout" element={<LogWorkout />} />
+          <Route path="/log-wellness" element={<LogWellness />} />
           <Route path="/premade-meals" element={<PremadeMeals />} />
-          {" "}
         </Routes>
       </div>
     </div>

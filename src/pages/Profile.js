@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const {activeRole} = useContext(AuthContext);
   const[showNewForm, setShowNewForm] = useState(false);
   const[qualifications, setQualifications] = useState([]);
   const [certifications, setCertifications] = useState([]);
@@ -20,6 +21,7 @@ function Profile() {
   });
   const [timeRules, setTimeRules] = useState([]);
   const [startTime, setStartTime]=useState("09:00");
+  const [endTime, setEndTime]=useState("22:00");
   const daysofWeek = ["S", "M", "T", "W", "TH", "F", "S"];
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -52,13 +54,9 @@ function Profile() {
       return next;
     });
   };
- 
-  useEffect(() => {
-  if (!modalOpen) return;
-
-  const token = localStorage.getItem("token");
 
   const fetchData = async () => {
+    const token = localStorage.getItem("token");
     const [qRes, cRes] = await Promise.all([
       fetch("http://localhost:4000/api/qualifications", {
         headers: { Authorization: `Bearer ${token}` },
@@ -71,9 +69,12 @@ function Profile() {
     const qData = await qRes.json();
     const cData = await cRes.json();
 
-    setQualifications(qData);
-    setCertifications(cData);
+    setQualifications(Array.isArray(qData) ? qData : []);
+    setCertifications(Array.isArray(cData) ? cData : []);
   };
+ 
+  useEffect(() => {
+  if (!modalOpen) return;
 
   fetchData();
 }, [modalOpen]);
@@ -207,32 +208,36 @@ function Profile() {
   };
 
   const handleSubmit = async () => {
-  const formData = new FormData();
+    const token = localStorage.getItem("token");
+    if (type === "certification"){
+      if (!file) return alert("Upload a file.");
 
-  formData.append("type", type);
+      const formData = new FormData();
+      formData.append("document", file);
 
-  if (type === "certification") {
-    if (!file) return alert("Upload a file");
-
-    formData.append("document", file);
-  }
-
-  if (type === "qualification") {
-    formData.append("degree_name", qualForm.degree_name);
-    formData.append("institution", qualForm.institution);
-    formData.append("field_of_study", qualForm.field_of_study);
-    formData.append("year_completed", qualForm.year_completed);
-  }
-
-  const res = await fetch("/api/documents", {
-    method: "POST",
-    body: formData,
-  });
-
-  const data = await res.json();
-
-  console.log(data);
-  setModalOpen(false);
+      const res = await fetch("http://localhost:4000/api/certifications", {
+        method: "POST",
+        headers: {Authorization: `Bearer ${token}`},
+        body: formData,
+      });
+      setFile(null);
+      const data=await res.json;
+      console.log(data);
+    }
+    if (type === "qualification") {
+      const res = await fetch("http://localhost:4000/api/qualifications", {
+        method: "POST",
+        headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+        body: JSON.stringify(qualForm),
+      });
+      const data = await res.json();
+      console.log(data);
+    }
+  setShowNewForm(false);
+  await fetchData();
 };
 
 const generateTimes = (interval = 30) => {
@@ -577,21 +582,21 @@ const hasAvailability = (day) => {
 
                                 <div className="modal-right">
                                   <div className="calendar-panel">
-                                    <div className="cal-header">
+                                    <div className="calendar-header">
                                       <button onClick={prevMonth}>‹</button>
                                       <h3>{months[currentMonth]} {currentYear}</h3>
                                       <button onClick={nextMonth}>›</button>
                                       </div>
-                                      <div className="cal-weekdays">
+                                      <div className="calendar-weekdays">
                                         {weekdays.map(d => (
                                           <div key={d}>{d}</div>
                                           ))}
                                           </div>
-                                          <div className="cal-grid">
+                                          <div className="calendar-grid">
                                             {cells.map((day, i) => (
                                               <div
                                               key={i}
-                                              className={`cal-cell 
+                                              className={`calendar-cell 
                                               ${!day ? "empty" : ""} 
                                               ${isToday(day) ? "today" : ""}
                                               ${day && hasAvailability(day) ? "available" : ""}`}>
@@ -600,9 +605,11 @@ const hasAvailability = (day) => {
                                               ))}
                                               </div>
                                               </div>
-                                              <button className="delete-btn" onClick={() => setModalAvail(false)}>
+                                              <div className="avail-btn-footer">
+                                              <button className="avail-delete-btn" onClick={() => setModalAvail(false)}>
                                                 Close
                                               </button>
+                                              </div>
                                 </div>
                   </div>
                   </div>
@@ -618,10 +625,10 @@ const hasAvailability = (day) => {
                   <h2>Update Qualifications and Certification</h2>
                 </div>
                 <div className="toggle">
-                  <button className="toggle-btns" onClick={() => setType("qualification")}>
+                  <button className="toggle-btns" onClick={() => {setType("qualification"); setShowNewForm(false);}}>
                     Qualification
                   </button>
-                  <button className="toggle-btns" onClick={() => setType("certification")}>
+                  <button className="toggle-btns" onClick={() => {setType("certification"); setShowNewForm(false);}}>
                     Certification
                   </button>
                   </div>
@@ -634,9 +641,12 @@ const hasAvailability = (day) => {
                       <p>You have no existing qualifications.</p>
                     ) : (
                       qualifications.map((q) => (
-                        <div key={q.id} className="item-card">
+                        <div key={q.qualification_id} className="avail-card">
+                          <label>Degree Name</label>
                           <p>{q.degree_name}</p>
+                          <label>Institution</label>
                           <p>{q.institution}</p>
+                          <label>Year Completed</label>
                           <p>{q.year_completed}</p>
                         </div>
                       ))
@@ -653,24 +663,24 @@ const hasAvailability = (day) => {
                   )}
                   {type ==="qualification" && showNewForm && (
                     <>
-                    <div className="input-group">
-                      <label>Degree Name</label>
-                    <input placeholder="e.g Bachelor of Science"
+                    <div className="input-group2">
+                    <label>Degree Name</label>
+                    <input type="text" placeholder="e.g Bachelor of Science"
                     onChange={(e) => setQualForm({...qualForm, degree_name: e.target.value})
                     }
                     />
                     <label>Institution</label>
-                    <input placeholder="e.g New Jersey Institute of Technology"
+                    <input type="text" placeholder="e.g New Jersey Institute of Technology"
                     onChange={(e) => setQualForm({...qualForm, institution: e.target.value})
                   }
                   />
                   <label>Field of Study</label>
-                  <input placeholder="e.g Medicine"
+                  <input type="text" placeholder="e.g Medicine"
                   onChange={(e) => setQualForm({...qualForm, field_of_study: e.target.value})
                 }
                   />
                   <label>Year Completed</label>
-                  <input placeholder="e.g 2026"
+                  <input type="text" placeholder="e.g 2026"
                   onChange={(e) => setQualForm({...qualForm, year_completed: e.target.value})}
                   />
                   </div>
@@ -691,10 +701,11 @@ const hasAvailability = (day) => {
                         <p>You have no existing certifications</p>
                       ) : (
                         certifications.map((c) => (
-                          <div key={c.id} className="item-card">
+                          <div key={c.certification_id} className="avail-card">
                             <a href={c.document_url} target="_blank" rel="noopener noreferrer">
-                              View Document
+                              📄 {c.document_url.split("/").pop()}
                             </a>
+                            <span className={`cert-status ${c.status}`}>{c.status}</span>
                           </div>
                         ))
                       )}
@@ -709,17 +720,34 @@ const hasAvailability = (day) => {
                       </>
                     )}
                     {type === "certification" && showNewForm && (
-                      <>
-                      <input type = "file"
-                      onChange={(e) => setFile(e.target.files[0])}
+                      <div className="upload-zone">
+                      <div className="upload-zone-icon">↑</div>
+                      <p className="upload-zone-title">
+                        Drag and drop files here or upload
+                      </p>
+                      <p className="upload-zone-sub">
+                        Accepted file types: PDF, PNG, JPG, JPEG
+                      </p>
+                      <label className="upload-zone-btn">
+                        Upload
+                      <input
+                        type="file"
+                        multiple
+                        accept=".pdf, .png, .jpg, .jpeg"
+                        style={{ display: "none" }}
+                        onChange={(e) =>
+                          setFile(Array.from(e.target.files))
+                        }
                       />
+                      </label>
+                      {file && <p className="upload-zone-filename">📄 {file.name}</p>}
                       <div className="modal-footer">
                       <button className="modal-btns" onClick={handleSubmit}>Submit</button>
                       <button className="modal-btns" onClick={() => setShowNewForm(false)}>
                         Back
                         </button>
                         </div>
-                      </>
+                      </div>
                       
                     )}
                 </div>

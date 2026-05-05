@@ -309,15 +309,17 @@
 }
 
 .modal{
-  background: rgb(204, 204, 204);
+  background: linear-gradient(to bottom, #0b1220, #141d2c);
   width: 550px;
   max-width: 100%;
   border-radius: 5px;
+  overflow-y: auto; 
+  max-height:90vh;
 }
 
 .modal-header{
   display:flex;
-  background: rgb(173, 173, 173);
+  background: linear-gradient(to top, #0b1220, #141d2c);
   color:rgb(0, 0, 0);
   padding: 20px 15px;
   border-top-left-radius: 5px;
@@ -547,42 +549,44 @@
   padding: 10px;
   border-radius: 10px;
   height: 100%;
-  max-width:600px;
-  margin-left:150px;
+  width: 100%;
+  max-width:650px;
+  margin-left:100px;
   margin-top:14px;
 }
 
-.cal-grid {
+.calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
 }
 
-.cal-cell {
+.calendar-cell {
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 8px;
-  min-height: 70px;
-  min-width: 70px;
+  min-height: 50px;
+  min-width: 50px;
 }
 
-.cal-cell.available {
+.calendar-cell.available {
   background-color: #2bb3a3;
   color: white;
   font-weight: bold;
   border: 2px solid #1e8f83;
 }
 
-.cal-header {
+.calendar-header {
   font-weight: bold;
   font-size:20px;
   margin-top: 15px;
   margin-bottom: 30px;
   text-align: center;
+  display: flex;
 }
 
-.cal-header button{
+.calendar-header button{
   padding: 10px 18px;
   background-color: #2bb3a3;
   color: white;
@@ -593,13 +597,20 @@
   cursor: pointer;
 }
 
-.cal-weekdays {
+.calendar-weekdays {
   background: #2bb3a3;
   color: white;
   padding: 4px;
   border-radius: 5px;
   margin-bottom: 4px;
   font-size: 12px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding-bottom: 6px;
 }
 
 .modal-left.avail-left-container{
@@ -612,4 +623,88 @@
 
 .duration-box select{
   color:black;
+}
+
+.avail-delete-btn{
+  width: 100px;
+  background-color: #ff3b3b;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  padding: 10px 0;
+  margin: 5px 0;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 30px;
+}
+
+.avail-btn-footer{
+  display:flex;
+  justify-content: flex-end;
+}
+
+.input-group2 {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.input-group2 label {
+  font-size: 12px;
+  color: #ccc;
+  margin-bottom: 6px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.input-group2 input[type="text"]{
+  width:500px;
+}
+
+.avail-card{
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 10px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.upload-zone-filename {
+  font-size: 12px;
+  color: #2bb3a3;
+  margin-top: 6px;
+}
+
+.cert-status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.cert-status.pending {
+  margin-top: 10px;
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffdb6f;
+  width:40px;
+}
+.cert-status.approved {
+  background: rgba(43, 179, 163, 0.2);
+  color: #2bb3a3;
+}
+.cert-status.rejected {
+  background: rgba(255, 80, 80, 0.2);
+  color: #ff5050;
 }

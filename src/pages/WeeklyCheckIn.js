@@ -25,33 +25,75 @@ function WeeklyCheckIn() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!user) return;
+  if (!user) return;
 
-    const today = new Date();
-    const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+  const today = new Date();
+  const thisWeek = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
 
-    const savedCheckins =
-      JSON.parse(localStorage.getItem("weeklyCheckins")) || [];
+  const savedCheckins =
+    JSON.parse(localStorage.getItem("weeklyCheckins")) || [];
 
-    const newCheckin = {
-      ...formData,
-      userId: user.user_id,
-      date: today.toLocaleDateString(),
-      weekKey: thisWeek,
+  const newCheckin = {
+    ...formData,
+    userId: user.user_id,
+    date: today.toLocaleDateString(),
+    weekKey: thisWeek,
+  };
+
+  localStorage.setItem(
+    "weeklyCheckins",
+    JSON.stringify([...savedCheckins, newCheckin])
+  );
+
+  const savedSurvey = JSON.parse(localStorage.getItem("clientSurveyData"));
+
+  if (savedSurvey && formData.weight) {
+    const newWeight = Number(formData.weight);
+    const weightKg = newWeight * 0.453592;
+
+    const bmr =
+      savedSurvey.gender === "male"
+        ? 10 * weightKg + 6.25 * savedSurvey.heightCm - 5 * savedSurvey.age + 5
+        : 10 * weightKg + 6.25 * savedSurvey.heightCm - 5 * savedSurvey.age - 161;
+
+    const tdee = bmr * savedSurvey.activityFactor;
+
+    const changeMap = {
+      0.5: 250,
+      1: 500,
+      1.5: 750,
     };
 
-    localStorage.setItem(
-      "weeklyCheckins",
-      JSON.stringify([...savedCheckins, newCheckin])
-    );
+    const adjustment = changeMap[savedSurvey.weeklyChange] || 0;
 
-    localStorage.setItem(`lastWeeklyCheckin-${user.user_id}`, thisWeek);
+    let calorieTarget = tdee;
 
-    alert("Weekly check-in saved!");
-    navigate("/dashboard");
-  };
+    if (savedSurvey.goal === "lose") {
+      calorieTarget = tdee - adjustment;
+    } else if (savedSurvey.goal === "gain") {
+      calorieTarget = tdee + adjustment;
+    }
+
+    const updatedSurvey = {
+      ...savedSurvey,
+      currentWeight: newWeight,
+      weightKg,
+      bmr: Math.round(bmr),
+      tdee: Math.round(tdee),
+      calorieTarget: Math.round(calorieTarget),
+      updatedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem("clientSurveyData", JSON.stringify(updatedSurvey));
+  }
+
+  localStorage.setItem(`lastWeeklyCheckin-${user.user_id}`, thisWeek);
+
+  alert("Weekly check-in saved!");
+  navigate("/dashboard");
+};
 
   if (!user) return null;
 

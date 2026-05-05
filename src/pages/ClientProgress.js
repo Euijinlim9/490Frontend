@@ -17,6 +17,7 @@ function ClientProgress() {
   const [client, setClient] = useState(null);
   const [workoutLogs, setWorkoutLogs] = useState([]);
   const [selectedMetric, setSelectedMetric] = useState("workouts");
+  const [lightboxPhoto, setLightboxPhoto] = useState(null); // lightbox for client progress photos
 
   const [graphData, setGraphData] = useState({
     workouts: [],
@@ -28,6 +29,33 @@ function ClientProgress() {
   });
   const [assignedWorkouts, setAssignedWorkouts] = useState([]);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [progressPhotos, setProgressPhotos] = useState([]);
+  const [photoPage, setPhotoPage] = useState(1);
+  const [photoTotalPages, setPhotoTotalPages] = useState(1);
+  const [photoFilter, setPhotoFilter] = useState({ from: "", to: "" });
+  const [photoLoading, setPhotoLoading] = useState(false);
+  const PHOTOS_PER_PAGE = 8;
+  const applyDatePreset = (preset) => {
+    const today = new Date();
+    const fmt = (d) => d.toISOString().split("T")[0];
+
+    if (preset === "all") {
+      setPhotoFilter({ from: "", to: "" });
+    } else if (preset === "7d") {
+      const d = new Date();
+      d.setDate(today.getDate() - 7);
+      setPhotoFilter({ from: fmt(d), to: fmt(today) });
+    } else if (preset === "30d") {
+      const d = new Date();
+      d.setDate(today.getDate() - 30);
+      setPhotoFilter({ from: fmt(d), to: fmt(today) });
+    } else if (preset === "90d") {
+      const d = new Date();
+      d.setDate(today.getDate() - 90);
+      setPhotoFilter({ from: fmt(d), to: fmt(today) });
+    }
+    setPhotoPage(1);
+  };
 
   const fetchClientData = useCallback(async () => {
     const token = localStorage.getItem("token");
@@ -52,6 +80,7 @@ function ClientProgress() {
       ]);
 
       const clientData = await clientRes.json();
+      if (!clientRes.ok) throw new Error("Failed to load client");
       const workoutData = await workoutRes.json();
       const assignedData = assignedRes.ok
         ? await assignedRes.json()
@@ -78,6 +107,41 @@ function ClientProgress() {
     }
   }, [clientUserId]);
 
+  const fetchPhotos = useCallback(async () => {
+    setPhotoLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const params = new URLSearchParams({
+        page: photoPage,
+        limit: PHOTOS_PER_PAGE,
+      });
+      if (photoFilter.from) params.set("from_date", photoFilter.from);
+      if (photoFilter.to) params.set("to_date", photoFilter.to);
+
+      const res = await fetch(
+        `http://localhost:4000/api/coach/clients/${clientUserId}/photos?${params}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-Active-Role": "coach",
+          },
+        }
+      );
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setProgressPhotos(data.data || []);
+      setPhotoTotalPages(data.totalPages || 1);
+    } catch (err) {
+      console.error("Failed to load photos:", err);
+      setProgressPhotos([]);
+    } finally {
+      setPhotoLoading(false);
+    }
+  }, [clientUserId, photoPage, photoFilter]);
+
+  useEffect(() => {
+    fetchPhotos();
+  }, [fetchPhotos]);
   useEffect(() => {
     fetchClientData();
   }, [fetchClientData]);
@@ -374,6 +438,124 @@ function ClientProgress() {
               </div>
             )}
           </section>
+          <section className="client-card">
+            <div className="cp-photos-header">
+              <h2 className="client-card-title">Progress Photos</h2>
+              <div className="cp-photos-filter">
+                <button
+                  className={`cp-filter-pill ${
+                    !photoFilter.from && !photoFilter.to ? "active" : ""
+                  }`}
+                  onClick={() => applyDatePreset("all")}
+                >
+                  All
+                </button>
+                <button
+                  className="cp-filter-pill"
+                  onClick={() => applyDatePreset("7d")}
+                >
+                  Last 7 days
+                </button>
+                <button
+                  className="cp-filter-pill"
+                  onClick={() => applyDatePreset("30d")}
+                >
+                  Last 30 days
+                </button>
+                <button
+                  className="cp-filter-pill"
+                  onClick={() => applyDatePreset("90d")}
+                >
+                  Last 90 days
+                </button>
+              </div>
+            </div>
+
+            <div className="cp-photos-date-range">
+              <label>
+                From
+                <input
+                  type="date"
+                  value={photoFilter.from}
+                  onChange={(e) => {
+                    setPhotoFilter((f) => ({ ...f, from: e.target.value }));
+                    setPhotoPage(1);
+                  }}
+                  className="cp-date-input"
+                />
+              </label>
+              <label>
+                To
+                <input
+                  type="date"
+                  value={photoFilter.to}
+                  onChange={(e) => {
+                    setPhotoFilter((f) => ({ ...f, to: e.target.value }));
+                    setPhotoPage(1);
+                  }}
+                  className="cp-date-input"
+                />
+              </label>
+            </div>
+
+            {photoLoading ? (
+              <p className="empty-state">Loading photos…</p>
+            ) : progressPhotos.length === 0 ? (
+              <p className="empty-state">
+                {photoFilter.from || photoFilter.to
+                  ? "No photos in this date range."
+                  : "No photos uploaded yet."}
+              </p>
+            ) : (
+              <>
+                <div className="cp-photo-grid">
+                  {progressPhotos.map((photo) => (
+                    <div
+                      key={photo.photo_id}
+                      className="cp-photo-card"
+                      onClick={() => setLightboxPhoto(photo)}
+                    >
+                      <img
+                        src={photo.image_data}
+                        alt={photo.caption || "Progress"}
+                        className="cp-photo-image"
+                        loading="lazy"
+                      />
+                      <div className="cp-photo-date">
+                        {photo.taken_date
+                          ? new Date(photo.taken_date).toLocaleDateString()
+                          : new Date(photo.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {photoTotalPages > 1 && (
+                  <div className="cp-pagination">
+                    <button
+                      className="cp-page-btn"
+                      onClick={() => setPhotoPage((p) => Math.max(1, p - 1))}
+                      disabled={photoPage === 1}
+                    >
+                      ← Prev
+                    </button>
+                    <span className="cp-page-info">
+                      Page {photoPage} of {photoTotalPages}
+                    </span>
+                    <button
+                      className="cp-page-btn"
+                      onClick={() =>
+                        setPhotoPage((p) => Math.min(photoTotalPages, p + 1))
+                      }
+                      disabled={photoPage === photoTotalPages}
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
 
           <section className="client-card">
             <h2 className="client-card-title">Diet Logs</h2>
@@ -390,6 +572,35 @@ function ClientProgress() {
             fetchClientData();
           }}
         />
+      )}
+      {lightboxPhoto && (
+        <div
+          className="cp-lightbox-overlay"
+          onClick={() => setLightboxPhoto(null)}
+        >
+          <button
+            className="cp-lightbox-close"
+            onClick={() => setLightboxPhoto(null)}
+            aria-label="Close"
+          >
+            ×
+          </button>
+          <img
+            src={lightboxPhoto.image_data}
+            alt={lightboxPhoto.caption || "Progress"}
+            className="cp-lightbox-image"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div
+            className="cp-lightbox-meta"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {lightboxPhoto.taken_date
+              ? new Date(lightboxPhoto.taken_date).toLocaleDateString()
+              : new Date(lightboxPhoto.created_at).toLocaleDateString()}
+            {lightboxPhoto.caption && <span> · {lightboxPhoto.caption}</span>}
+          </div>
+        </div>
       )}
     </div>
   );
