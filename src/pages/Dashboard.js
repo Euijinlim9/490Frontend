@@ -224,7 +224,6 @@ function Dashboard() {
     sleepHours: 0,
     waterCurrent: 0,
     waterGoal: 0,
-    heartLog: 0,
     stepLog: 0,
   });
 
@@ -234,7 +233,6 @@ function Dashboard() {
     sleepHours: "",
     waterCurrent: "",
     waterGoal: "",
-    heartLog: "",
     stepLog: "",
   });
 
@@ -441,6 +439,7 @@ function Dashboard() {
     }
   };
 
+  //WEIGHT DATA CHANGE TO BACKEND
   useEffect(() => {
     const savedWeightData =
       JSON.parse(localStorage.getItem("weightData")) || [];
@@ -448,32 +447,54 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
-    const selectedDay = selectedMacroDate.toLocaleDateString();
+    if (!user) return;
 
-    const todaysMeals = savedMeals.filter((meal) => meal.date === selectedDay);
+    const token = localStorage.getItem("token");
 
-    const totals = todaysMeals.reduce(
-      (acc, meal) => {
-        acc.totalCalories += Number(meal.calories) || 0;
-        acc.protein += Number(meal.protein) || 0;
-        acc.carbs += Number(meal.carbs) || 0;
-        acc.fats += Number(meal.fats) || 0;
-        acc.fiber += Number(meal.fiber) || 0;
-        return acc;
-      },
-      {
-        totalCalories: 0,
-        protein: 0,
-        fiber: 0,
-        carbs: 0,
-        fats: 0,
+    const fetchMealsForDay = async () => {
+      try {
+        const date = selectedMacroDate.toISOString().split("T")[0];
+
+        const res = await fetch(
+          `http://localhost:4000/api/logs/meal-log?date=${date}`,
+          {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to fetch meals");
+
+        const meals = await res.json();
+
+        const totals = meals.reduce(
+          (acc, meal) => {
+            acc.totalCalories += Number(meal.calories) || 0;
+            acc.protein += Number(meal.protein) || 0;
+            acc.carbs += Number(meal.carbs) || 0;
+            acc.fats += Number(meal.fats) || 0;
+            acc.fiber += Number(meal.fiber) || 0;
+            return acc;
+          },
+          {
+            totalCalories: 0,
+            protein: 0,
+            fiber: 0,
+            carbs: 0,
+            fats: 0,
+          }
+        );
+
+        setMealTotals(totals);
+      } catch (err) {
+        console.error("Meal fetch error:", err);
       }
-    );
+    };
+    fetchMealsForDay();
+  }, [selectedMacroDate, user]);
 
-    setMealTotals(totals);
-  }, [selectedMacroDate]);
-
+  // CLIENT SURVEY CHANGE TO BACKEND?
   useEffect(() => {
     const savedSurvey =
       JSON.parse(localStorage.getItem("clientSurveyData")) || {};
@@ -499,50 +520,72 @@ function Dashboard() {
   );
 
   useEffect(() => {
-    const savedWorkouts =
-      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
-    const today = new Date().toLocaleDateString();
+    if (!user) return;
 
-    const todaysWorkouts = savedWorkouts.filter((workout) => {
-      if (!workout.date) return false;
-      const workoutDate = new Date(workout.date).toLocaleDateString();
-      return workoutDate === today;
-    });
+    const fetchTodayActivity = async () => {
+      const token = localStorage.getItem("token");
 
-    const totalMinutes = todaysWorkouts.reduce((acc, workout) => {
-      acc += Number(workout.duration) || 0;
-      return acc;
-    }, 0);
+      try {
+        const res = await fetch(
+          "http://localhost:4000/api/logs/workouts/today",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    setActivityCurrent(totalMinutes);
-  }, []);
+        if (!res.ok) throw new Error("Failed to fetch activity");
+
+        const data = await res.json();
+        setActivityCurrent(Number(data.totalMinutes) || 0);
+      } catch (err) {
+        console.error("Activity fetch error:", err);
+      }
+    };
+
+    fetchTodayActivity();
+  }, [user]);
 
   useEffect(() => {
-    const savedWellness =
-      JSON.parse(localStorage.getItem("loggedWellness")) || [];
-    const today = new Date().toLocaleDateString();
+    if (!user) return;
 
-    const todaysWellness = savedWellness.filter(
-      (entry) => entry.date === today
-    );
+    const fetchWellness = async () => {
+      const token = localStorage.getItem("token");
 
-    const waterTotal = todaysWellness.reduce((acc, entry) => {
-      return acc + (Number(entry.waterLog) || 0);
-    }, 0);
+      try {
+        const res = await fetch("http://localhost:4000/api/logs/wellness-check/today", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    const latestEntry =
-      todaysWellness.length > 0
-        ? todaysWellness[todaysWellness.length - 1]
-        : null;
+        if (!res.ok) {
+          setWellness({
+            sleepHours: 0,
+            waterCurrent: 0, 
+            waterGoal: 80,
+            stepLog: 0,
+          })
+        };
 
-    setWellness({
-      sleepHours: latestEntry ? Number(latestEntry.hoursSlept) || 0 : 0,
-      waterCurrent: waterTotal,
-      waterGoal: 0,
-      heartLog: latestEntry ? Number(latestEntry.heartRate) || 0 : 0,
-      stepLog: latestEntry ? Number(latestEntry.stepLog) || 0 : 0,
-    });
-  }, []);
+        const result = await res.json();
+        const logs = result.checkin || {};
+        console.log(logs);
+
+        setWellness({
+          sleepHours: logs.sleep_hours || 0,
+          waterCurrent: Number(logs.water_intake_oz) || 0,
+          waterGoal: 80,
+          stepLog: logs.steps || 0,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchWellness();
+  }, [user]);
 
   const activityPercent = Math.min(
     activityGoal ? (activityCurrent / activityGoal) * 100 : 0,
@@ -567,46 +610,23 @@ function Dashboard() {
     #6ca6ff ${proteinPercent + fiberPercent + carbsPercent}% 100%
   )`;
 
-  const formatDay = (date) => new Date(date).toLocaleDateString();
-
-  const groupByDay = useCallback((items, dateKey, valueKey) => {
-    const grouped = {};
-
-    items.forEach((item) => {
-      if (!item[dateKey]) return;
-
-      const day = formatDay(item[dateKey]);
-      grouped[day] = (grouped[day] || 0) + (Number(item[valueKey]) || 0);
-    });
-
-    return Object.entries(grouped).map(([day, value]) => ({
-      day,
-      value,
-    }));
-  }, []);
-
   const chartData = useMemo(() => {
     const groupedByDay = {};
 
     weightData.forEach((entry) => {
-      const dateObj = new Date(entry.label);
-      const dayKey = dateObj.toLocaleDateString();
+      const dayKey = new Date(entry.label).toISOString().split("T")[0];
 
       groupedByDay[dayKey] = {
         day: dayKey,
         value: Number(entry.value),
-        fullDate: entry.label,
       };
     });
 
     return Object.values(groupedByDay);
   }, [weightData]);
 
-  const stepChartData = stepData.map((entry) => ({
-    day: formatDay(entry.label),
-    value: Number(entry.value) || 0,
-  }));
-
+  const stepChartData = stepData;
+  
   const calorieChartData = mealChartData;
 
   const volumeChartData = workoutChartData;
@@ -692,7 +712,7 @@ function Dashboard() {
     }));
   };
 
-  const saveWellnessField = (field) => {
+  const saveWellnessField = async (field) => {
     const value = Number(wellnessInputs[field]) || 0;
 
     setWellness((prev) => ({
@@ -700,66 +720,113 @@ function Dashboard() {
       [field]: value,
     }));
 
-    if (field === "stepLog") {
-      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
-      const today = new Date().toLocaleDateString();
+    const token = localStorage.getItem("token");
 
-      const filteredSteps = savedSteps.filter(
-        (entry) => new Date(entry.label).toLocaleDateString() !== today
-      );
+    const fieldMap = {
+      sleepHours: "sleep_hours",
+      waterCurrent: "water_intake_oz",
+      stepLog: "steps",
+    };
 
-      const newEntry = {
-        label: new Date().toISOString(),
-        value,
-      };
-
-      const updatedSteps = [...filteredSteps, newEntry];
-
-      localStorage.setItem("stepData", JSON.stringify(updatedSteps));
-      setStepData(updatedSteps);
+    try {
+      await fetch("http://localhost:4000/api/logs/wellness/upsert-today", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          [fieldMap[field]]: value,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save wellness:", err);
     }
+
     setEditingCard(null);
   };
 
   useEffect(() => {
-    const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
-    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
-    const savedWorkouts =
-      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
+    if (!user) return;
 
-    setStepData(savedSteps);
+    const token = localStorage.getItem("token");
 
-    setMealChartData(groupByDay(savedMeals, "date", "calories"));
-    setWorkoutChartData(groupByDay(savedWorkouts, "date", "duration"));
-  }, [groupByDay]);
+    const fetchGraphData = async () => {
+      try {
+        const start = "2026-04-25";
+        const end = new Date().toISOString().split("T")[0];
 
-  const deleteTodayMetric = (field) => {
-    const today = new Date().toLocaleDateString();
+        const [stepsRes, mealsRes, workoutsRes] = await Promise.all([
+          fetch(`http://localhost:4000/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://localhost:4000/api/logs/graph?metric=calories&period=day&start=${start}&end=${end}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`http://localhost:4000/api/logs/graph?metric=volume&period=day&start=${start}&end=${end}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-    setWellness((prev) => ({
-      ...prev,
-      [field]: 0,
-    }));
+        const stepsJson = await stepsRes.json();
+        const mealsJson = await mealsRes.json();
+        const workoutsJson = await workoutsRes.json();
 
-    if (field === "stepLog") {
-      const savedSteps = JSON.parse(localStorage.getItem("stepData")) || [];
+        const stepsData = stepsJson.data || stepsJson;
+        const mealsData = mealsJson.data || mealsJson;
+        const workoutsData = workoutsJson.data || workoutsJson;
 
-      const updatedSteps = savedSteps.filter(
-        (entry) => new Date(entry.label).toLocaleDateString() !== today
+
+        // normalize shape for charts
+        const format = (arr) =>
+          arr.map((item) => ({
+            day: item.period,
+            value: Number(item.value) || 0,
+          }));
+
+        setStepData(format(stepsData));
+        setMealChartData(format(mealsData));
+        setWorkoutChartData(format(workoutsData));
+
+
+      } catch (err) {
+        console.error("Graph fetch error:", err);
+      }
+    };
+
+    fetchGraphData();
+  }, [user]);
+
+  const deleteTodayMetric = async (field) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(
+        "http://localhost:4000/api/logs/wellness/clear",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ field }),
+        }
       );
 
-      localStorage.setItem("stepData", JSON.stringify(updatedSteps));
-      setStepData(updatedSteps);
+      if (!res.ok) throw new Error("Failed to delete");
+
+      const updated = await res.json();
+
+      setWellness((prev) => ({
+        ...prev,
+        sleepHours: updated.sleep_hours || 0,
+        waterCurrent: updated.water_intake_oz || 0,
+        stepLog: updated.steps || 0,
+      }));
+
+    } catch (err) {
+      console.error(err);
     }
-
-    const savedWellness =
-      JSON.parse(localStorage.getItem("loggedWellness")) || [];
-
-    const updatedWellness = savedWellness.filter(
-      (entry) => entry.date !== today
-    );
-
-    localStorage.setItem("loggedWellness", JSON.stringify(updatedWellness));
   };
 
   const changeMacroDay = (amount) => {
@@ -776,17 +843,27 @@ function Dashboard() {
       : selectedMacroDate.toLocaleDateString();
 
   useEffect(() => {
-    if (!user || !activeRole) return;
+    const checkToday = async () => {
+      const token = localStorage.getItem("token");
+      if (!user || !activeRole !== "client") return;
 
-    const today = new Date().toLocaleDateString();
-    const lastCheckinDate = localStorage.getItem(
-      `lastDailyCheckin-${user.user_id}`
-    );
+      try {
+        const res = await fetch("http://localhost:4000/api/logs/checkins/daily", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    if (activeRole === "client" && lastCheckinDate !== today) {
-      navigate("/daily-checkin");
-    }
-  }, [navigate, user, activeRole]);
+        if (res.status === 404) {
+          navigate("/daily-checkin");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    checkToday();
+  }, [user, activeRole]);
 
   useEffect(() => {
     if (!user || activeRole !== "client") return;
@@ -806,24 +883,44 @@ function Dashboard() {
   }, [navigate, user, activeRole]);
 
   useEffect(() => {
-    if (!user) return;
+    const token = localStorage.getItem("token");
+    if (!user || !token ) return;
+    
+    const fetchChartData = async () => {
+      try {
+        const start = "2026-04-25";
+        const end = new Date().toISOString().split("T")[0];
 
-    const dailyCheckins =
-      JSON.parse(localStorage.getItem("DailyCheckIns")) || [];
+        const [energyRes, stressRes, motivationRes] = await Promise.all([
+          fetch(`http://localhost:4000/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`, {
+            headers: { Authorization: `Bearer ${token}`},
+          }),
+          fetch(`http://localhost:4000/api/logs/graph?metric=stress&period=day&start=${start}&end=${end}`, {
+            headers: { Authorization: `Bearer ${token}`},
+          }),
+          fetch(`http://localhost:4000/api/logs/graph?metric=motivation&period=day&start=${start}&end=${end}`, {
+            headers: { Authorization: `Bearer ${token}`},
+          }),
+        ]);
 
-    const weeklyCheckins =
-      JSON.parse(localStorage.getItem("weeklyCheckins")) || [];
+        const energyData = await energyRes.json();
+        const stressData = await stressRes.json();
+        const motivationData = await motivationRes.json();
 
-    const userDaily = dailyCheckins
-      .filter((entry) => entry.userId === user.user_id)
-      .map((entry) => ({
-        day: entry.date,
-        energy: Number(entry.energy) || 0,
-        stress: Number(entry.stress) || 0,
-        motivation: Number(entry.motivation) || 0,
-      })); 
+        const merged = energyData.map((item, index) => ({
+          day: item.period,
+          energy: Number(item.value) || 0,
+          stress: Number(stressData[index]?.value) || 0,
+          motivation: Number(motivationData[index]?.value || 0),
+        }));
 
-    setDailySurveyChartData(userDaily);
+        setDailySurveyChartData(merged);
+      } catch (err) {
+        console.error("Chart fetch error:", err);
+      }
+    };
+
+    fetchChartData();
   }, [user]);
 
   return (

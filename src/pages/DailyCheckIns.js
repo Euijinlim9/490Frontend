@@ -14,7 +14,7 @@ function DailyCheckIns() {
     sleep: "",
     body: "",
     motivation: 5,
-  });
+  }); 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,31 +25,41 @@ function DailyCheckIns() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user) return;
 
-    const today = new Date().toLocaleDateString();
 
-    const savedDailyCheckins =
-      JSON.parse(localStorage.getItem("DailyCheckIns")) || [];
+   const payload = {
+    mood_level: formData.mood,
+    energy_level: formData.energy,
+    stress_level: formData.stress,
+    sleep_quality: formData.sleep,
+    body_quality: formData.body,
+    motivation_level: formData.motivation,
+  };
 
-    const newDailyCheckin = {
-      ...formData,
-      userId: user.user_id,
-      date: today,
-    };
+  try {
+    const token = localStorage.getItem("token");
 
-    localStorage.setItem(
-      "DailyCheckIns",
-      JSON.stringify([...savedDailyCheckins, newDailyCheckin])
-    );
+    const res = await fetch("http://localhost:4000/api/logs/checkins/daily", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
 
-    localStorage.setItem(`lastDailyCheckin-${user.user_id}`, today);
+    if (!res.ok) throw new Error("Failed check-in");
 
-    alert("Daily check-in saved!");
+    alert("Saved!");
     navigate("/dashboard");
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
   };
 
   if (!user) return null;
@@ -65,11 +75,11 @@ function DailyCheckIns() {
             <label>Mood Today</label>
             <select name="mood" value={formData.mood} onChange={handleChange}>
               <option value="">Select Mood</option>
-              <option value="great">Great</option>
-              <option value="good">Good</option>
-              <option value="okay">Okay</option>
-              <option value="low">Low</option>
-              <option value="exhausted">Exhausted</option>
+              <option value="5">Great</option>
+              <option value="4">Good</option>
+              <option value="3">Okay</option>
+              <option value="2">Low</option>
+              <option value="1">Exhausted</option>
             </select>
           </div>
 
@@ -103,10 +113,10 @@ function DailyCheckIns() {
             <label>Sleep Quality</label>
             <select name="sleep" value={formData.sleep} onChange={handleChange}>
               <option value="">Select Quality</option>
-              <option value="great">Excellent</option>
-              <option value="good">Good</option>
-              <option value="okay">Okay</option>
-              <option value="poor">Poor</option>
+              <option value="4">Excellent</option>
+              <option value="3">Good</option>
+              <option value="2">Okay</option>
+              <option value="1">Poor</option>
             </select>
           </div>
 
