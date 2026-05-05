@@ -863,7 +863,7 @@ function Dashboard() {
     };
 
     checkToday();
-  }, [user, activeRole]);
+  }, [user, activeRole, navigate]);
 
   useEffect(() => {
     if (!user || activeRole !== "client") return;
