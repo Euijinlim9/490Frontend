@@ -121,7 +121,7 @@ function Calendar() {
     personalEvents.filter((e) => e.date >= todayKey).map((e) => e.date)
   )].sort();
 
-  const allUpcomingDates = [...new Set([...upcomingAssignmentDates, ...upcomingPersonalDates])].sort();
+  const allUpcomingDates = [...new Set([...upcomingAssignmentDates, ...upcomingPersonalDates])].sort().slice(0, 10);
 
   const formatEventDate = (key) => {
     const [y, m, d] = key.split("-").map(Number);
@@ -191,19 +191,9 @@ function Calendar() {
                 <span className="cal-day-num">{day}</span>
                 {hasEvents && (
                   <div className="plan-pills">
-                    {dayAssignments.slice(0, 1).map((a) => (
-                      <span key={a.assigned_workout_id} className={`plan-pill ${statusBadgeClass(a.status)}`}>
-                        {a.Workout?.title || "Workout"}
-                      </span>
+                    {[...dayAssignments.map((a) => ({ key: a.assigned_workout_id, label: a.Workout?.title || "Workout", cls: statusBadgeClass(a.status), style: {} })), ...dayPersonal.map((e) => ({ key: e.calendar_event_id, label: e.text, cls: "", style: { background: e.color } }))].map((item) => (
+                      <span key={item.key} className={`plan-pill ${item.cls}`} style={item.style}>{item.label}</span>
                     ))}
-                    {dayPersonal.slice(0, 1).map((e) => (
-                      <span key={e.calendar_event_id} className="plan-pill" style={{ background: e.color }}>
-                        {e.text}
-                      </span>
-                    ))}
-                    {(dayAssignments.length + dayPersonal.length) > 2 && (
-                      <span className="plan-pill-more">+{(dayAssignments.length + dayPersonal.length) - 2} more</span>
-                    )}
                   </div>
                 )}
               </div>

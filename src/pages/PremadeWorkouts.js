@@ -25,7 +25,6 @@ function PremadeWorkouts() {
 
         setCreatedWorkouts(data.data || []);
         setCurrentPage(data.currentPage || 1);
-        console.log("Fetched Workouts: ", data);
       } catch (err) {
         console.error(err);
       }
@@ -71,16 +70,13 @@ function PremadeWorkouts() {
     name: w.title,
     isPublic: true,
     estimated_minutes: w.estimated_minutes,
-    exercises: (w.Exercises || []).map((ex) => {
-      console.log("DEBUG single exercise:", ex);
-      return {
+    exercises: (w.Exercises || []).map((ex) => ({
         exercise_id: ex.exercise_id,
         name: ex.name,
         sets: ex.workout_exercise?.sets,
         reps: ex.workout_exercise?.reps,
         breakTime: ex.workout_exercise?.rest_seconds || 10,
-      };
-    }),
+      })),
   }));
 
   const ExerciseList = ({ exercises }) => (
@@ -113,21 +109,11 @@ function PremadeWorkouts() {
       <div className="pw-card-header">
         <span className="pw-card-name">{workout.name}</span>
         {workout.isPublic && <span className="pw-public-badge">Public</span>}
-        <button
-          className="pw-delete-btn"
-          onClick={() => setDeleteTarget(workout.id)}
-        >
-          Delete
-        </button>
+        <button className="pw-delete-btn" onClick={() => setDeleteTarget(workout.id)}>Delete</button>
       </div>
       <span className="pw-card-meta">{workout.exercises.length} exercises</span>
       <ExerciseList exercises={workout.exercises} />
-      <button
-        className="pw-start-btn"
-        onClick={(e) => startWorkout(e, workout)}
-      >
-        ▶ Start Workout
-      </button>
+      <button className="pw-start-btn" onClick={(e) => startWorkout(e, workout)}>▶ Start Workout</button>
     </div>
   );
 
@@ -155,99 +141,15 @@ function PremadeWorkouts() {
             </div>
           )}
         </div>
-
-        {/*<div className="pw-section">
-          <h3 className="pw-section-title">Community Workouts</h3>
-          <div className="pw-community-grid">
-            {GENERAL_WORKOUTS.map((w) => {
-              const isOpen = expandedIds.has(w.id);
-              const isFav = favoritedIds.has(w.id);
-              return (
-                <div
-                  key={w.id}
-                  className={`pw-community-card pw-general-card ${isOpen ? "expanded" : ""}`}
-                  onClick={() => toggle(w.id)}
-                >
-                  <div className="pw-community-card-top">
-                    <div className="pw-card-top-left">
-                      <span className="pw-card-name">{w.name}</span>
-                      {!isOpen && isFav && <span className="pw-fav-indicator">★</span>}
-                    </div>
-                    <div className="pw-card-top-right">
-                      <span className="pw-general-badge">General</span>
-                      {isOpen && (
-                        <button className={`pw-fav-btn ${isFav ? "active" : ""}`} onClick={(e) => toggleFavorite(e, w.id)}>
-                          {isFav ? "★" : "☆"}
-                        </button>
-                      )}
-                      <span className="pw-community-toggle">{isOpen ? "▲" : "▼"}</span>
-                    </div>
-                  </div>
-                  <p className="pw-general-desc">{w.description}</p>
-                  {isOpen && (
-                    <>
-                      <ExerciseList exercises={w.exercises} />
-                      <button className="pw-start-btn" onClick={(e) => startWorkout(e, w)}>▶ Start Workout</button>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-            {COMMUNITY_CATEGORIES.map((cat) => {
-              const isOpen = expandedIds.has(cat.id);
-              const isFav = favoritedIds.has(cat.id);
-              return (
-                <div
-                  key={cat.id}
-                  className={`pw-community-card ${isOpen ? "expanded" : ""}`}
-                  onClick={() => toggle(cat.id)}
-                >
-                  <div className="pw-community-card-top">
-                    <div className="pw-card-top-left">
-                      <span className="pw-card-name">{cat.name}</span>
-                      {!isOpen && isFav && <span className="pw-fav-indicator">★</span>}
-                    </div>
-                    <div className="pw-card-top-right">
-                      {isOpen && (
-                        <button className={`pw-fav-btn ${isFav ? "active" : ""}`} onClick={(e) => toggleFavorite(e, cat.id)}>
-                          {isFav ? "★" : "☆"}
-                        </button>
-                      )}
-                      <span className="pw-community-toggle">{isOpen ? "▲" : "▼"}</span>
-                    </div>
-                  </div>
-                  <p className="pw-general-desc">{cat.description}</p>
-                  {isOpen && (
-                    <>
-                      <ExerciseList exercises={cat.exercises} />
-                      <button className="pw-start-btn" onClick={(e) => startWorkout(e, cat)}>▶ Start Workout</button>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>*/}
       </div>
       {deleteTarget && (
         <div className="delete-modal-backdrop">
           <div className="delete-modal">
             <h3>Delete workout?</h3>
             <p>This action cannot be undone.</p>
-
             <div className="delete-modal-actions">
-              <button
-                className="cancel-delete-btn"
-                onClick={() => setDeleteTarget(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(deleteTarget)}
-              >
-                Delete
-              </button>
+              <button className="cancel-delete-btn" onClick={() => setDeleteTarget(null)}>Cancel</button>
+              <button className="delete-btn" onClick={() => handleDelete(deleteTarget)}>Delete</button>
             </div>
           </div>
         </div>

@@ -35,8 +35,17 @@ function CustomWorkout() {
     muscle: "",
     equipment: "",
   });
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [scheduleWeeks, setScheduleWeeks] = useState(4);
 
-  // fetches exercises
+  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const toggleDay = (i) => {
+    setSelectedDays((prev) =>
+      prev.includes(i) ? prev.filter((d) => d !== i) : [...prev, i]
+    );
+  };
+
   useEffect(() => {
     const fetchExercises = async () => {
       try {
@@ -122,7 +131,6 @@ function CustomWorkout() {
     );
   };
 
-  // changed to post and save workout to db
   const handleFinish = async () => {
     if (!workoutName || !estimatedMinutes) {
       setNameError(true);
@@ -165,9 +173,7 @@ function CustomWorkout() {
       });
 
       const data = await res.json();
-      console.log(data); // should say "Workout created successfully" along with data
 
-      //reset everything
       setWorkoutName("");
       setAddedExercises([]);
       setNameError(false);
@@ -176,6 +182,29 @@ function CustomWorkout() {
       setEstimatedMinutes("");
       setDescription("");
       setTimeout(() => setShowSaved(false), 2500);
+
+      if (selectedDays.length > 0) {
+        const today = new Date();
+        const token2 = localStorage.getItem("token");
+        const dates = [];
+        for (let week = 0; week < scheduleWeeks; week++) {
+          selectedDays.forEach((dayIndex) => {
+            const d = new Date(today);
+            const diff = (dayIndex - today.getDay() + 7) % 7 + week * 7;
+            d.setDate(today.getDate() + diff);
+            dates.push(d.toISOString().split("T")[0]);
+          });
+        }
+        await Promise.all(
+          dates.map((dateStr) =>
+            fetch("http://localhost:4000/api/calendar", {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token2}` },
+              body: JSON.stringify({ date: dateStr, text: workoutName, color: "#7ed87e" }),
+            })
+          )
+        );
+      }
     } catch (err) {
       console.error(err);
     }
@@ -230,17 +259,38 @@ function CustomWorkout() {
                   <option value="90">90 min</option>
                 </select>
               </div>
+
+              <div className="cw-schedule-row">
+                <div className="cw-schedule-header">
+                  <span className="cw-meta-label">Schedule Days</span>
+                </div>
+                <div className="cw-days-row">
+                  {DAYS.map((day, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`cw-day-btn ${selectedDays.includes(i) ? "selected" : ""}`}
+                      onClick={() => toggleDay(i)}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+                <div className="cw-weeks-row">
+                  <span className="cw-meta-label">Repeat for</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="52"
+                    value={scheduleWeeks}
+                    onChange={(e) => setScheduleWeeks(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="cw-weeks-input"
+                  />
+                  <span className="cw-meta-label">weeks</span>
+                </div>
+              </div>
             </div>
           </div>
-          {/*<div className="cw-visibility-row">
-            <span className="cw-visibility-label">{isPublic ? "Public" : "Private"}</span>
-            <div
-              className={`cw-slider ${isPublic ? "cw-slider-on" : ""}`}
-              onClick={() => setIsPublic((prev) => !prev)}
-            >
-              <div className="cw-slider-thumb" />
-            </div>
-          </div>*/}
         </div>
 
         {addedExercises.length > 0 && (
