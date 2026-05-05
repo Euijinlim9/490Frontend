@@ -262,6 +262,10 @@
   align-items: center;
 }
 
+.journal {
+  height: 120px;
+}
+
 @media (max-width: 768px) {
   .form-card {
     max-width: 100%;
