@@ -35,6 +35,13 @@ function CoachDetail() {
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
 
+  //coach assigned workouts
+  const [assignedWorkouts, setAssignedWorkouts] = useState([]);
+  const [assignedLoading, setAssignedLoading] = useState(false);
+  const [declineTarget, setDeclineTarget] = useState(null);
+  const [declineReason, setDeclineReason] = useState("");
+  const [responding, setResponding] = useState(false);
+
   useEffect(() => {
     const fetchCoach = async () => {
       const token = localStorage.getItem("token");
@@ -109,6 +116,68 @@ function CoachDetail() {
       JSON.parse(localStorage.getItem(`coachReviews-${id}`)) || [];
     setReviews(savedReviews);
   }, [id]);
+
+    useEffect(() => {
+    if (activeTab !== "workouts" || myCoachState !== "active") return;
+    const fetchAssigned = async () => {
+      setAssignedLoading(true);
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch("http://localhost:4000/api/client/my-assigned-workouts?status=assigned", {
+        headers: { Authorization: `Bearer ${token}`, "X-Active-Role": "client" },
+      });
+      const data = await res.json();
+      setAssignedWorkouts((data.data || []).filter(w => w.coach_user_id === parseInt(id)));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAssignedLoading(false);
+    }
+  };
+  fetchAssigned();
+}, [activeTab, myCoachState, id]);
+
+  const handleAssignmentAccept = async (assignmentId) => {
+    setResponding(true);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:4000/api/client/assignments/${assignmentId}/accept`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "X-Active-Role": "client" },
+    });
+    if (!res.ok) throw new Error("Failed to accept");
+    setAssignedWorkouts(prev => prev.filter(w => w.assigned_workout_id !== assignmentId));
+    alert("Workout accepted! Your coach has been notified.");
+    setActiveTab("about");
+  } catch (err) {
+    alert("Something went wrong. Try again.");
+  } finally {
+    setResponding(false);
+  }
+};
+
+  const handleDeclineSubmit = async (assignmentId) => {
+    if (!declineReason.trim()) return;
+    setResponding(true);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`http://localhost:4000/api/client/assignment/${assignmentId}/decline`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "X-Active-Role": "client" },
+        body: JSON.stringify({ decline_reason: declineReason }),
+    });
+    if (!res.ok) throw new Error("Failed to decline");
+    setAssignedWorkouts(prev => prev.filter(w => w.assigned_workout_id !== assignmentId));
+    setDeclineTarget(null);
+    setDeclineReason("");
+    alert("Workout declined. Your coach has been notified.");
+    setActiveTab("about");
+  } catch (err) {
+    alert("Something went wrong. Try again.");
+  } finally {
+    setResponding(false);
+  }
+}; 
 
   const handleRequest = async () => {
     if (!window.confirm(`Send a coaching request to ${coach.first_name}?`))
@@ -215,6 +284,8 @@ function CoachDetail() {
     setReportDetails("");
     setShowReportForm(false);
   };
+
+  
 
   if (loading)
     return (
@@ -377,7 +448,7 @@ function CoachDetail() {
 
         {/* Tabs */}
         <div className="cp-tabs">
-          {["about", "packages", "reviews", "certifications"].map((tab) => (
+          {["about", "packages", "reviews", "certifications", ...(myCoachState === "active" ? ["workouts"] : [])].map((tab) => (
             <button
               key={tab}
               className={`cp-tab ${activeTab === tab ? "active" : ""}`}
@@ -579,6 +650,77 @@ function CoachDetail() {
             </p>
           </div>
         )}
+
+        {/*assigned workouts to client tab */}
+        {activeTab === "workouts" && myCoachState === "active" && (
+          <div className="cp-card">
+          <h3 className="cp-card-title">Proposed Workout Plans</h3>
+          {assignedLoading ? (
+            <p>Loading</p>
+          ) : assignedWorkouts.length === 0 ? (
+      <div className="cp-empty">
+        <div className="cp-empty-icon">📋</div>
+        <p>No proposed workouts from your coach yet.</p>
+      </div>
+    ) : (
+      assignedWorkouts.map((w) =>
+        declineTarget === w.assigned_workout_id ? (
+          <div key={w.assigned_workout_id} className="cp-assigned-card">
+            <h4 className="cp-assigned-title">Why are you declining "{w.Workout?.title}"?</h4>
+            <textarea
+              className="cp-decline-input"
+              placeholder="Let your coach know why this plan doesn't work for you..."
+              value={declineReason}
+              onChange={(e) => setDeclineReason(e.target.value)}
+              rows={4}
+            />
+            <div className="cp-assigned-actions">
+              <button
+                className="cp-btn cp-btn-primary"
+                disabled={!declineReason.trim() || responding}
+                onClick={() => handleDeclineSubmit(w.assigned_workout_id)}
+              >
+                {responding ? "Submitting..." : "Submit"}
+              </button>
+              <button
+                className="cp-btn cp-btn-ghost"
+                onClick={() => { setDeclineTarget(null); setDeclineReason(""); }}
+              >
+                Go Back
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div key={w.assigned_workout_id} className="cp-assigned-card">
+            <div className="cp-assigned-header">
+              <div className="cp-assigned-header container">
+              <span className="cp-assigned-title">{w.Workout?.title}</span>
+              {w.due_date && <p className="cp-assigned-due">📅 Due: {w.due_date}</p>}
+              </div>
+              <span className="cp-assigned-status">{w.status}</span>
+            </div>
+            {w.coach_notes && <p className="cp-assigned-notes">📝 {w.coach_notes}</p>}
+            <div className="cp-assigned-actions">
+              <button
+                className="cp-btn cp-btn-primary"
+                disabled={responding}
+                onClick={() => handleAssignmentAccept(w.assigned_workout_id)}
+              >
+                ✓ Accept
+              </button>
+              <button
+                className="cp-btn cp-btn-ghost"
+                onClick={() => setDeclineTarget(w.assigned_workout_id)}
+              >
+                ✕ Decline
+              </button>
+            </div>
+          </div>
+        )
+      )
+    )}
+          </div>
+)}
       </div>
 
       {/* Subscribe modal */}

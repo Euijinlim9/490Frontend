@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import "../styles/Profile.css";
 import userimg from "../images/user.svg";
 import { AuthContext } from "../context/AuthContext";
@@ -44,6 +44,7 @@ function Profile() {
   5: "Friday",
   6: "Saturday",
 };
+  const fileRef = useRef(null);
 
   const [activeDays, setActiveDays] = useState(new Set([1, 2, 3, 4, 5]));
  
@@ -337,6 +338,33 @@ const hasAvailability = (day) => {
   setTimeRules((prev) => prev.filter((rule) => rule.id !== id));
 };
 
+  const handlePictureUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    formData.append("profile_pic", file);
+
+    try {
+      const res = await fetch("http://localhost:4000/api/profile/picture", {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setUser((prev) => ({ ...prev, profile_pic: data.profile_pic }));
+      setMessage("Profile picture updated!");
+      setTimeout(() => setMessage(""), 3000);
+    } else {
+      setMessage(data.error || "Failed to upload picture");
+    }
+  } catch (err) {
+    setMessage("Something went wrong.");
+  }
+};
+
   const isToday = (day) =>
     day === today.getDate() &&
     currentMonth === today.getMonth() &&
@@ -349,15 +377,29 @@ const hasAvailability = (day) => {
       <div className="container-left">
         <div className="profile-text">Profile Settings</div>
         {user?.profile_pic ? (
-          <img src={user.profile_pic} alt="Profile" className="avatar" />
+          <img src={user.profile_pic.startsWith("http") ? user.profile_pic: 
+            `http://localhost:4000${user.profile_pic}`
+          }
+          alt="Profile"
+          className="avatar"
+          />
         ) : (
-          <img src={userimg} alt="" className="avatar" />
+        <img src={userimg} alt="" className="avatar" />
         )}
         <div className="profile-name">
           {user?.first_name || "First"} {user?.last_name || "Last"}
         </div>
         {activeRole === "coach" && <div className="profile-badge">Coach</div>}
-        <button className="upload-btn">Upload new image</button>
+        <input
+        type="file"
+        accept="image/png, image/jpeg, image/jpg"
+        ref={fileRef}
+        style={{display: "none"}}
+        onChange={handlePictureUpload}
+        />
+        <button className="upload-btn" onClick={() => fileRef.current.click()}>
+          Upload new image
+          </button>
         <button className="signout-btn" onClick={handleLogout}>
           Sign out
         </button>

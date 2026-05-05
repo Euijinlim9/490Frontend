@@ -32,3 +32,10 @@
   align-items: center;
   justify-content: center;
 }
+
+.circle-icon.profile{
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}

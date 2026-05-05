@@ -1,6 +1,6 @@
 .coach-app-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 24px;
   padding: 40px;
   max-width: 1400px;
@@ -8,6 +8,7 @@
 }
 
 .coach-app-card {
+    grid-template-columns: repeat(minmax(280px, 1fr));
   position: relative;
   background: linear-gradient(
     145deg,
@@ -23,11 +24,15 @@
   flex-direction: column;
   overflow: hidden;
   backdrop-filter: blur(10px);
+  width: 280px;     
+  height: 150px;              
+  flex-shrink: 0;
 }
 
 .coach-app-card h3{
     display:flex;
     justify-content: center;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 .btn-footer{
@@ -38,7 +43,9 @@
 }
 
 .view-btn{
-    width:100%;
+    margin-left:10px;
+    margin-top:40px;
+    width:260px;
     background-color:#747474;
     font-size: 20px;
     border:none;

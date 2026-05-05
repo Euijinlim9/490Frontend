@@ -298,6 +298,10 @@
   margin-bottom: 8px;
 }
 
+.cp-modal-label.search{
+  margin-left:20px;
+}
+
 .cp-modal-label:first-child {
   margin-top: 0;
 }
@@ -314,6 +318,10 @@
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s;
+}
+
+.cp-modal-input.search{
+  margin-bottom: 10px;
 }
 
 .cp-modal-input:focus {
