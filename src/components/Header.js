@@ -187,15 +187,12 @@ function Header() {
           >
             {user?.profile_pic ? (
               <img
-                src={user.profile_pic}
+                src={
+                  user.profile_pic.startsWith("http") ? user.profile_pic:
+                  `http://localhost:4000${user.profile_pic}`
+                }
                 alt="Profile"
-                className="circle-icon"
-                style={{
-                  borderRadius: "50%",
-                  width: "32px",
-                  height: "32px",
-                  objectFit: "cover",
-                }}
+                className="circle-icon profile"
               />
             ) : (
               <svg viewBox="0 0 24 24" className="circle-icon">

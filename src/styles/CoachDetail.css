@@ -898,3 +898,56 @@
   flex-wrap: wrap;
   margin-bottom: 20px;
 }
+
+.cp-assigned-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.cp-assigned-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+.cp-assigned-title { font-weight: 600; font-size: 16px; }
+.cp-assigned-status {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #fef3c7;
+  color: #92400e;
+  text-transform: capitalize;
+  margin-left: 10px;
+}
+.cp-assigned-due { 
+  font-size: 13px; 
+  color: #6b7280; 
+  margin-right:10px; 
+}
+.cp-assigned-notes { 
+  font-size: 13px; 
+  color: #374151; 
+  margin-bottom: 12px; 
+}
+.cp-assigned-actions { 
+  display: flex; 
+  gap: 10px; 
+  margin-top: 12px; 
+}
+
+.cp-decline-input {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  margin: 12px 0;
+  resize: vertical;
+}
+
+.cp-assigned-header.container{
+  display:flex;
+  flex-direction: column;
+}

@@ -32,7 +32,7 @@ function PremadeWorkouts() {
     };
 
     fetchWorkouts();
-  }, [currentPage]);
+  }, [currentPage]); 
 
   const handleDelete = async (id) => {
     try {
