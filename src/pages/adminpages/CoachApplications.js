@@ -6,7 +6,7 @@ function CoachApplication(){
     const [selectedCoach, setSelectedCoach] = useState(null);
     const [query, setQuery] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    const [filter, setFilter] = useState([]);
+    const [filter, setFilter] = useState("");
 
     useEffect(() => {
         const token = localStorage.getItem("token");

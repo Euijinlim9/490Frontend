@@ -8,10 +8,11 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [query, setQuery] = useState("");
 
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchWorkouts = async () => {
       try {
         const res = await fetch("http://localhost:4000/api/workout/premade", {
@@ -28,7 +29,33 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
     };
     fetchWorkouts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); */
+
+  useEffect(() => {
+  const hardcodedWorkouts = [
+    {
+      workout_id: 1,
+      title: "Push Day",
+      estimated_minutes: 60,
+      description: "Chest, shoulders, and triceps focused workout",
+    },
+    {
+      workout_id: 2,
+      title: "Pull Day",
+      estimated_minutes: 55,
+      description: "Back and biceps focused workout",
+    },
+    {
+      workout_id: 3,
+      title: "Leg Day",
+      estimated_minutes: 65,
+      description: "Quads, hamstrings, glutes, and calves",
+    },
+  ];
+
+  setWorkouts(hardcodedWorkouts);
+  setLoading(false);
+}, []);
 
   const handleSubmit = async () => {
     if (!selectedId) {
@@ -81,6 +108,7 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
       <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
         <div className="cp-modal-header">
           <h3>Assign a Workout</h3>
+          
           <button
             type="button"
             className="cp-modal-close"
@@ -102,8 +130,16 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
           ) : (
             <>
               <label className="cp-modal-label">Select workout</label>
+              <input
+              type="text"
+              className="cp-modal-input search"
+              placeholder="Search Workouts..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              />
               <div className="cp-workout-picker">
-                {workouts.map((w) => (
+                {workouts.filter((w) =>
+                  (w.title || "").toLowerCase().includes(query.toLowerCase())).map((w) => (
                   <div
                     key={w.workout_id}
                     className={`cp-workout-option ${
