@@ -7,8 +7,8 @@
           const [wellnessForm, setWellnessForm] = useState({
             hoursSlept: "",
             waterLog: "",
-            heartRate: "", 
-            stepLog: "",    
+            notes: "", 
+            stepLog: "", 
           }); 
         
           const handleWellnessChange = (e) => {
@@ -19,23 +19,47 @@
             }));  
           }; 
         
-          const handleWellnessSubmit = (e) => {
-            const savedWellness = JSON.parse(localStorage.getItem("loggedWellness")) || []; 
-        
-            const newWellness = {
-              ...wellnessForm, 
-              date: new Date().toLocaleDateString(),
-            }; 
-        
-            localStorage.setItem("loggedWellness", JSON.stringify([...savedWellness, newWellness])); 
-        
-            setWellnessForm({
-              hoursSlept: "",
-              waterLog: "",
-              heartRate: "", 
-              stepLog: "",  
-            });
-            navigate("/dashboard"); 
+          const handleWellnessSubmit = async (e) => {
+            e.preventDefault();
+
+            const token = localStorage.getItem("token");
+            
+            const payload = {
+              sleep_hours: Number(wellnessForm.hoursSlept),
+              water_intake_oz: Number(wellnessForm.waterLog),
+              steps: Number(wellnessForm.stepLog),
+              notes: wellnessForm.notes,
+              date: new Date().toISOString().split("T")[0],
+            };
+
+            try {
+              const res = await fetch("http://localhost:4000/api/logs/wellness-check", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+              });
+
+              if(!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.error || "Failed to log wellness");
+              }
+
+              setWellnessForm({
+                hoursSlept: "",
+                waterLog: "",
+                stepLog: "",
+                notes: "",
+              });
+
+              alert("Wellness Logged!");
+              navigate("/logs");
+            } catch (err) {
+              console.error(err);
+              alert(err.message);
+            }
            };    
             
             
@@ -45,7 +69,7 @@
                 <div className="form-header"> 
                   <div className="form-title">Log Your Stats</div>
                   <div className="form-subtitle">
-                    Log hours slept, water intake, and average heart rate here.
+                    Log hours slept, water intake, and journal here.
                   </div>
                 </div>
 
@@ -87,14 +111,14 @@
                   </div>
 
                   <div className="form-group">
-                    <label>Average Heart Rate</label>
+                    <label>Notes</label>
                     <input
                       className="log-input"
-                      type="number"
-                      name="heartRate"
-                      value={wellnessForm.heartRate}
+                      type="text"
+                      name="notes"
+                      value={wellnessForm.notes}
                       onChange={handleWellnessChange}
-                      placeholder="Enter Average Heart Rate Today"
+                      placeholder="Enter anything you would like to journal today."
                     />
                   </div>
 
