@@ -13,7 +13,7 @@ function PaymentHistory() {
     const fetchPayments = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await fetch("http://localhost:4000/api/client/payments", {
+        const res = await fetch("http://localhost:4000/api/payments/history", {
           headers: {
             Authorization: `Bearer ${token}`,
             "X-Active-Role": activeRole,
@@ -21,7 +21,7 @@ function PaymentHistory() {
         });
         if (!res.ok) throw new Error("Failed to load payments");
         const data = await res.json();
-        setPayments(data);
+        setPayments(data.payments);
       } catch (err) {
         setError(err.message);
       } finally {

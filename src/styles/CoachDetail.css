@@ -120,7 +120,6 @@
   color: #8a909a;
 }
 
-
 .cp-request-btn:hover:not(:disabled) {
   background: #e0e0e0;
   transform: translateY(-1px);
@@ -909,9 +908,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
 }
-.cp-assigned-title { font-weight: 600; font-size: 16px; }
+.cp-assigned-title {
+  font-weight: 600;
+  font-size: 16px;
+}
 .cp-assigned-status {
   font-size: 12px;
   padding: 3px 10px;
@@ -921,20 +922,20 @@
   text-transform: capitalize;
   margin-left: 10px;
 }
-.cp-assigned-due { 
-  font-size: 13px; 
-  color: #6b7280; 
-  margin-right:10px; 
+.cp-assigned-due {
+  font-size: 13px;
+  color: #6b7280;
+  margin-right: 10px;
 }
-.cp-assigned-notes { 
-  font-size: 13px; 
-  color: #374151; 
-  margin-bottom: 12px; 
+.cp-assigned-notes {
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 12px;
 }
-.cp-assigned-actions { 
-  display: flex; 
-  gap: 10px; 
-  margin-top: 12px; 
+.cp-assigned-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .cp-decline-input {
@@ -947,7 +948,33 @@
   resize: vertical;
 }
 
-.cp-assigned-header.container{
-  display:flex;
+.cp-assigned-header.container {
+  display: flex;
   flex-direction: column;
+}
+
+.cp-active-purchase-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+  padding: 14px 20px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cp-active-purchase-banner strong {
+  color: #86efac;
+}
+
+.cp-active-purchase-banner .cp-program-btn {
+  margin: 0;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
