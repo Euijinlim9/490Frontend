@@ -123,7 +123,12 @@ function Header() {
       <div className="right-btns">
         {(activeRole === "coach" || activeRole === "client") && (
           <div className="icon-btn">
-            <Link to="/notifications" className="circle notif-circle">
+            <Link
+              to="/notifications"
+              className="circle notif-circle"
+              aria-label="Alerts"
+              title="Alerts"
+            >
               <svg viewBox="0 0 24 24" className="circle-icon">
                 <path
                   d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22z"
@@ -143,17 +148,16 @@ function Header() {
                 <span className="notif-badge">{unreadCount}</span>
               )}
             </Link>
-
-            <div className="nav-small">
-              <Link to="/notifications" className="nav-btn-small">
-                Alerts
-              </Link>
-            </div>
           </div>
         )}
 
         <div className="icon-btn">
-          <Link to="/messages" className="circle">
+          <Link
+            to="/messages"
+            className="circle"
+            aria-label="Messages"
+            title="Messages"
+          >
             <svg viewBox="0 0 24 24" className="circle-icon">
               <path
                 d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z"
@@ -171,19 +175,16 @@ function Header() {
               />
             </svg>
           </Link>
-
-          <div className="nav-small">
-            <Link to="/messages" className="nav-btn-small">
-              Messages
-            </Link>
-          </div>
         </div>
 
         <div className="icon-btn profile-dropdown-wrapper">
-          <div
+          <button
+            type="button"
             className="circle"
             onClick={() => setShowDropdown(!showDropdown)}
-            style={{ cursor: "pointer" }}
+            aria-label="Profile menu"
+            aria-expanded={showDropdown}
+            title="Profile"
           >
             {user?.profile_pic ? (
               <img
@@ -213,17 +214,7 @@ function Header() {
                 />
               </svg>
             )}
-          </div>
-
-          <div className="nav-small">
-            <span
-              className="nav-btn-small"
-              onClick={() => setShowDropdown(!showDropdown)}
-              style={{ cursor: "pointer" }}
-            >
-              {user ? `${user.first_name} ${user.last_name}` : "Profile"}
-            </span>
-          </div>
+          </button>
 
           {showDropdown && (
             <div className="profile-dropdown">
