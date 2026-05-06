@@ -24,7 +24,6 @@ function CoachDashboardView({
   const { activeRole } = useContext(AuthContext);
   const [earnings, setEarnings] = useState(null);
   const [earningsLoading, setEarningsLoading] = useState(true);
-
   useEffect(() => {
     const fetchEarnings = async () => {
       const token = localStorage.getItem("token");
