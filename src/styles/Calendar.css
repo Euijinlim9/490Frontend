@@ -11,9 +11,11 @@
 .calendar-events-panel {
   width: 260px;
   flex-shrink: 0;
-  background: rgba(128, 128, 128, 0.45);
-  border: 2px solid white;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(12px);
   padding: 20px 16px;
   box-sizing: border-box;
   display: flex;
@@ -26,11 +28,12 @@
   margin: 0 0 16px 0;
   font-size: 22px;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .no-events {
   font-size: 13px;
-  color: #ccc;
+  color: #9fb0c7;
   font-style: italic;
 }
 
@@ -48,14 +51,15 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  background: rgba(7, 11, 17, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
 }
 
 .event-group-header {
   font-size: 12px;
   font-weight: 700;
-  color: #ccc;
+  color: #9dccff;
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -68,9 +72,11 @@
 
 .calendar-main-panel {
   flex: 1;
-  background: rgba(128, 128, 128, 0.45);
-  border: 2px solid white;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(12px);
   padding: 24px;
   box-sizing: border-box;
   display: flex;
@@ -90,20 +96,23 @@
   margin: 0;
   font-size: 22px;
   font-weight: 700;
+  color: #ffffff;
 }
 
 .cal-arrow {
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
   color: white;
-  font-size: 28px;
+  font-size: 24px;
   cursor: pointer;
   line-height: 1;
-  padding: 0 8px;
+  padding: 3px 10px;
 }
 
 .cal-arrow:hover {
-  color: #aac4ff;
+  background: rgba(74, 158, 255, 0.16);
+  color: #9dccff;
 }
 
 .cal-weekdays {
@@ -116,7 +125,7 @@
   text-align: center;
   font-size: 13px;
   font-weight: 600;
-  color: #ccc;
+  color: #9fb0c7;
   padding-bottom: 6px;
 }
 
@@ -136,8 +145,9 @@
   align-items: flex-start;
   justify-content: flex-start;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.07);
-  transition: background 0.15s ease;
+  background: rgba(7, 11, 17, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.15s ease, border-color 0.15s ease;
   position: relative;
   padding: 6px;
   box-sizing: border-box;
@@ -146,7 +156,8 @@
 }
 
 .cal-cell:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(74, 158, 255, 0.12);
+  border-color: rgba(74, 158, 255, 0.28);
 }
 
 .cal-cell.empty {
@@ -156,7 +167,7 @@
 }
 
 .cal-cell.today .cal-day-num {
-  background: #506a92;
+  background: #4a9eff;
   color: white;
   border-radius: 50%;
   width: 26px;
@@ -167,8 +178,8 @@
 }
 
 .cal-cell.has-plan {
-  background: rgba(108, 166, 255, 0.15);
-  border: 1px solid rgba(108, 166, 255, 0.4);
+  background: rgba(43, 179, 163, 0.12);
+  border: 1px solid rgba(43, 179, 163, 0.35);
 }
 
 .cal-day-num {
@@ -203,14 +214,15 @@
 
 .plan-pill-more {
   font-size: 10px;
-  color: #ccc;
+  color: #9fb0c7;
   padding-left: 4px;
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(5, 8, 13, 0.6);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -218,9 +230,10 @@
 }
 
 .modal-box {
-  background: #2a3a52;
-  border: 2px solid white;
-  border-radius: 20px;
+  background: linear-gradient(to bottom, #0b1220, #141d2c);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
   padding: 24px;
   width: 360px;
   box-sizing: border-box;
@@ -249,7 +262,7 @@
 
 .modal-no-plans {
   font-size: 13px;
-  color: #aaa;
+  color: #9fb0c7;
   font-style: italic;
 }
 
@@ -257,7 +270,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(7, 11, 17, 0.3);
   border-radius: 10px;
   padding: 8px 12px;
   font-size: 14px;
@@ -316,23 +329,23 @@
   padding: 8px 12px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(7, 11, 17, 0.3);
   color: white;
   font-size: 14px;
   outline: none;
 }
 
 .modal-input::placeholder {
-  color: #aaa;
+  color: #9fb0c7;
 }
 
 .modal-input:focus {
-  border-color: #6ca6ff;
+  border-color: #4a9eff;
 }
 
 .modal-add-btn {
   padding: 8px 16px;
-  background: #506a92;
+  background: #4a9eff;
   border: none;
   border-radius: 10px;
   color: white;
@@ -342,7 +355,7 @@
 }
 
 .modal-add-btn:hover {
-  background: #3b5f8f;
+  background: #3d8ce6;
 }
 
 .modal-close-btn {
@@ -350,13 +363,13 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  color: #ccc;
+  color: #dbe5f4;
   font-size: 13px;
   cursor: pointer;
 }
 
 .modal-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* Status badges on calendar */
@@ -385,7 +398,7 @@
 }
 
 .cal-event-title {
-  color: #e5e5e5;
+  color: #dbe5f4;
 }
 
 .cal-event-badge {
@@ -406,7 +419,7 @@
 }
 
 .modal-assignment {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(7, 11, 17, 0.3);
   border-radius: 8px;
   padding: 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -422,12 +435,12 @@
 .modal-assignment-title {
   font-size: 15px;
   font-weight: 600;
-  color: #e5e5e5;
+  color: #ffffff;
 }
 
 .modal-assignment-desc {
   margin: 4px 0 8px 0;
-  color: #aaa;
+  color: #9fb0c7;
   font-size: 13px;
 }
 
@@ -435,17 +448,17 @@
   display: flex;
   gap: 12px;
   font-size: 12px;
-  color: #888;
+  color: #7f8fa8;
   margin-bottom: 8px;
 }
 
 .modal-coach-notes {
   margin-top: 8px;
   padding: 8px 10px;
-  background: rgba(108, 166, 255, 0.08);
-  border-left: 2px solid #6ca6ff;
+  background: rgba(74, 158, 255, 0.08);
+  border-left: 2px solid #4a9eff;
   font-size: 13px;
-  color: #ccc;
+  color: #dbe5f4;
   font-style: italic;
   border-radius: 0 4px 4px 0;
 }
