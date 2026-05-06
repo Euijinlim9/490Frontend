@@ -33,7 +33,7 @@
 
 .logs-home-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
   gap: 18px;
   margin-bottom: 18px;
 }
@@ -46,13 +46,14 @@
 
 .logs-preview-wide {
   grid-column: 1 / -1;
+  min-height: 130px;
 }
 
 .logs-preview-wide-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
@@ -60,22 +61,22 @@
 .logs-preview-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 28px 30px;
+  border-radius: 18px;
+  padding: 20px 22px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .logs-home-card {
-  min-height: 260px;
+  min-height: 190px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .logs-preview-card {
-  min-height: 210px;
+  min-height: 170px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -85,7 +86,7 @@
 .logs-preview-card h3 {
   color: white;
   margin: 0 0 12px 0;
-  font-size: 24px;
+  font-size: 21px;
   font-weight: 700;
 }
 
@@ -94,15 +95,15 @@
   color: #c7ced8;
   margin: 0;
   line-height: 1.5;
-  font-size: 15px;
+  font-size: 14px;
   max-width: 420px;
 }
 
 .logs-home-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-top: 22px;
+  margin-top: 16px;
   align-items: flex-start;
   justify-content: flex-start;
 }
@@ -113,7 +114,7 @@
   align-items: center;
   justify-content: center;
   width: fit-content;
-  padding: 12px 22px;
+  padding: 10px 16px;
   border-radius: 999px;
   text-decoration: none;
   color: white;
@@ -121,7 +122,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   transition: all 0.2s ease;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
   box-sizing: border-box;
   line-height: 1;
 }
@@ -138,6 +139,10 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+}
+
+.logs-home-card:first-child .logs-home-actions {
+  flex-wrap: nowrap;
 }
 
 @media (max-width: 1100px) {
@@ -267,6 +272,14 @@
 }
 
 @media (max-width: 768px) {
+  .logs-home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .logs-home-card:first-child .logs-home-actions {
+    flex-wrap: wrap;
+  }
+
   .form-card {
     max-width: 100%;
     padding: 24px;
