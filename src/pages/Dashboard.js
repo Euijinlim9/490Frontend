@@ -845,15 +845,16 @@ function Dashboard() {
   useEffect(() => {
     const checkToday = async () => {
       const token = localStorage.getItem("token");
-      if (!user || !activeRole !== "client") return;
+      if (!user || activeRole !== "client") return;
 
       try {
-        const res = await fetch("http://localhost:4000/api/logs/checkins/daily", {
+        const res = await fetch("http://localhost:4000/api/logs/checkins/today", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        
+        console.log(res.status);
         if (res.status === 404) {
           navigate("/daily-checkin");
         }
