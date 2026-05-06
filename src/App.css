@@ -22,3 +22,8 @@ body {
   flex-direction: column;
 }
 
+.logo {
+  margin-right: 20px;
+  color: white;
+}
+
