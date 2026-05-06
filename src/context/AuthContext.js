@@ -34,7 +34,13 @@ export const AuthProvider = ({ children }) => {
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
-          setActiveRole(data.user.role);
+          const savedRole = localStorage.getItem("activeRole");
+
+          if (savedRole) {
+            setActiveRoleState(savedRole); // don't rewrite localStorage again
+          } else {
+            setActiveRole(data.user.role);
+          }
         } else if (res.status === 401) {
           localStorage.removeItem("token");
           setUser(null);
