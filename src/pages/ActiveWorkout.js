@@ -21,6 +21,9 @@ function ActiveWorkout() {
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
   const [startTime] = useState(() => Date.now());
+  const [showCardioForm, setShowCardioForm] = useState(false);
+  const [cardioInputs, setCardioInputs] = useState({});
+  const [isSaved, setIsSaved] = useState(false);
 
   const exercises = useMemo(() => {
     return activeWorkout?.exercises || [];
@@ -60,60 +63,49 @@ function ActiveWorkout() {
     }
   }, [phase, running, timer, currentSet, totalSets, goNextExercise]);
 
-  useEffect(() => {
-    if (!done || submittedRef.current || !activeWorkout) return;
+
+
+  const submitWorkout = useCallback (async (extraCardioData = {}) => {
+    if (submittedRef.current || !activeWorkout) return;
     submittedRef.current = true;
-    console.log("DEBUG done effect", {
-      activeWorkoutId: activeWorkout?.id,
-      assignmentId: activeWorkout?.assignmentId,
-      exerciseCount: exercises.length,
-      exerciseIds: exercises.map((e) => e.exercise_id),
-    });
 
-    // Keep localStorage for now (other parts of dashboard read it)
-    const workoutLog = {
-      workoutType: activeWorkout.name,
-      duration:
-        exercises.reduce(
-          (total, ex) =>
-            total + (Number(ex.breakTime) || 0) * (Number(ex.sets) || 1),
-          0
-        ) / 60,
-      sets: exercises.reduce((total, ex) => total + (Number(ex.sets) || 0), 0),
-      reps: exercises.reduce(
-        (total, ex) => total + (Number(ex.sets) || 0) * (Number(ex.reps) || 0),
-        0
-      ),
-      date: new Date().toLocaleDateString(),
-    };
+    const token = localStorage.getItem("token");
 
-    const existingWorkouts =
-      JSON.parse(localStorage.getItem("loggedWorkouts")) || [];
+    try {
+      const strengthLogs = [];
+      const cardioLogs = [];
 
-    localStorage.setItem(
-      "loggedWorkouts",
-      JSON.stringify([...existingWorkouts, workoutLog])
-    );
+      exercises.forEach((ex) => {
+        if (!ex.exercise_id) return;
 
-    // Backend integration — works for both assigned AND self-started workouts
-    if (activeWorkout.id && exercises.length > 0) {
-      const token = localStorage.getItem("token");
+        const category = ex.category?.toLowerCase().trim();
 
-      const strengthLogs = exercises
-        .filter((ex) => ex.exercise_id)
-        .map((ex) => ({
-          exercise_id: ex.exercise_id,
-          sets: Number(ex.sets) || 0,
-          reps: Number(ex.reps) || 0,
-          weight_lbs: ex.weight ? Number(ex.weight) : null,
-        }));
+        if (category === "strength") {
+          strengthLogs.push({
+            exercise_id: ex.exercise_id,
+            sets: Number(ex.sets) || 0,
+            reps: Number(ex.reps) || 0,
+            weight_lbs: ex.weight ? Number(ex.weight) : null,
+          });
+        }
+
+        if (category === "cardio") {
+          const input = extraCardioData[ex.exercise_id] || {};
+
+          cardioLogs.push({
+            exercise_id: ex.exercise_id,
+            duration_minutes: Number(input.duration) || 0,
+            distance_km: input.distance ? Number(input.distance) : null,   // ✅ FIXED
+            avg_heart_rate: input.heartRate ? Number(input.heartRate) : null, // ✅ FIXED
+          });
+        }
+      });
 
       const elapsedMs = Date.now() - startTime;
       const durationMinutes = Math.max(1, Math.round(elapsedMs / 60000));
 
-      // 1. Always log the workout to DB
-      if (strengthLogs.length > 0) {
-        fetch("http://localhost:4000/api/logs/workout-log", {
+      if (strengthLogs.length > 0 || cardioLogs.length > 0) {
+        const res = await fetch("http://localhost:4000/api/logs/workout-log", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -125,35 +117,54 @@ function ActiveWorkout() {
             duration_minutes: durationMinutes,
             notes: null,
             strengthLogs,
-            cardioLogs: [],
+            cardioLogs,
           }),
-        })
-          .then(async (res) => {
-            if (!res.ok) {
-              const err = await res.json();
-              console.error("Workout log POST failed:", res.status, err);
-            } else {
-              console.log("✓ Workout log saved to DB");
-            }
-          })
-          .catch((err) => console.error("Workout log network error:", err));
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          console.error("Workout log POST failed:", res.status, err);
+          submittedRef.current = false; 
+          return;
+        }
+
+        console.log("Workout Log saved");
+        setIsSaved(true); 
       }
 
-      // 2. Only mark assignment complete if this came from a coach assignment
       if (activeWorkout.assignmentId) {
-        fetch(
-          `http://localhost:4000/api/client/assignments/${activeWorkout.assignmentId}/complete`,
+        await fetch(
+         `http://localhost:4000/api/client/assignments/${activeWorkout.assignmentId}/complete`,
           {
             method: "PATCH",
             headers: { Authorization: `Bearer ${token}` },
           }
-        ).catch((err) =>
-          console.error("Failed to mark assignment complete:", err)
         );
       }
+
+    } catch (err) {
+      console.error("Workout log error:", err);
+      submittedRef.current = false;
+    }
+  }, [activeWorkout, exercises, startTime]);
+
+  useEffect(() => {
+    if(!done || submittedRef.current || !activeWorkout) return;
+
+    console.log("EXERCISES:", exercises);
+    console.log(  "CATEGORIES:",exercises.map((e) => e.category));
+
+    const hasCardio = exercises.some(
+      (ex) => ex.category?.toLowerCase().trim() === "cardio"
+    );
+
+    if (hasCardio) {
+      setShowCardioForm(true);
+      return;
     }
 
-  }, [done, activeWorkout, exercises, startTime]);
+    submitWorkout();
+  }, [done, activeWorkout, exercises, submitWorkout]);
 
   const handleDoneSet = () => {
     if (currentSet < totalSets) {
@@ -185,16 +196,82 @@ function ActiveWorkout() {
 
   if (done) {
     return (
+      <>
+      {showCardioForm && (
+        <div className="cardio-modal-backdrop">
+        <div className="cardio-form">
+          <h3>Enter Cardio Details</h3>
+
+          {exercises 
+            .filter((ex) => ex.category?.toLowerCase() === "cardio")
+            .map((ex) => (
+              <div key={ex.exercise_id}>
+                <h4>{ex.name}</h4>
+
+                <input
+                  placeholder="Duration (min)"
+                  onChange={(e) => 
+                    setCardioInputs((prev) => ({
+                      ...prev,
+                      [ex.exercise_id]: {
+                        ...prev[ex.exercise_id],
+                        duration: e.target.value,
+                      },
+                    }))
+                  }
+                />
+
+                <input
+                  placeholder="Distance (km)"
+                  onChange={(e) => 
+                    setCardioInputs((prev) => ({
+                      ...prev,
+                      [ex.exercise_id]: {
+                        ...prev[ex.exercise_id],
+                        distance: e.target.value,
+                      },
+                    }))
+                  }
+                />
+
+                <input
+                  placeholder="Heart Rate"
+                  onChange={(e) => 
+                    setCardioInputs((prev) => ({
+                      ...prev,
+                      [ex.exercise_id]: {
+                        ...prev[ex.exercise_id],
+                        heartRate: e.target.value,
+                      },
+                    }))
+                  }
+                />
+              </div>
+            ))}
+
+            <button
+              onClick={() => {
+                submitWorkout(cardioInputs);
+                setShowCardioForm(false);
+              }}
+            >Save Workout</button>
+        </div>
+      </div>
+      )}
+
       <div className="aw-page">
         <div className="aw-done-box">
           <span className="aw-done-icon">🎉</span>
           <h2>Workout Complete!</h2>
           <p>{activeWorkout.name}</p>
+          {isSaved && !showCardioForm && (
           <button className="aw-btn-primary" onClick={handleFinishWorkout}>
             Back to Workouts
           </button>
+          )}
         </div>
       </div>
+      </>
     );
   }
 

@@ -73,6 +73,7 @@ function PremadeWorkouts() {
     exercises: (w.Exercises || []).map((ex) => ({
         exercise_id: ex.exercise_id,
         name: ex.name,
+        category: ex.category,
         sets: ex.workout_exercise?.sets,
         reps: ex.workout_exercise?.reps,
         breakTime: ex.workout_exercise?.rest_seconds || 10,
