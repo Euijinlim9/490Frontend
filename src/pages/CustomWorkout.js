@@ -172,8 +172,6 @@ function CustomWorkout() {
         }),
       });
 
-      const data = await res.json();
-
       setWorkoutName("");
       setAddedExercises([]);
       setNameError(false);
