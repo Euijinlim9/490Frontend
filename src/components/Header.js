@@ -10,7 +10,7 @@ function Header() {
 
   const [showDropdown, setShowDropdown] = useState(false);
 
-  //const effectiveRole = activeRole || user?.role || "client"; 
+  //const effectiveRole = activeRole || user?.role || "client";
   const [notifications, setNotifications] = useState([]);
   const handleLogout = () => {
     logout();
@@ -71,7 +71,7 @@ function Header() {
               Applications
             </Link>
             <Link to="/admin/viewusers" className="nav-btn">
-            View All Accounts
+              View All Accounts
             </Link>
             <Link to="/admin/exercise" className="nav-btn">
               Exercises
