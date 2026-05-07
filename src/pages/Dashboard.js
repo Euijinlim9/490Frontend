@@ -5,7 +5,7 @@ import React, {
   useState,
   useCallback,
 } from "react";
-
+import userimg from "../assets/default-avatar.svg";
 import { WorkoutContext } from "../context/WorkoutContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -135,11 +135,13 @@ function Dashboard() {
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
       endOfWeek.setHours(23, 59, 59, 999);
-      const thisWeek = (data.data || []).filter((a) => {
-        if (!a.due_date) return false;
-        const d = new Date(a.due_date + "T00:00:00");
-        return d >= startOfWeek && d <= endOfWeek;
-      }).sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
+      const thisWeek = (data.data || [])
+        .filter((a) => {
+          if (!a.due_date) return false;
+          const d = new Date(a.due_date + "T00:00:00");
+          return d >= startOfWeek && d <= endOfWeek;
+        })
+        .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
       setWeekWorkouts(thisWeek);
 
       const calRes = await fetch("http://localhost:4000/api/calendar", {
@@ -168,6 +170,55 @@ function Dashboard() {
       fetchTodayAssignment();
     }
   }, [activeRole, fetchTodayAssignment]);
+
+  const [activePurchases, setActivePurchases] = useState([]);
+
+  useEffect(() => {
+    if (activeRole !== "client") return;
+
+    const fetchPurchases = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(
+          "http://localhost:4000/api/sessions/purchases",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Active-Role": "client",
+            },
+          }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        const active = (data.purchases || []).filter(
+          (p) => p.status === "active" && p.sessions_remaining > 0
+        );
+
+        // Aggregate per coach
+        const byCoach = {};
+        for (const p of active) {
+          const cid = p.coach_user_id;
+          if (!byCoach[cid]) {
+            byCoach[cid] = {
+              coach_user_id: cid,
+              coach: p.coach,
+              sessions_remaining: 0,
+              total_sessions: 0,
+              purchase_count: 0,
+            };
+          }
+          byCoach[cid].sessions_remaining += p.sessions_remaining;
+          byCoach[cid].total_sessions += p.total_sessions;
+          byCoach[cid].purchase_count += 1;
+        }
+        setActivePurchases(Object.values(byCoach));
+      } catch (err) {
+        console.error("Failed to load purchases:", err);
+      }
+    };
+
+    fetchPurchases();
+  }, [activeRole]);
 
   const handleStartAssignedWorkout = (assignment) => {
     const w = assignment.Workout;
@@ -378,7 +429,10 @@ function Dashboard() {
         throw new Error("Failed to drop client");
       }
 
-      const existingNotifications = JSON.parse(localStorage.getItem(`clientNotifications-${clientUserId}`)) || []; 
+      const existingNotifications =
+        JSON.parse(
+          localStorage.getItem(`clientNotifications-${clientUserId}`)
+        ) || [];
 
       const newNotification = {
         message: `${user?.first_name} ended the coaching relationship. Payment will be canceled.`,
@@ -386,7 +440,8 @@ function Dashboard() {
         read: false,
       };
 
-      localStorage.setItem(`clientNotifications-${clientUserId}`, 
+      localStorage.setItem(
+        `clientNotifications-${clientUserId}`,
         JSON.stringify([newNotification, ...existingNotifications])
       );
 
@@ -431,9 +486,9 @@ function Dashboard() {
         },
       });
       if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || "Failed to unhire coach");
-    }
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to unhire coach");
+      }
 
       setMyCoach({ state: "none", coach: null });
     } catch (err) {
@@ -462,7 +517,7 @@ function Dashboard() {
           `http://localhost:4000/api/logs/meal-log?date=${date}`,
           {
             headers: {
-            Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -557,20 +612,23 @@ function Dashboard() {
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch("http://localhost:4000/api/logs/wellness-check/today", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          "http://localhost:4000/api/logs/wellness-check/today",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) {
           setWellness({
             sleepHours: 0,
-            waterCurrent: 0, 
+            waterCurrent: 0,
             waterGoal: 80,
             stepLog: 0,
-          })
-        };
+          });
+        }
 
         const result = await res.json();
         const logs = result.checkin || {};
@@ -629,7 +687,7 @@ function Dashboard() {
   }, [weightData]);
 
   const stepChartData = stepData;
-  
+
   const calorieChartData = mealChartData;
 
   const volumeChartData = workoutChartData;
@@ -760,15 +818,24 @@ function Dashboard() {
         const end = new Date().toISOString().split("T")[0];
 
         const [stepsRes, mealsRes, workoutsRes] = await Promise.all([
-          fetch(`http://localhost:4000/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=calories&period=day&start=${start}&end=${end}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=volume&period=day&start=${start}&end=${end}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch(
+            `http://localhost:4000/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+          fetch(
+            `http://localhost:4000/api/logs/graph?metric=calories&period=day&start=${start}&end=${end}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+          fetch(
+            `http://localhost:4000/api/logs/graph?metric=volume&period=day&start=${start}&end=${end}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
         ]);
 
         const stepsJson = await stepsRes.json();
@@ -778,7 +845,6 @@ function Dashboard() {
         const stepsData = stepsJson.data || stepsJson;
         const mealsData = mealsJson.data || mealsJson;
         const workoutsData = workoutsJson.data || workoutsJson;
-
 
         // normalize shape for charts
         const format = (arr) =>
@@ -790,8 +856,6 @@ function Dashboard() {
         setStepData(format(stepsData));
         setMealChartData(format(mealsData));
         setWorkoutChartData(format(workoutsData));
-
-
       } catch (err) {
         console.error("Graph fetch error:", err);
       }
@@ -804,17 +868,14 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(
-        "http://localhost:4000/api/logs/wellness/clear",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ field }),
-        }
-      );
+      const res = await fetch("http://localhost:4000/api/logs/wellness/clear", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ field }),
+      });
 
       if (!res.ok) throw new Error("Failed to delete");
 
@@ -826,7 +887,6 @@ function Dashboard() {
         waterCurrent: updated.water_intake_oz || 0,
         stepLog: updated.steps || 0,
       }));
-
     } catch (err) {
       console.error(err);
     }
@@ -851,12 +911,15 @@ function Dashboard() {
       if (!user || activeRole !== "client") return;
 
       try {
-        const res = await fetch("http://localhost:4000/api/logs/checkins/today", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        
+        const res = await fetch(
+          "http://localhost:4000/api/logs/checkins/today",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
         console.log(res.status);
         if (res.status === 404) {
           navigate("/daily-checkin");
@@ -888,23 +951,32 @@ function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!user || !token ) return;
-    
+    if (!user || !token) return;
+
     const fetchChartData = async () => {
       try {
         const start = "2026-04-25";
         const end = new Date().toISOString().split("T")[0];
 
         const [energyRes, stressRes, motivationRes] = await Promise.all([
-          fetch(`http://localhost:4000/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`, {
-            headers: { Authorization: `Bearer ${token}`},
-          }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=stress&period=day&start=${start}&end=${end}`, {
-            headers: { Authorization: `Bearer ${token}`},
-          }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=motivation&period=day&start=${start}&end=${end}`, {
-            headers: { Authorization: `Bearer ${token}`},
-          }),
+          fetch(
+            `http://localhost:4000/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+          fetch(
+            `http://localhost:4000/api/logs/graph?metric=stress&period=day&start=${start}&end=${end}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+          fetch(
+            `http://localhost:4000/api/logs/graph?metric=motivation&period=day&start=${start}&end=${end}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
         ]);
 
         const energyData = await energyRes.json();
@@ -948,23 +1020,21 @@ function Dashboard() {
             {activeRole === "client" && (
               <section className="dashboard-section">
                 <div className="section-title">My Coach</div>
-
-                <div className="my-coach-card">
+                <div className="coach-hub-card dashboard-card">
                   {myCoach.state === "loading" && (
                     <div className="my-coach-loading">Loading...</div>
                   )}
 
                   {myCoach.state === "none" && (
-                    <div className="my-coach-empty">
-                      <div className="my-coach-empty-icon">🏋️</div>
-                      <div className="my-coach-empty-text">
-                        <h4>You don't have a coach yet.</h4>
+                    <div className="coach-hub-empty">
+                      <div className="coach-hub-empty-icon">🏋️</div>
+                      <div className="coach-hub-empty-text">
+                        <h4>No coach yet</h4>
                         <p>
-                          Browse our coaches and find the right fit for your
-                          goals.
+                          Find a coach that matches your goals and get started.
                         </p>
                       </div>
-                      <Link to="/coach" className="my-coach-cta">
+                      <Link to="/coach" className="coach-hub-cta">
                         Browse Coaches →
                       </Link>
                     </div>
@@ -973,69 +1043,153 @@ function Dashboard() {
                   {(myCoach.state === "pending" ||
                     myCoach.state === "active") &&
                     myCoach.coach && (
-                      <div className="my-coach-active">
-                        <img
-                          src={
-                            myCoach.coach.profile_pic || "/default-avatar.png"
-                          }
-                          alt={myCoach.coach.first_name}
-                          className="my-coach-avatar"
-                        />
-
-                        <div className="my-coach-info">
-                          <div className="my-coach-name-row">
-                            <h4 className="my-coach-name">
+                      <>
+                        <div className="coach-hub-main">
+                          <div className="coach-hub-avatar-wrap">
+                            <img
+                              src={
+                                myCoach.coach.profile_pic ||
+                                "/default-avatar.png"
+                              }
+                              alt={myCoach.coach.first_name}
+                              className="coach-hub-avatar"
+                            />
+                            <span
+                              className={`coach-hub-status-dot ${myCoach.state}`}
+                            />
+                          </div>
+                          <div className="coach-hub-info">
+                            <h3 className="coach-hub-name">
                               {myCoach.coach.first_name}{" "}
                               {myCoach.coach.last_name}
-                            </h4>
-                            <span
-                              className={`my-coach-status-pill ${myCoach.state}`}
-                            >
-                              {myCoach.state === "pending"
-                                ? "Pending"
-                                : "Active"}
-                            </span>
+                              <span
+                                className={`coach-hub-pill ${myCoach.state}`}
+                              >
+                                {myCoach.state === "pending"
+                                  ? "Pending"
+                                  : "Active"}
+                              </span>
+                            </h3>
+                            <p className="coach-hub-specialty">
+                              {myCoach.coach.specialization ||
+                                "General Coaching"}
+                            </p>
+                            <p className="coach-hub-hint">
+                              {myCoach.state === "active"
+                                ? "You're working with this coach."
+                                : "Waiting for coach to approve your request."}
+                            </p>
                           </div>
-                          <p className="my-coach-specialty">
-                            {myCoach.coach.specialization || "General Coaching"}
-                          </p>
-                          {myCoach.state === "active" && (
-                            <p className="my-coach-hint">
-                              You're working with this coach.
-                            </p>
-                          )}
-                          {myCoach.state === "pending" && (
-                            <p className="my-coach-hint">
-                              Waiting for coach to approve your request.
-                            </p>
-                          )}
+                          <div className="coach-hub-actions">
+                            <Link
+                              to={`/coach/${myCoach.coach.user_id}`}
+                              className="coach-hub-btn-sec"
+                            >
+                              View Profile
+                            </Link>
+                            {myCoach.state === "pending" && (
+                              <button
+                                onClick={handleCancelRequest}
+                                className="coach-hub-btn-danger"
+                              >
+                                Cancel
+                              </button>
+                            )}
+                            {myCoach.state === "active" && (
+                              <button
+                                onClick={handleUnhireCoach}
+                                className="coach-hub-btn-danger"
+                              >
+                                Unhire
+                              </button>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="my-coach-actions">
-                          <Link
-                            to={`/coach/${myCoach.coach.user_id}`}
-                            className="my-coach-btn-secondary"
-                          >
-                            View Profile
-                          </Link>
-                          {myCoach.state === "pending" && (
-                            <button
-                              onClick={handleCancelRequest}
-                              className="my-coach-btn-danger"
-                            >
-                              Cancel Request
-                            </button>
-                          )}
-                          {myCoach.state === "active" && (
-                            <button
-                              onClick={handleUnhireCoach}
-                              className="my-coach-btn-danger"
-                            >
-                              Unhire
-                            </button>
-                          )}
-                        </div>
-                      </div>
+                        {activePurchases.length > 0 && (
+                          <>
+                            <div className="coach-hub-divider" />
+                            <div className="coach-hub-sessions-header">
+                              <span className="coach-hub-sessions-label">
+                                Your Sessions
+                              </span>
+                              <span className="coach-hub-sessions-pill">
+                                {activePurchases.reduce(
+                                  (sum, p) => sum + p.sessions_remaining,
+                                  0
+                                )}{" "}
+                                remaining
+                              </span>
+                            </div>
+                            <div className="coach-hub-sessions-list">
+                              {activePurchases.map((p) => (
+                                <div
+                                  key={p.coach_user_id}
+                                  className="coach-hub-session-row"
+                                >
+                                  <img
+                                    src={
+                                      p.coach?.profile_pic
+                                        ? p.coach.profile_pic.startsWith("http")
+                                          ? p.coach.profile_pic
+                                          : `http://localhost:4000${p.coach.profile_pic}`
+                                        : userimg
+                                    }
+                                    alt={p.coach?.first_name}
+                                    className="coach-hub-session-avatar"
+                                  />
+                                  <div className="coach-hub-session-info">
+                                    <div className="coach-hub-session-name">
+                                      {p.coach?.first_name} {p.coach?.last_name}
+                                    </div>
+                                    <div className="coach-hub-session-meta">
+                                      <strong>{p.sessions_remaining}</strong>{" "}
+                                      session
+                                      {p.sessions_remaining === 1
+                                        ? ""
+                                        : "s"}{" "}
+                                      remaining
+                                      {p.purchase_count > 1 && (
+                                        <span className="coach-hub-session-multi">
+                                          {" "}
+                                          · {p.purchase_count} packages
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="coach-hub-session-track-wrap">
+                                    <div className="coach-hub-session-track">
+                                      <div
+                                        className="coach-hub-session-fill"
+                                        style={{
+                                          width: `${Math.min(
+                                            (p.sessions_remaining /
+                                              p.total_sessions) *
+                                              100,
+                                            100
+                                          )}%`,
+                                        }}
+                                      />
+                                    </div>
+                                    <span className="coach-hub-session-track-lbl">
+                                      {p.sessions_remaining} /{" "}
+                                      {p.total_sessions}
+                                    </span>
+                                  </div>
+                                  <button
+                                    className="coach-hub-book-btn"
+                                    onClick={() =>
+                                      navigate(`/coach/${p.coach_user_id}`)
+                                    }
+                                  >
+                                    Book →
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </>
                     )}
                 </div>
               </section>
@@ -1134,31 +1288,75 @@ function Dashboard() {
                     d.setDate(startOfWeek.getDate() + i);
                     return d;
                   });
-                  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                  const DAYS = [
+                    "Sun",
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri",
+                    "Sat",
+                  ];
                   return (
                     <div className="week-day-row">
                       {days.map((d, i) => {
-                        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-                        const isToday = d.toDateString() === today.toDateString();
+                        const key = `${d.getFullYear()}-${String(
+                          d.getMonth() + 1
+                        ).padStart(2, "0")}-${String(d.getDate()).padStart(
+                          2,
+                          "0"
+                        )}`;
+                        const isToday =
+                          d.toDateString() === today.toDateString();
                         const isPast = d < new Date(today.toDateString());
-                        const workouts = weekWorkouts.filter((a) => a.due_date === key);
-                        const personal = weekPersonalEvents.filter((e) => e.date === key);
+                        const workouts = weekWorkouts.filter(
+                          (a) => a.due_date === key
+                        );
+                        const personal = weekPersonalEvents.filter(
+                          (e) => e.date === key
+                        );
                         return (
-                          <div key={i} className={`week-day-cell ${isToday ? "week-day-today" : ""} ${isPast && !isToday ? "week-day-past" : ""}`}>
+                          <div
+                            key={i}
+                            className={`week-day-cell ${
+                              isToday ? "week-day-today" : ""
+                            } ${isPast && !isToday ? "week-day-past" : ""}`}
+                          >
                             <span className="week-day-label">{DAYS[i]}</span>
-                            <span className={`week-day-num ${isToday ? "week-day-num-today" : ""}`}>{d.getDate()}</span>
+                            <span
+                              className={`week-day-num ${
+                                isToday ? "week-day-num-today" : ""
+                              }`}
+                            >
+                              {d.getDate()}
+                            </span>
                             <div className="week-day-workouts">
-                              {workouts.length === 0 && personal.length === 0 ? (
+                              {workouts.length === 0 &&
+                              personal.length === 0 ? (
                                 <span className="week-day-empty">—</span>
                               ) : (
                                 <>
                                   {workouts.map((a) => (
-                                    <span key={a.assigned_workout_id} className={`week-day-pill ${a.status === "completed" ? "pill-done" : "pill-scheduled"}`}>
+                                    <span
+                                      key={a.assigned_workout_id}
+                                      className={`week-day-pill ${
+                                        a.status === "completed"
+                                          ? "pill-done"
+                                          : "pill-scheduled"
+                                      }`}
+                                    >
                                       {a.Workout?.title || "Workout"}
                                     </span>
                                   ))}
                                   {personal.map((e) => (
-                                    <span key={e.calendar_event_id} className="week-day-pill" style={{ background: e.color, color: "white" }}>
+                                    <span
+                                      key={e.calendar_event_id}
+                                      className="week-day-pill"
+                                      style={{
+                                        background: e.color,
+                                        color: "white",
+                                      }}
+                                    >
                                       {e.text}
                                     </span>
                                   ))}
