@@ -832,8 +832,9 @@
    ============================================ */
 
 .cp-request-btn,
-.cp-report-btn {
-  min-width: 155px;
+.cp-report-btn,
+.cp-fire-btn {
+  min-width: 100px;
   height: 42px;
   padding: 0 18px;
   border-radius: 10px;
@@ -846,6 +847,12 @@
   justify-content: center;
   white-space: nowrap;
   letter-spacing: 0.15px;
+}
+
+.cp-btn-header{
+  display: flex;
+  margin-left: auto;
+  gap: 10px;
 }
 
 /* Request Coach */
@@ -892,7 +899,7 @@
 .cp-title-row {
   display: flex;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   flex-wrap: wrap;
   margin-bottom: 20px;

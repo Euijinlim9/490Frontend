@@ -497,6 +497,63 @@ function Profile() {
     }
   };
 
+  const handleDeleteQual = async (id) =>{
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/qualifications/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+      if (!res.ok) {
+        throw new Error("Failed to delete qualification");
+      }
+
+      setQualifications((prev) =>
+        prev.filter(
+          (item) =>
+            item.qualification_id !== id
+          )
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    const handleDeleteCert = async (id) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `http://localhost:4000/api/certifications/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to delete certification");
+    }
+
+    setCertifications((prev) =>
+      prev.filter((item) => item.certification_id !== id)
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   const isToday = (day) =>
     day === today.getDate() &&
     currentMonth === today.getMonth() &&
@@ -696,7 +753,8 @@ function Profile() {
               <div className="modal-container">
                 <div className="modal-availability">
                   <div className="modal-header">
-                    <h2>Update Your Coaching Availability</h2>
+                    <h2>Coaching Availability</h2>
+                    <p>Update your weekly coaching availabilities</p>
                   </div>
                   <div className="avail-content">
                     <div className="modal-left avail-left-container">
@@ -760,33 +818,27 @@ function Profile() {
                         </select>
                       </div>
                       <button className="save-btn avail-btn" onClick={addRule}>
-                        Add Availability
+                        + Add Availability
                       </button>
                       <div className="rules-list">
+                        <p className="avail-section-label">Added rules</p>
                         {timeRules.length === 0 ? (
-                          <p>No availability added yet</p>
+                          <p style={{ fontSize: 13, color: "#aaa" }}>No availability added yet</p>
                         ) : (
                           timeRules.map((r) => (
-                            <div key={r.id} className="rule-item">
-                              <div className="rule-header">
-                                <h3>
-                                  {dayMap[r.dayOfWeek]}:{" "}
-                                  {formatTime(r.startTime)} to{" "}
-                                  {formatTime(r.endTime)}
-                                </h3>
-                                <button
-                                  className="rule-item-btn"
-                                  onClick={() => handleDeleteRule(r.id)}
-                                >
-                                  Delete
-                                </button>
+                          <div key={r.id} className="rule-item">
+                            <div className="rule-header">
+                              <h3>
+                                {dayMap[r.dayOfWeek]}: {formatTime(r.startTime)} – {formatTime(r.endTime)}
+                              </h3>
+                              <button className="rule-item-btn" onClick={() => handleDeleteRule(r.id)}>✕</button>
                               </div>
-                              <h4>Session Duration: {r.duration} minutes</h4>
+                              <h4>{r.duration} min sessions</h4>
                             </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
+                            ))
+                          )}
+                          </div>
+                        </div>
 
                     <div className="modal-right">
                       <div className="calendar-panel">
@@ -871,16 +923,23 @@ function Profile() {
                         ) : (
                           qualifications.map((q) => (
                             <div
-                              key={q.qualification_id}
-                              className="avail-card"
+                            key={q.qualification_id}
+                            className="qualification-card"
                             >
-                              <label>Degree Name</label>
-                              <p>{q.degree_name}</p>
-                              <label>Institution</label>
-                              <p>{q.institution}</p>
-                              <label>Year Completed</label>
-                              <p>{q.year_completed}</p>
-                            </div>
+                              <div className="qualification-info">
+                                <h4>{q.degree_name}</h4>
+                                <p>
+                                  {q.field_of_study} • {q.institution}
+                                </p>
+                                <span>{q.year_completed}</span>
+                                </div>
+                                <button
+                                className="qualification-delete"
+                                onClick={() => handleDeleteQual(q.qualification_id)}
+                                >
+                                  Delete
+                                </button>
+                                </div>
                           ))
                         )}
                         <div className="modal-footer">
@@ -984,6 +1043,11 @@ function Profile() {
                               <span className={`cert-status ${c.status}`}>
                                 {c.status}
                               </span>
+                              <button
+                              className="cert-delete"
+                              onClick={() => handleDeleteCert(c.certification_id)}>
+                                Delete
+                              </button>
                             </div>
                           ))
                         )}
@@ -1021,7 +1085,8 @@ function Profile() {
                             accept=".pdf, .png, .jpg, .jpeg"
                             style={{ display: "none" }}
                             onChange={(e) =>
-                              setFile(Array.from(e.target.files))
+                              setFile(e.target.files[0]
+                              )
                             }
                           />
                         </label>

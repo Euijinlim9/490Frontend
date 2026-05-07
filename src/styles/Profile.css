@@ -309,6 +309,7 @@
   border-top-right-radius: 14px;
   justify-content: center;
   align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .modal-header h2 {
@@ -437,6 +438,7 @@
 }
 
 .date-container {
+  margin-top: 11px;
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
@@ -489,7 +491,7 @@
   height: 38px;
   border-radius: 8px;
   border: none;
-  background: #eaeaea;
+  background: rgba(255, 255, 255, 0.185);;
   cursor: pointer;
   margin-top: 14px;
   margin-bottom: 14px;
@@ -540,7 +542,21 @@
   align-items: center;
   gap: 8px;
 }
-
+ 
+.rule-header h3 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+ 
+.rule-item h4 {
+  font-size: 11px;
+  font-weight: 400;
+  color: #888;
+  margin: 3px 0 0;
+}
+ 
 .rule-item-btn {
   width: 44px;
   background-color: #ff4e4e;
@@ -551,16 +567,31 @@
   margin: 5px 0;
   font-weight: 600;
   cursor: pointer;
+  font-size: 13px;
+  color: #e24b4a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  font-weight: 600;
+}
+ 
+.rule-item-btn:hover {
+  background: #fcebeb;
+  border-color: #f09595;
 }
 
 .calendar-grid {
+  border: 1px;
+  border-color: rgba(255, 255, 255, 0.185);
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 7px;
 }
 
 .calendar-cell {
-  background: white;
+  background: rgba(255, 255, 255, 0.185);;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 6px;
@@ -680,6 +711,70 @@
   color: #ff5050;
 }
 
+.qualification-card {
+  background: #1b1b1b;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 12px;
+}
+
+.qualification-info h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+}
+
+.qualification-info p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #bdbdbd;
+}
+
+.qualification-info span {
+  font-size: 12px;
+  color: #8e8e8e;
+}
+
+.qualification-delete {
+  background: rgba(255, 70, 70, 0.12);
+  border: 1px solid rgba(255, 70, 70, 0.25);
+  color: #ff6b6b;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.qualification-delete:hover {
+  background: rgba(255, 70, 70, 0.22);
+}
+
+.cert-delete {
+  width:70px;
+  margin-left:auto;
+  background: rgba(255, 70, 70, 0.12);
+  border: 1px solid rgba(255, 70, 70, 0.25);
+  color: #ff6b6b;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.cert-delete:hover {
+  background: rgba(255, 70, 70, 0.22);
+}
 @media (max-width: 1000px) {
   .profile-page {
     grid-template-columns: 1fr;
