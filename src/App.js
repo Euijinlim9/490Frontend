@@ -170,6 +170,7 @@ function App() {
           <Route path="/log-workout" element={<LogWorkout />} />
           <Route path="/log-wellness" element={<LogWellness />} />
           <Route path="/premade-meals" element={<PremadeMeals />} />
+
         </Routes>
       </div>
     </div>
