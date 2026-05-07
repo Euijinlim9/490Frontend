@@ -574,6 +574,7 @@ function Dashboard() {
             fats: 0,
           }
         );
+        console.log(totals);
 
         setMealTotals(totals);
       } catch (err) {
@@ -848,6 +849,15 @@ function Dashboard() {
         const start = "2026-04-25";
         const end = new Date().toISOString().split("T")[0];
 
+        const periodMap = {
+          daily: "day",
+          weekly: "week",
+          monthly: "month",
+          yearly: "year",
+        };
+
+        const period = periodMap[selectedTimeView];
+
         const [stepsRes, mealsRes, workoutsRes] = await Promise.all([
           fetch(
             `http://localhost:4000/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`,
@@ -880,7 +890,7 @@ function Dashboard() {
         // normalize shape for charts
         const format = (arr) =>
           arr.map((item) => ({
-            day: item.period,
+            day: String(item.period),
             value: Number(item.value) || 0,
           }));
 
@@ -893,7 +903,7 @@ function Dashboard() {
     };
 
     fetchGraphData();
-  }, [user]);
+  }, [user, selectedTimeView]);
 
   const deleteTodayMetric = async (field) => {
     const token = localStorage.getItem("token");
@@ -989,6 +999,15 @@ function Dashboard() {
         const start = "2026-04-25";
         const end = new Date().toISOString().split("T")[0];
 
+        const periodMap = {
+          daily: "day",
+          weekly: "week",
+          monthly: "month",
+          yearly: "year",
+        };
+
+        const period = periodMap[selectedTimeView];
+
         const [energyRes, stressRes, motivationRes] = await Promise.all([
           fetch(
             `http://localhost:4000/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`,
@@ -1015,7 +1034,7 @@ function Dashboard() {
         const motivationData = await motivationRes.json();
 
         const merged = energyData.map((item, index) => ({
-          day: item.period,
+          day: String(item.period),
           energy: Number(item.value) || 0,
           stress: Number(stressData[index]?.value) || 0,
           motivation: Number(motivationData[index]?.value || 0),
@@ -1028,7 +1047,7 @@ function Dashboard() {
     };
 
     fetchChartData();
-  }, [user]);
+  }, [user, selectedTimeView]);
 
   return (
     <div className="dashboard-page">
@@ -1121,6 +1140,7 @@ function Dashboard() {
                             >
                               View Profile
                             </Link>
+
                             {myCoach.state === "pending" && (
                               <button
                                 onClick={handleCancelRequest}
@@ -1129,9 +1149,10 @@ function Dashboard() {
                                 Cancel
                               </button>
                             )}
+
                             {myCoach.state === "active" && (
                               <button
-                                onClick={handleUnhireCoach}
+                                onClick={() => setShowFireConfirm(true)}
                                 className="coach-hub-btn-danger"
                               >
                                 Unhire
