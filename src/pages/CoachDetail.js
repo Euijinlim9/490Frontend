@@ -397,6 +397,37 @@ function CoachDetail() {
     setShowReportForm(false);
   };
 
+    const handleUnhireCoach = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to unhire your coach? This will end your coaching relationship."
+      )
+    ) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:4000/api/client/my-coach", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Active-Role": activeRole,
+        },
+      });
+      if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Failed to unhire coach");
+    }
+
+      setMyCoachState("none");
+      setMyCoachId(null);
+    } catch (err) {
+      console.error(err);
+      alert("Could not unhire coach. Try again.");
+    }
+  };
+
   if (loading)
     return (
       <div className="cp-page">
@@ -434,7 +465,7 @@ function CoachDetail() {
     if (hasPlans) return null;
     const label = (() => {
       if (myCoachState === "pending") return "Request Pending";
-      if (myCoachState === "active") return "You already have a coach";
+      if (myCoachState === "active") return "Coach Already Hired";
       if (requesting) return "Sending...";
       return "Request this Coach";
     })();
@@ -480,7 +511,16 @@ function CoachDetail() {
                     {coach.Coach?.specialization || "General Coaching"} · Coach
                   </p>
                 </div>
+                <div className="cp-btn-header">
                 {headerButton}
+                {myCoachState === "active" && !isSelf &&
+                <button
+                className="cp-fire-btn"
+                onClick={handleUnhireCoach}
+                >
+                  Fire Coach
+                </button>
+                }
                 {canReview && (
                   <button
                     className="cp-report-btn"
@@ -489,6 +529,7 @@ function CoachDetail() {
                     Report Coach
                   </button>
                 )}
+              </div>
               </div>
               <div className="cp-stats">
                 <div className="cp-stat">

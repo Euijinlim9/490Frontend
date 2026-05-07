@@ -430,7 +430,10 @@ function Dashboard() {
           "X-Active-Role": activeRole,
         },
       });
-      if (!res.ok && res.status !== 204) throw new Error("Failed to unhire");
+      if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Failed to unhire coach");
+    }
 
       setMyCoach({ state: "none", coach: null });
     } catch (err) {

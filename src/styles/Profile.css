@@ -100,7 +100,7 @@
 }
 .input-group label {
   font-size: 12px;
-  color: #ccc;
+  color: #aaa;
   margin-bottom: 6px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -295,8 +295,8 @@
 }
 
 .modal-container {
-  background: transparent;
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(4px);
   position: fixed;
   top: 0;
   left: 0;
@@ -306,6 +306,7 @@
   justify-content: center;
   align-items: center;
   pointer-events: auto;
+  z-index: 1000;
 }
 
 .modal {
@@ -321,15 +322,25 @@
   display: flex;
   background: linear-gradient(to top, #0b1220, #141d2c);
   color: rgb(0, 0, 0);
-  padding: 20px 15px;
+  padding: 40px 24px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .modal-header h2 {
-  color: #000000;
+  font-size: 20px;
+  font-weight: 600;
+  color: #7d7d7d;
+  margin: 0;
+}
+
+.modal-header p {
+  font-size: 13px;
+  color: #888;
+  margin: 2px 0 0;
 }
 
 .modal input,
@@ -369,7 +380,10 @@
 }
 
 .modal-availability {
-  background: rgb(204, 204, 204);
+  background: linear-gradient(to bottom, #0b1220, #141d2c);
+  color: rgb(0, 0, 0);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
   width: 1150px;
   max-width: 100%;
   border-radius: 5px;
@@ -426,7 +440,6 @@
 }
 
 .calendar-panel {
-  background: #ffffff;
   padding: 10px;
   border-radius: 10px;
   height: 100%;
@@ -440,12 +453,13 @@
   margin-left: 0;
 }
 .date-container {
+  margin-top: 11px;
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
   width: 400px;
   margin-left: 20px;
-  background: white;
+  background: rgba(255, 255, 255, 0.185);
   border-radius: 10px;
 }
 
@@ -458,10 +472,11 @@
 .date-box select {
   margin-top: 10px;
   width: 150px;
-  border-color: #a9a9a9;
+  border-color: rgba(255, 255, 255, 0.185);
 }
 
 .date-box label {
+  color:#000000;
   font-size: 18px;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
@@ -472,6 +487,7 @@
 }
 
 .weekday-row label {
+  color:#aaa;
   margin-left: 20px;
   margin-top: 20px;
 }
@@ -489,7 +505,7 @@
   height: 48px;
   border-radius: 10px;
   border: none;
-  background: #eaeaea;
+  background: rgba(255, 255, 255, 0.185);;
   cursor: pointer;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -501,6 +517,7 @@
 }
 
 .save-btn.avail-btn {
+  width:400px;
   margin-left: 20px;
   background-color: #2bb3a3;
 }
@@ -510,14 +527,14 @@
   padding: 10px;
   border-radius: 10px;
   width: 380px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.185);;
   margin-left: 20px;
 }
 
 .duration-box select {
   margin-top: 10px;
   width: 200px;
-  border-color: #a9a9a9;
+  border-color: rgba(255, 255, 255, 0.185);;
 }
 
 .duration-box label {
@@ -526,34 +543,47 @@
   margin-right: 20px;
 }
 
-.rule-item {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  width: 380px;
-  background-color: white;
-  margin-left: 20px;
-  margin-top: 20px;
-  height: 80px;
-}
-
 .rule-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
 }
-
-.rule-item-btn {
-  width: 50px;
-  background-color: #ff4e4e;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  padding: 5px 0;
-  margin: 5px 0;
+ 
+.rule-header h3 {
+  font-size: 13px;
   font-weight: 600;
+  color: #111;
+  margin: 0;
+}
+ 
+.rule-item h4 {
+  font-size: 11px;
+  font-weight: 400;
+  color: #888;
+  margin: 3px 0 0;
+}
+ 
+.rule-item-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: transparent;
   cursor: pointer;
+  font-size: 13px;
+  color: #e24b4a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  font-weight: 600;
+}
+ 
+.rule-item-btn:hover {
+  background: #fcebeb;
+  border-color: #f09595;
 }
 
 .modal-right {
@@ -561,13 +591,15 @@
 }
 
 .calendar-grid {
+  border: 1px;
+  border-color: rgba(255, 255, 255, 0.185);
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
 }
 
 .calendar-cell {
-  background: white;
+  background: rgba(255, 255, 255, 0.185);;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 8px;
@@ -583,12 +615,14 @@
 }
 
 .calendar-header {
+  padding: 20px 20px;
   font-weight: bold;
   font-size: 20px;
-  margin-top: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 5px;
   text-align: center;
   display: flex;
+  border: 2px solid rgba(255, 255, 255, 0.185);
+  border-radius: 10px;
 }
 
 .calendar-header button {
@@ -708,4 +742,69 @@
 .cert-status.rejected {
   background: rgba(255, 80, 80, 0.2);
   color: #ff5050;
+}
+
+.qualification-card {
+  background: #1b1b1b;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 12px;
+}
+
+.qualification-info h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+}
+
+.qualification-info p {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #bdbdbd;
+}
+
+.qualification-info span {
+  font-size: 12px;
+  color: #8e8e8e;
+}
+
+.qualification-delete {
+  background: rgba(255, 70, 70, 0.12);
+  border: 1px solid rgba(255, 70, 70, 0.25);
+  color: #ff6b6b;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.qualification-delete:hover {
+  background: rgba(255, 70, 70, 0.22);
+}
+
+.cert-delete {
+  width:70px;
+  margin-left:auto;
+  background: rgba(255, 70, 70, 0.12);
+  border: 1px solid rgba(255, 70, 70, 0.25);
+  color: #ff6b6b;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.cert-delete:hover {
+  background: rgba(255, 70, 70, 0.22);
 }
