@@ -1,88 +1,79 @@
 import "../styles/PremadeMeals.css"; 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function PremadeMeals (){
  const [query, setQuery] = useState("");
  const [searchQuery, setSearchQuery] = useState("");
  const [filter, setFilter] = useState("");
  const [mealTypeFilter, setMealTypeFilter] = useState("");
-
- const meals = [
-    { 
-    id: 1,
-    name: "Protein Oatmeal Bowl", 
-    type: "breakfast", 
-    diet: "Vegetarian", 
-    calories: 350, 
-    protein: 15, 
-    carbs: 30, 
-    fiber: 4,
-    fats: 10, 
-    description: "Oats, greek yogurt, berries, and nut butter.",
- }, 
- { 
-    id: 2,
-    name: "Grilled Chicken Rice Bowl", 
-    type: "lunch", 
-    diet: "low-cal", 
-    calories: 475, 
-    protein: 35, 
-    carbs: 40, 
-    fiber: 6,
-    fats: 25, 
-    description: "Chicken, brown rice, veggies, and a light sauce.",
- }, 
- { 
-    id: 3,
-    name: "Chickpea Salad", 
-    type: "dinner", 
-    diet: "Vegan", 
-    calories: 350, 
-    protein: 25, 
-    carbs: 10, 
-    fiber: 8,
-    fats: 10, 
-    description: "Chickpeas, greens, cucumber, tomata, vinaigrette.",
- }, 
-]; 
+ const [meals, setMeals] = useState([]);
+ const [loading, setLoading] = useState(true);
 
   const handleSearch = () => {
     setSearchQuery(query); 
   }; 
 
-   const handleLogMeal = (meal) => {
-    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
+  useEffect(() => {
+    const fetchMeals = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-    const newMeal = { 
-        mealName: meal.name, 
-        mealTime: meal.type, 
-        calories: meal.calories, 
-        protein: meal.protein, 
-        carbs: meal.carbs, 
-        fiber: meal.fiber, 
-        fats: meal.fats,
-        description: meal.description, 
-        date: new Date().toLocaleDateString(), 
-    }; 
+        const res = await fetch("http://localhost:4000/api/meals", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    localStorage.setItem(
-        "loggedMeals", JSON.stringify([...savedMeals, newMeal])
-    ); 
+        const data = await res.json();
+        setMeals(data);
+      } catch (err) {
+        console.error("Failed to fetch meals", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchMeals();
+  }, []);
 
-    alert(`${meal.name} logged!`);
-}; 
+  const handleLogMeal = async (meal) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:4000/api/logs/meal-log", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          meal_id: meal.id,
+          date: new Date().toISOString().split("T")[0],
+          servings: 1,
+        }),
+      });
+
+      if (!res.ok) throw new Error("failed to log meal");
+      alert(`${meal.name} logged!`);
+    } catch (err) {
+      console.error(err);
+      alert("failed to log meal");
+    }
+  }; 
+
 
     const filteredMeals = meals.filter((meal) => {
     const search = searchQuery.toLowerCase(); 
 
     const matchesSearch = !searchQuery || meal.name.toLowerCase().includes(search); 
+    
+    console.log(filter);
+    const matchesType = filter === "" ? true: meal.is_premade === (filter === "1");
 
-    const matchesDiet = !filter || meal.diet === filter; 
-
-    const matchesType = !mealTypeFilter || meal.type === mealTypeFilter; 
-
-    return matchesSearch && matchesDiet && matchesType; 
-  }); 
+    return matchesSearch && matchesType;});
+  if (loading) {
+    return <div>Loading meals...</div>;
+  } 
 
   return ( 
     <div>
@@ -109,26 +100,11 @@ function PremadeMeals (){
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
-          <option value="" disabled>
-            Filter
+          <option value="">
+            All Types
           </option>
-          <option value="Vegetarian">Vegetarian</option>
-          <option value="Vegan">Vegan</option>
-          <option value="gluten-free">Gluten Free</option>
-          <option value="low-cal">Low Calorie</option>
-          <option value="">All Diets</option>
-        </select>
-
-        <select
-          className="filter-dropdown"
-          value={mealTypeFilter}
-          onChange={(e) => setMealTypeFilter(e.target.value)}
-        >
-          <option value="breakfast">Breakfast</option>
-          <option value="lunch">Lunch</option>
-          <option value="dinner">Dinner</option>
-          <option value="snack">Snack</option>
-          <option value="">All Meals</option>
+          <option value="1">Premade</option>
+          <option value="0">Custom</option>
         </select>
 
         <button className="search-button" onClick={handleSearch}>
@@ -141,10 +117,10 @@ function PremadeMeals (){
               <h3>{meal.name}</h3>
               <p>{meal.description}</p>
               <div className="meal-macros">
-              <span>{meal.calories} cal</span>
+              <span>{meal.calories_per_serving} cal</span>
               <span>{meal.protein}g protein</span>
               <span>{meal.carbs}g carbs</span>
-              <span>{meal.fats}g fats</span>
+              <span>{meal.fat}g fats</span>
               <span>{meal.fiber}g fiber</span>
             </div>
 

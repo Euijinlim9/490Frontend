@@ -485,6 +485,7 @@ function Dashboard() {
             fats: 0,
           }
         );
+        console.log(totals);
 
         setMealTotals(totals);
       } catch (err) {
@@ -756,14 +757,23 @@ function Dashboard() {
         const start = "2026-04-25";
         const end = new Date().toISOString().split("T")[0];
 
+        const periodMap = {
+          daily: "day",
+          weekly: "week",
+          monthly: "month",
+          yearly: "year",
+        };
+
+        const period = periodMap[selectedTimeView];
+
         const [stepsRes, mealsRes, workoutsRes] = await Promise.all([
-          fetch(`http://localhost:4000/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`, {
+          fetch(`http://localhost:4000/api/logs/graph?metric=steps&period=${period}&start=${start}&end=${end}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=calories&period=day&start=${start}&end=${end}`, {
+          fetch(`http://localhost:4000/api/logs/graph?metric=calories&period=${period}&start=${start}&end=${end}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=volume&period=day&start=${start}&end=${end}`, {
+          fetch(`http://localhost:4000/api/logs/graph?metric=volume&period=${period}&start=${start}&end=${end}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -780,7 +790,7 @@ function Dashboard() {
         // normalize shape for charts
         const format = (arr) =>
           arr.map((item) => ({
-            day: item.period,
+            day: String(item.period),
             value: Number(item.value) || 0,
           }));
 
@@ -795,7 +805,7 @@ function Dashboard() {
     };
 
     fetchGraphData();
-  }, [user]);
+  }, [user, selectedTimeView]);
 
   const deleteTodayMetric = async (field) => {
     const token = localStorage.getItem("token");
@@ -845,10 +855,10 @@ function Dashboard() {
   useEffect(() => {
     const checkToday = async () => {
       const token = localStorage.getItem("token");
-      if (!user || !activeRole !== "client") return;
+      if (!user || activeRole !== "client") return;
 
       try {
-        const res = await fetch("http://localhost:4000/api/logs/checkins/daily", {
+        const res = await fetch("http://localhost:4000/api/logs/checkins/today", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -891,14 +901,23 @@ function Dashboard() {
         const start = "2026-04-25";
         const end = new Date().toISOString().split("T")[0];
 
+        const periodMap = {
+          daily: "day",
+          weekly: "week",
+          monthly: "month",
+          yearly: "year",
+        }
+
+        const period = periodMap[selectedTimeView];
+
         const [energyRes, stressRes, motivationRes] = await Promise.all([
-          fetch(`http://localhost:4000/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`, {
+          fetch(`http://localhost:4000/api/logs/graph?metric=energy&period=${period}&start=${start}&end=${end}`, {
             headers: { Authorization: `Bearer ${token}`},
           }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=stress&period=day&start=${start}&end=${end}`, {
+          fetch(`http://localhost:4000/api/logs/graph?metric=stress&period=${period}&start=${start}&end=${end}`, {
             headers: { Authorization: `Bearer ${token}`},
           }),
-          fetch(`http://localhost:4000/api/logs/graph?metric=motivation&period=day&start=${start}&end=${end}`, {
+          fetch(`http://localhost:4000/api/logs/graph?metric=motivation&period=${period}&start=${start}&end=${end}`, {
             headers: { Authorization: `Bearer ${token}`},
           }),
         ]);
@@ -908,7 +927,7 @@ function Dashboard() {
         const motivationData = await motivationRes.json();
 
         const merged = energyData.map((item, index) => ({
-          day: item.period,
+          day: String(item.period),
           energy: Number(item.value) || 0,
           stress: Number(stressData[index]?.value) || 0,
           motivation: Number(motivationData[index]?.value || 0),
@@ -921,7 +940,7 @@ function Dashboard() {
     };
 
     fetchChartData();
-  }, [user]);
+  }, [user, selectedTimeView]);
 
   return (
     <div className="dashboard-page">
