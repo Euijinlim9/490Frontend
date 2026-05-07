@@ -50,6 +50,9 @@ import ClientProgress from "./pages/ClientProgress";
 import AdminRole from "./components/AdminRole";
 import WorkoutPhotos from "./pages/WorkoutPhotos";
 import NutritionistMealPlanPage from "./pages/NutritionistMealPlanPage";
+import NutritionistDetail from "./pages/NutritionistDetail";
+import NutritionistRequests from "./pages/NutritionistRequests";
+import NutritionistProfile from "./pages/NutritionistProfile";
 
 function App() {
   const location = useLocation();
@@ -97,6 +100,9 @@ function App() {
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
           <Route path="/nutritionist/plans" element={<NutritionistMealPlanPage />} />
+          <Route path="/nutritionist/requests" element={<NutritionistRequests />} />
+          <Route path="/nutritionist/profile" element={<NutritionistProfile />} />
+          <Route path="/nutritionist/:id" element={<NutritionistDetail />} />
           <Route path="/workout-photos" element={<WorkoutPhotos />} />
           <Route
             path="/test-survey"

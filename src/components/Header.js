@@ -120,6 +120,12 @@ function Header() {
             <Link to="/nutritionist/plans" className="nav-btn">
               Meal Plans
             </Link>
+            <Link to="/nutritionist/requests" className="nav-btn">
+              Requests
+            </Link>
+            <Link to="/nutritionist/profile" className="nav-btn">
+              My Profile
+            </Link>
           </>
         )}
       </div>
