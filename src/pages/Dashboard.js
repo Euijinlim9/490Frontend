@@ -518,9 +518,6 @@ function Dashboard() {
       }`.trim();
       setFiredCoach(name);
 
-        const name = `${myCoach.coach?.first_name || ""} ${myCoach.coach?.last_name || ""}`.trim();
-        setFiredCoach(name);
-
       setMyCoach({ state: "none", coach: null });
       setShowFireConfirm(false);
       setShowFireSuccess(true);
@@ -1080,7 +1077,7 @@ function Dashboard() {
                   {(myCoach.state === "pending" ||
                     myCoach.state === "active") &&
                     myCoach.coach && (
-                      <>
+                      <div>
                         <div className="coach-hub-main">
                           <div className="coach-hub-avatar-wrap">
                             <img
@@ -1142,8 +1139,11 @@ function Dashboard() {
                             )}
                           </div>
                         </div>
-.
-
+                      </div>
+                    )}
+                </div>
+              </section>
+            )}
             {upcomingBookings.length > 0 && (
               <section className="dashboard-section">
                 <div className="section-title">Upcoming Sessions</div>
