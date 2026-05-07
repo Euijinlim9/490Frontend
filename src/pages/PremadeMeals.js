@@ -5,7 +5,6 @@ function PremadeMeals (){
  const [query, setQuery] = useState("");
  const [searchQuery, setSearchQuery] = useState("");
  const [filter, setFilter] = useState("");
- const [mealTypeFilter, setMealTypeFilter] = useState("");
  const [meals, setMeals] = useState([]);
  const [loading, setLoading] = useState(true);
 
