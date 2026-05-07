@@ -8,12 +8,15 @@ function UserReport(){
     const [query, setQuery] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [filter, setFilter] = useState("");
+    const [actionModal, setActionModal] = useState(null);
+    const [pendingAction, setPendingAction] = useState(null);
+    const [resolutionNotes, setResolutionNotes] = useState("");
 
     useEffect(() =>{
         const fetchReports = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch ("http://localhost:4000/admin/coach-reports",
+                const res = await fetch ("http://localhost:4000/admin/reports/coach",
                 {
                     headers: {Authorization: `Bearer ${token}`,},
                 }
@@ -68,8 +71,51 @@ function UserReport(){
       status.includes(search)
     );
   });
+    const handleUpdateStatus = async (reportId, status, resolution_notes = "") => {
+    const token = localStorage.getItem("token");
 
+    try {
+        const res = await fetch(
+            `http://localhost:4000/admin/reports/coach/${reportId}/status`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    status,
+                    resolution_notes,
+                }),
+            }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || "Failed to update report");
+        }
+        
+        setReports((prev) =>
+            prev.map((r) =>
+                r.report_id === reportId
+        ? data.report : r
+            )
+        );
+
+        setActionModal({
+            type: status,
+            report: data.report,
+        });
+        setSelectedReport(null);
+
+    } catch (err) {
+        console.error("Error updating report:", err);
+    }
+};
+  
     return(
+        <div className="coach-app-container">
         <div className="report-container">
             <div className="report-header">
                 <h2>Coach Reports</h2>
@@ -203,13 +249,102 @@ function UserReport(){
                         <p>No evidence provided</p>
                         )}
                         <div className="report-btn-footer">
-                        <button className="report-back-btn"onClick={() => setSelectedReport(null)}>
-                            Back
+                        <button
+                        className="accept-btn"
+                        onClick={() => {
+                            setPendingAction({
+                            reportId: selectedReport.report_id,
+                            status: "resolved",});
+                        }}>
+                            Resolve
+                        </button>
+
+                        <button
+                        className="reject-btn"
+                        onClick={() => {
+                            setPendingAction({
+                            reportId: selectedReport.report_id,
+                            status: "dismissed",});
+                        }}>
+                            Dismiss
                         </button>
                         </div>
+                        <button className="view-btn"onClick={() => setSelectedReport(null)}>
+                            Back
+                        </button>
                     </div>
                 </div>
             )}
+            {pendingAction && (
+                <div
+                className="modal-overlay"
+                onClick={() => {
+                    setPendingAction(null);
+                    setResolutionNotes("");}}>
+                <div
+                className="report-modal"
+                onClick={(e) => e.stopPropagation()}>
+                <h2>
+                {pendingAction.status === "resolved"
+                    ? "Resolve Report"
+                    : "Dismiss Report"}
+            </h2>
+            <p>Please provide resolution notes.</p>
+            <textarea
+                className="report-textarea"
+                placeholder="Enter notes here..."
+                value={resolutionNotes}
+                onChange={(e) => setResolutionNotes(e.target.value)}
+            />
+
+            <div className="report-btn-footer">
+                <button
+                    className="reject-btn"
+                    onClick={() => {
+                        setPendingAction(null);
+                        setResolutionNotes("");}}>
+                    Cancel
+                </button>
+                <button
+                    className="accept-btn"
+                    onClick={async () => {
+                        await handleUpdateStatus(
+                            pendingAction.reportId,
+                            pendingAction.status,
+                            resolutionNotes
+                        );
+
+                        setPendingAction(null);
+                        setResolutionNotes("");
+                    }}
+                >
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+)}
+            {actionModal && (
+                <div className="modal-overlay" onClick={() => setActionModal(null)}>
+                <div className="report-modal" onClick={(e) => e.stopPropagation()}>
+                <h2>Action Completed</h2>
+                <p>
+                    Report has been{" "}
+                    <strong>
+                        {actionModal.type === "resolved" ? "Resolved" : "Dismissed"}
+                    </strong>
+                </p>
+            <p>Status updated successfully.</p>
+            <button
+                className="view-btn"
+                onClick={() => setActionModal(null)}
+            >
+                OK
+            </button>
+        </div>
+    </div>
+)}
+        </div>
         </div>
     );
 }

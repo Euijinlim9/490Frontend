@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
 import CoachDashboardView from "../components/CoachDashboardView";
+import AdminDashboard from "./adminpages/AdminDashboard";
 import {
   LineChart,
   Line,
@@ -27,6 +28,9 @@ function Dashboard() {
   const [subscription, setSubscription] = useState(null);
   const [subLoading, setSubLoading] = useState(true);
   const navigate = useNavigate();
+  const [showFireConfirm, setShowFireConfirm] = useState(false);
+  const [showFireSuccess, setShowFireSuccess] = useState(false);
+  const [firedCoach, setFiredCoach] = useState("");
 
   const [myCoach, setMyCoach] = useState({ state: "loading", coach: null });
 
@@ -413,14 +417,6 @@ function Dashboard() {
   };
 
   const handleUnhireCoach = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to unhire your coach? This will end your coaching relationship."
-      )
-    ) {
-      return;
-    }
-
     const token = localStorage.getItem("token");
     try {
       const res = await fetch("http://localhost:4000/api/client/my-coach", {
@@ -435,10 +431,16 @@ function Dashboard() {
       throw new Error(data.error || "Failed to unhire coach");
     }
 
+        const name = `${myCoach.coach?.first_name || ""} ${myCoach.coach?.last_name || ""}`.trim();
+        setFiredCoach(name);
+
       setMyCoach({ state: "none", coach: null });
+      setShowFireConfirm(false);
+      setShowFireSuccess(true);
     } catch (err) {
       console.error(err);
       alert("Could not unhire coach. Try again.");
+      setShowFireConfirm(false);
     }
   };
 
@@ -929,7 +931,9 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-      {activeRole === "coach" ? (
+      {activeRole === "admin" ? (
+        <AdminDashboard />
+      ) : activeRole === "coach" ? (
         <CoachDashboardView
           user={user}
           pendingRequests={pendingRequests}
@@ -1028,7 +1032,7 @@ function Dashboard() {
                           )}
                           {myCoach.state === "active" && (
                             <button
-                              onClick={handleUnhireCoach}
+                              onClick={() => setShowFireConfirm(true)}
                               className="my-coach-btn-danger"
                             >
                               Unhire
@@ -1728,6 +1732,60 @@ function Dashboard() {
           </div>
         </div>
       )}
+      {showFireConfirm && (
+        <div
+        className="cp-modal-overlay"
+        onClick={() => setShowFireConfirm(false)}>
+          <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+            className="cp-modal-close"
+            onClick={() => setShowFireConfirm(false)}>
+              ✕
+            </button>
+            <h3 className="cp-modal-title">Fire Coach?</h3>
+            <p className="cp-modal-desc">
+            Are you sure you want to fire {firedCoach}?
+            This will end your coaching relationship and cancel all active payments.
+            </p>
+            <div className="cp-modal-actions">
+              <button
+              className="cp-modal-confirm-btn"
+              onClick={handleUnhireCoach}>
+              Yes, Fire Coach
+              </button>
+              <button
+              className="cp-btn cp-btn-ghost"
+              onClick={() => setShowFireConfirm(false)}>
+                Cancel
+              </button>
+              </div>
+            </div>
+          </div>
+          )}
+          
+          {showFireSuccess && (
+            <div
+            className="cp-modal-overlay"
+            onClick={() => setShowFireSuccess(false)}>
+              <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+                <button
+                className="cp-modal-close"
+                onClick={() => setShowFireSuccess(false)}>
+                  ✕
+                </button>
+                <h3 className="cp-modal-title">Termination Successful</h3>
+                <p className="cp-modal-desc">
+                  Your coaching relationship with {firedCoach}
+                  has been ended. All payments toward this coach have been canceled.
+                </p>
+                <button
+                className="cp-modal-confirm-btn"
+                onClick={() => setShowFireSuccess(false)}>
+                  OK
+                </button>
+            </div>
+          </div>
+        )}
     </div>
   );
 }

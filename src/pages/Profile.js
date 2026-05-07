@@ -562,170 +562,85 @@ function Profile() {
   if (!user) return <p>Loading ...</p>;
 
   return (
-    <div className="profile-page">
+        <div className="profile-page">
       <div className="container-left">
         <div className="profile-text">Profile Settings</div>
         {user?.profile_pic ? (
           <img
-            src={
-              user.profile_pic.startsWith("http")
-                ? user.profile_pic
-                : `http://localhost:4000${user.profile_pic}`
-            }
+            src={user.profile_pic.startsWith("http") ? user.profile_pic : `http://localhost:4000${user.profile_pic}`}
             alt="Profile"
             className="avatar"
           />
         ) : (
           <img src={userimg} alt="" className="avatar" />
         )}
-        <div className="profile-name">
-          {user?.first_name || "First"} {user?.last_name || "Last"}
-        </div>
+        <div className="profile-name">{user?.first_name || "First"} {user?.last_name || "Last"}</div>
         {activeRole === "coach" && <div className="profile-badge">Coach</div>}
-        <input
-          type="file"
-          accept="image/png, image/jpeg, image/jpg"
-          ref={fileRef}
-          style={{ display: "none" }}
-          onChange={handlePictureUpload}
-        />
-        <button className="upload-btn" onClick={() => fileRef.current.click()}>
-          Upload new image
-        </button>
-        <button className="signout-btn" onClick={handleLogout}>
-          Sign out
-        </button>
-        <button
-          className="delete-btn"
-          onClick={() => setShowDeleteConfirm(true)}
-        >
-          Delete Account
-        </button>
+        <input type="file" accept="image/png, image/jpeg, image/jpg" ref={fileRef} style={{ display: "none" }} onChange={handlePictureUpload} />
+        <button className="upload-btn" onClick={() => fileRef.current.click()}>Upload new image</button>
+        <button className="signout-btn" onClick={handleLogout}>Sign out</button>
+        <button className="delete-btn" onClick={() => setShowDeleteConfirm(true)}>Delete Account</button>
         {showDeleteConfirm && (
           <div className="delete-overlay">
             <div className="delete-modal">
               <h3>Delete Account</h3>
               <p>Are you sure? This action cannot be undone.</p>
               <div className="delete-confirm-buttons">
-                <button
-                  className="delete-confirm-yes"
-                  onClick={handleDeleteAccount}
-                >
-                  Yes, Delete
-                </button>
-                <button
-                  className="delete-confirm-no"
-                  onClick={() => setShowDeleteConfirm(false)}
-                >
-                  Cancel
-                </button>
+                <button className="delete-confirm-yes" onClick={handleDeleteAccount}>Yes, Delete</button>
+                <button className="delete-confirm-no" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
               </div>
             </div>
           </div>
         )}
       </div>
-
+ 
       <div className="container-right">
         <h3>BASIC INFORMATION</h3>
         <div className="line"></div>
-
         {message && <div className="profile-message">{message}</div>}
-
+ 
         <div className="name">
           <div className="input-group">
             <label htmlFor="firstname">First Name</label>
-            <input
-              id="firstname"
-              name="first_name"
-              type="text"
-              value={form.first_name}
-              onChange={handleChange}
-            />
+            <input id="firstname" name="first_name" type="text" value={form.first_name} onChange={handleChange} />
           </div>
           <div className="input-group">
             <label htmlFor="lastname">Last Name</label>
-            <input
-              id="lastname"
-              name="last_name"
-              type="text"
-              value={form.last_name}
-              onChange={handleChange}
-            />
+            <input id="lastname" name="last_name" type="text" value={form.last_name} onChange={handleChange} />
           </div>
         </div>
-
+ 
         <div className="input-group email-group">
           <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="text"
-            defaultValue={user?.email || ""}
-            disabled
-          />
+          <input id="email" type="text" defaultValue={user?.email || ""} disabled />
         </div>
-
+ 
         <div className="input-group phone-group">
           <label htmlFor="phone">Phone Number</label>
-          <input
-            id="phone"
-            name="phone"
-            type="text"
-            value={form.phone}
-            onChange={handleChange}
-          />
+          <input id="phone" name="phone" type="text" value={form.phone} onChange={handleChange} />
         </div>
-
-        {/* Coach-specific fields */}
+ 
         {activeRole === "coach" && (
           <>
             <h3>COACH PROFILE</h3>
             <div className="line"></div>
-
             <div className="input-group">
               <label htmlFor="bio">Bio</label>
-              <textarea
-                id="bio"
-                name="bio"
-                rows="4"
-                placeholder="Tell clients about yourself, your approach, and your experience..."
-                value={coachForm.bio}
-                onChange={handleCoachChange}
-              />
+              <textarea id="bio" name="bio" rows="4" placeholder="Tell clients about yourself..." value={coachForm.bio} onChange={handleCoachChange} />
             </div>
-
             <div className="name">
               <div className="input-group">
                 <label htmlFor="experience_years">Years of Experience</label>
-                <input
-                  id="experience_years"
-                  name="experience_years"
-                  type="number"
-                  placeholder="0"
-                  value={coachForm.experience_years}
-                  onChange={handleCoachChange}
-                />
+                <input id="experience_years" name="experience_years" type="number" placeholder="0" value={coachForm.experience_years} onChange={handleCoachChange} />
               </div>
               <div className="input-group">
                 <label htmlFor="price">Session Price ($)</label>
-                <input
-                  id="price"
-                  name="price"
-                  type="number"
-                  placeholder="0.00"
-                  value={coachForm.price}
-                  onChange={handleCoachChange}
-                />
+                <input id="price" name="price" type="number" placeholder="0.00" value={coachForm.price} onChange={handleCoachChange} />
               </div>
             </div>
-
             <div className="input-group">
               <label htmlFor="specialization">Specialization</label>
-              <select
-                id="specialization"
-                name="specialization"
-                value={coachForm.specialization}
-                onChange={handleCoachChange}
-              >
+              <select id="specialization" name="specialization" value={coachForm.specialization} onChange={handleCoachChange}>
                 <option value="">Select Specialization</option>
                 <option value="strength-training">Strength Training</option>
                 <option value="cardio">Cardio</option>
@@ -737,395 +652,20 @@ function Profile() {
                 <option value="general-fitness">General Fitness</option>
               </select>
             </div>
-
             <div className="profile-btn-footer">
-              <button className="save-btn" onClick={() => setModalAvail(true)}>
-                Manage Coaching Availability
-              </button>
-
-              <button className="save-btn" onClick={() => setModalOpen(true)}>
-                Update Qualifications
-              </button>
+              <button className="save-btn" onClick={() => setModalAvail(true)}>Manage Coaching Availability</button>
+              <button className="save-btn" onClick={() => setModalOpen(true)}>Update Qualifications</button>
             </div>
-
-            {/*modal for coaching availability*/}
-            {modalAvail && (
-              <div className="modal-container">
-                <div className="modal-availability">
-                  <div className="modal-header">
-                    <h2>Coaching Availability</h2>
-                    <p>Update your weekly coaching availabilities</p>
-                  </div>
-                  <div className="avail-content">
-                    <div className="modal-left avail-left-container">
-                      <div className="date-container">
-                        <div className="date-box">
-                          <label>Start Time</label>
-                          <select
-                            value={startTime}
-                            onChange={(e) => setStartTime(e.target.value)}
-                          >
-                            {timeOptions.map((t) => (
-                              <option key={t.value} value={t.value}>
-                                {t.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="date-box">
-                          <label>End Time</label>
-                          <select
-                            value={endTime}
-                            onChange={(e) => setEndTime(e.target.value)}
-                          >
-                            {timeOptions
-                              .filter((t) => t.value > startTime) // prevents invalid times
-                              .map((t) => (
-                                <option key={t.value} value={t.value}>
-                                  {t.label}
-                                </option>
-                              ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="weekday-row">
-                        <label>Select Available Days</label>
-                        <div className="day-btn">
-                          {daysofWeek.map((d, i) => (
-                            <button
-                              key={i}
-                              className={
-                                activeDays.has(i) ? "day active" : "day"
-                              }
-                              onClick={() => toggleDay(i)}
-                            >
-                              {d}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="duration-box">
-                        <label>Set Session Duration:</label>
-                        <select
-                          value={duration}
-                          onChange={(e) => setDuration(Number(e.target.value))}
-                        >
-                          <option value={30}>30 minutes</option>
-                          <option value={60}>60 minutes</option>
-                          <option value={90}>90 minutes</option>
-                          <option value={120}>120 minutes</option>
-                        </select>
-                      </div>
-                      <button className="save-btn avail-btn" onClick={addRule}>
-                        + Add Availability
-                      </button>
-                      <div className="rules-list">
-                        <p className="avail-section-label">Added rules</p>
-                        {timeRules.length === 0 ? (
-                          <p style={{ fontSize: 13, color: "#aaa" }}>No availability added yet</p>
-                        ) : (
-                          timeRules.map((r) => (
-                          <div key={r.id} className="rule-item">
-                            <div className="rule-header">
-                              <h3>
-                                {dayMap[r.dayOfWeek]}: {formatTime(r.startTime)} – {formatTime(r.endTime)}
-                              </h3>
-                              <button className="rule-item-btn" onClick={() => handleDeleteRule(r.id)}>✕</button>
-                              </div>
-                              <h4>{r.duration} min sessions</h4>
-                            </div>
-                            ))
-                          )}
-                          </div>
-                        </div>
-
-                    <div className="modal-right">
-                      <div className="calendar-panel">
-                        <div className="calendar-header">
-                          <button onClick={prevMonth}>‹</button>
-                          <h3>
-                            {months[currentMonth]} {currentYear}
-                          </h3>
-                          <button onClick={nextMonth}>›</button>
-                        </div>
-                        <div className="calendar-weekdays">
-                          {weekdays.map((d) => (
-                            <div key={d}>{d}</div>
-                          ))}
-                        </div>
-                        <div className="calendar-grid">
-                          {cells.map((day, i) => (
-                            <div
-                              key={i}
-                              className={`calendar-cell 
-                                              ${!day ? "empty" : ""} 
-                                              ${isToday(day) ? "today" : ""}
-                                              ${
-                                                day && hasAvailability(day)
-                                                  ? "available"
-                                                  : ""
-                                              }`}
-                            >
-                              {day}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="avail-btn-footer">
-                        <button
-                          className="avail-delete-btn"
-                          onClick={() => setModalAvail(false)}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {modalOpen && (
-              <div className="modal-container">
-                {/* modal pops up when coach tries to update qualifications/certification */}
-                <div className="modal">
-                  <div className="modal-header">
-                    <h2>Update Qualifications and Certification</h2>
-                  </div>
-                  <div className="toggle">
-                    <button
-                      className="toggle-btns"
-                      onClick={() => {
-                        setType("qualification");
-                        setShowNewForm(false);
-                      }}
-                    >
-                      Qualification
-                    </button>
-                    <button
-                      className="toggle-btns"
-                      onClick={() => {
-                        setType("certification");
-                        setShowNewForm(false);
-                      }}
-                    >
-                      Certification
-                    </button>
-                  </div>
-                  <div className="modal-content">
-                    {/*qualification form option*/}
-                    {!showNewForm && type === "qualification" && (
-                      <>
-                        <h3>Existing Qualifications</h3>
-                        {qualifications.length === 0 ? (
-                          <p>You have no existing qualifications.</p>
-                        ) : (
-                          qualifications.map((q) => (
-                            <div
-                            key={q.qualification_id}
-                            className="qualification-card"
-                            >
-                              <div className="qualification-info">
-                                <h4>{q.degree_name}</h4>
-                                <p>
-                                  {q.field_of_study} • {q.institution}
-                                </p>
-                                <span>{q.year_completed}</span>
-                                </div>
-                                <button
-                                className="qualification-delete"
-                                onClick={() => handleDeleteQual(q.qualification_id)}
-                                >
-                                  Delete
-                                </button>
-                                </div>
-                          ))
-                        )}
-                        <div className="modal-footer">
-                          <button
-                            className="modal-btns"
-                            onClick={() => setShowNewForm(true)}
-                          >
-                            + Add New
-                          </button>
-                          <button
-                            className="modal-btns"
-                            type="button"
-                            onClick={() => setModalOpen(false)}
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </>
-                    )}
-                    {type === "qualification" && showNewForm && (
-                      <>
-                        <div className="input-group2">
-                          <label>Degree Name</label>
-                          <input
-                            type="text"
-                            placeholder="e.g Bachelor of Science"
-                            onChange={(e) =>
-                              setQualForm({
-                                ...qualForm,
-                                degree_name: e.target.value,
-                              })
-                            }
-                          />
-                          <label>Institution</label>
-                          <input
-                            type="text"
-                            placeholder="e.g New Jersey Institute of Technology"
-                            onChange={(e) =>
-                              setQualForm({
-                                ...qualForm,
-                                institution: e.target.value,
-                              })
-                            }
-                          />
-                          <label>Field of Study</label>
-                          <input
-                            type="text"
-                            placeholder="e.g Medicine"
-                            onChange={(e) =>
-                              setQualForm({
-                                ...qualForm,
-                                field_of_study: e.target.value,
-                              })
-                            }
-                          />
-                          <label>Year Completed</label>
-                          <input
-                            type="text"
-                            placeholder="e.g 2026"
-                            onChange={(e) =>
-                              setQualForm({
-                                ...qualForm,
-                                year_completed: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                        <div className="modal-footer">
-                          <button className="modal-btns" onClick={handleSubmit}>
-                            Submit
-                          </button>
-
-                          <button
-                            className="modal-btns"
-                            onClick={() => setShowNewForm(false)}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </>
-                    )}
-                    {/*certification form option*/}
-                    {!showNewForm && type === "certification" && (
-                      <>
-                        <h3>Exisiting Certifications</h3>
-                        {certifications.length === 0 ? (
-                          <p>You have no existing certifications</p>
-                        ) : (
-                          certifications.map((c) => (
-                            <div
-                              key={c.certification_id}
-                              className="avail-card"
-                            >
-                              <a
-                                href={c.document_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                📄 {c.document_url.split("/").pop()}
-                              </a>
-                              <span className={`cert-status ${c.status}`}>
-                                {c.status}
-                              </span>
-                              <button
-                              className="cert-delete"
-                              onClick={() => handleDeleteCert(c.certification_id)}>
-                                Delete
-                              </button>
-                            </div>
-                          ))
-                        )}
-                        <div className="modal-footer">
-                          <button
-                            className="modal-btns"
-                            onClick={() => setShowNewForm(true)}
-                          >
-                            + Add New
-                          </button>
-                          <button
-                            className="modal-btns"
-                            type="button"
-                            onClick={() => setModalOpen(false)}
-                          >
-                            Close
-                          </button>
-                        </div>
-                      </>
-                    )}
-                    {type === "certification" && showNewForm && (
-                      <div className="upload-zone">
-                        <div className="upload-zone-icon">↑</div>
-                        <p className="upload-zone-title">
-                          Drag and drop files here or upload
-                        </p>
-                        <p className="upload-zone-sub">
-                          Accepted file types: PDF, PNG, JPG, JPEG
-                        </p>
-                        <label className="upload-zone-btn">
-                          Upload
-                          <input
-                            type="file"
-                            multiple
-                            accept=".pdf, .png, .jpg, .jpeg"
-                            style={{ display: "none" }}
-                            onChange={(e) =>
-                              setFile(e.target.files[0]
-                              )
-                            }
-                          />
-                        </label>
-                        {file && (
-                          <p className="upload-zone-filename">📄 {file.name}</p>
-                        )}
-                        <div className="modal-footer">
-                          <button className="modal-btns" onClick={handleSubmit}>
-                            Submit
-                          </button>
-                          <button
-                            className="modal-btns"
-                            onClick={() => setShowNewForm(false)}
-                          >
-                            Back
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
           </>
         )}
-
-        {/* Client goal - show when in client mode */}
+ 
         {activeRole !== "coach" && (
           <>
             <h3>UPDATE PERSONAL GOALS</h3>
             <div className="line"></div>
             <div className="input-group goals">
               <label htmlFor="goals">Goals</label>
-              <select
-                id="goals"
-                name="goal"
-                value={form.goal || ""}
-                onChange={handleChange}
-              >
+              <select id="goals" name="goal" value={form.goal || ""} onChange={handleChange}>
                 <option value="">Select Your Goal</option>
                 <option value="lose">Lose Weight</option>
                 <option value="gain">Gain Weight</option>
@@ -1134,11 +674,189 @@ function Profile() {
             </div>
           </>
         )}
-
-        <button className="save-btn" onClick={handleSave}>
-          Save Changes
-        </button>
+ 
+        <button className="save-btn" onClick={handleSave}>Save Changes</button>
       </div>
+ 
+      {/* ── Modals outside both containers ── */}
+      {modalAvail && (
+        <div className="modal-container">
+          <div className="modal-availability">
+            <div className="modal-header">
+              <h2>Coaching Availability</h2>
+            </div>
+            <div className="avail-content">
+              <div className="modal-left avail-left-container">
+                <div className="date-container">
+                  <div className="date-box">
+                    <label>Start Time</label>
+                    <select value={startTime} onChange={(e) => setStartTime(e.target.value)}>
+                      {timeOptions.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    </select>
+                  </div>
+                  <div className="date-box">
+                    <label>End Time</label>
+                    <select value={endTime} onChange={(e) => setEndTime(e.target.value)}>
+                      {timeOptions.filter((t) => t.value > startTime).map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="weekday-row">
+                  <label>Select Available Days</label>
+                  <div className="day-btn">
+                    {daysofWeek.map((d, i) => (
+                      <button key={i} className={activeDays.has(i) ? "day active" : "day"} onClick={() => toggleDay(i)}>{d}</button>
+                    ))}
+                  </div>
+                </div>
+                <div className="duration-box">
+                  <label>Set Session Duration:</label>
+                  <select value={duration} onChange={(e) => setDuration(Number(e.target.value))}>
+                    <option value={30}>30 minutes</option>
+                    <option value={60}>60 minutes</option>
+                    <option value={90}>90 minutes</option>
+                    <option value={120}>120 minutes</option>
+                  </select>
+                </div>
+                <button className="save-btn avail-btn" onClick={addRule}>+ Add Availability</button>
+                <div className="rules-list">
+                  <p className="avail-section-label">Added rules</p>
+                  {timeRules.length === 0 ? (
+                    <p style={{ fontSize: 13, color: "#aaa" }}>No availability added yet</p>
+                  ) : (
+                    timeRules.map((r) => (
+                      <div key={r.id} className="rule-item">
+                        <div className="rule-header">
+                          <h3>{dayMap[r.dayOfWeek]}: {formatTime(r.startTime)} – {formatTime(r.endTime)}</h3>
+                          <button className="rule-item-btn" onClick={() => handleDeleteRule(r.id)}>✕</button>
+                        </div>
+                        <h4>{r.duration} min sessions</h4>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+ 
+              <div className="modal-right">
+                <div className="calendar-panel">
+                  <div className="calendar-header">
+                    <button onClick={prevMonth}>‹</button>
+                    <h3>{months[currentMonth]} {currentYear}</h3>
+                    <button onClick={nextMonth}>›</button>
+                  </div>
+                  <div className="calendar-weekdays">
+                    {weekdays.map((d) => <div key={d}>{d}</div>)}
+                  </div>
+                  <div className="calendar-grid">
+                    {cells.map((day, i) => (
+                      <div key={i} className={`calendar-cell ${!day ? "empty" : ""} ${isToday(day) ? "today" : ""} ${day && hasAvailability(day) ? "available" : ""}`}>
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="avail-btn-footer">
+                  <button className="avail-delete-btn" onClick={() => setModalAvail(false)}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+ 
+      {modalOpen && (
+        <div className="modal-container">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Update Qualifications and Certification</h2>
+            </div>
+            <div className="toggle">
+              <button className="toggle-btns" onClick={() => { setType("qualification"); setShowNewForm(false); }}>Qualification</button>
+              <button className="toggle-btns" onClick={() => { setType("certification"); setShowNewForm(false); }}>Certification</button>
+            </div>
+            <div className="modal-content">
+              {!showNewForm && type === "qualification" && (
+                <>
+                  <h3>Existing Qualifications</h3>
+                  {qualifications.length === 0 ? (
+                    <p>You have no existing qualifications.</p>
+                  ) : (
+                    qualifications.map((q) => (
+                      <div key={q.qualification_id} className="qualification-card">
+                        <div className="qualification-info">
+                          <h4>{q.degree_name}</h4>
+                          <p>{q.field_of_study} • {q.institution}</p>
+                          <span>{q.year_completed}</span>
+                        </div>
+                        <button className="qualification-delete" onClick={() => handleDeleteQual(q.qualification_id)}>Delete</button>
+                      </div>
+                    ))
+                  )}
+                  <div className="modal-footer">
+                    <button className="modal-btns" onClick={() => setShowNewForm(true)}>+ Add New</button>
+                    <button className="modal-btns" type="button" onClick={() => setModalOpen(false)}>Close</button>
+                  </div>
+                </>
+              )}
+              {type === "qualification" && showNewForm && (
+                <>
+                  <div className="input-group2">
+                    <label>Degree Name</label>
+                    <input type="text" placeholder="e.g Bachelor of Science" onChange={(e) => setQualForm({ ...qualForm, degree_name: e.target.value })} />
+                    <label>Institution</label>
+                    <input type="text" placeholder="e.g New Jersey Institute of Technology" onChange={(e) => setQualForm({ ...qualForm, institution: e.target.value })} />
+                    <label>Field of Study</label>
+                    <input type="text" placeholder="e.g Medicine" onChange={(e) => setQualForm({ ...qualForm, field_of_study: e.target.value })} />
+                    <label>Year Completed</label>
+                    <input type="text" placeholder="e.g 2026" onChange={(e) => setQualForm({ ...qualForm, year_completed: e.target.value })} />
+                  </div>
+                  <div className="modal-footer">
+                    <button className="modal-btns" onClick={handleSubmit}>Submit</button>
+                    <button className="modal-btns" onClick={() => setShowNewForm(false)}>Back</button>
+                  </div>
+                </>
+              )}
+              {!showNewForm && type === "certification" && (
+                <>
+                  <h3>Existing Certifications</h3>
+                  {certifications.length === 0 ? (
+                    <p>You have no existing certifications</p>
+                  ) : (
+                    certifications.map((c) => (
+                      <div key={c.certification_id} className="avail-card">
+                        <a href={c.document_url} target="_blank" rel="noopener noreferrer">📄 {c.document_url.split("/").pop()}</a>
+                        <span className={`cert-status ${c.status}`}>{c.status}</span>
+                        <button className="cert-delete" onClick={() => handleDeleteCert(c.certification_id)}>Delete</button>
+                      </div>
+                    ))
+                  )}
+                  <div className="modal-footer">
+                    <button className="modal-btns" onClick={() => setShowNewForm(true)}>+ Add New</button>
+                    <button className="modal-btns" type="button" onClick={() => setModalOpen(false)}>Close</button>
+                  </div>
+                </>
+              )}
+              {type === "certification" && showNewForm && (
+                <div className="upload-zone">
+                  <div className="upload-zone-icon">↑</div>
+                  <p className="upload-zone-title">Drag and drop files here or upload</p>
+                  <p className="upload-zone-sub">Accepted file types: PDF, PNG, JPG, JPEG</p>
+                  <label className="upload-zone-btn">
+                    Upload
+                    <input type="file" accept=".pdf, .png, .jpg, .jpeg" style={{ display: "none" }} onChange={(e) => setFile(e.target.files[0])} />
+                  </label>
+                  {file && <p className="upload-zone-filename">📄 {file.name}</p>}
+                  <div className="modal-footer">
+                    <button className="modal-btns" onClick={handleSubmit}>Submit</button>
+                    <button className="modal-btns" onClick={() => setShowNewForm(false)}>Back</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+ 
     </div>
   );
 }

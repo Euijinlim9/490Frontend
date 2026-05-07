@@ -116,27 +116,28 @@ function AdminDashboard(){
 }, []);
 
     const isWithinLastWeek = (date) => {
-    const now = new Date();
-    const past = new Date();
-    past.setDate(now.getDate() - 7);
+        if (!date) return false;
+        const now = new Date();
+        const past = now - 7 * 24 * 60 * 60 * 1000;
 
-    return new Date(date) >= past;
+        return new Date(date) >= past;
     };
 
     const recentCoaches = pendingCoaches.filter(c =>
-        isWithinLastWeek(c.created_at)
+        isWithinLastWeek(c.createdAt)
     );
 
     const recentUsers = users.filter(u =>
-        isWithinLastWeek(u.created_at)
+        isWithinLastWeek(u.createdAt)
     );
 
     const recentReports = reports.filter(r =>
-        isWithinLastWeek(r.created_at)
+        isWithinLastWeek(r.createdAt)
     );
 
+    console.log(users[0])
     return(
-        <div className="dashboard-page">
+        <div className="admin-dashboard-page">
             <h1>Your Admin Dashboard</h1>
             <div className="stats-row">
                 <div className="stat-card">
@@ -193,9 +194,26 @@ function AdminDashboard(){
                     <div className="admin-dash-chart">
                         <ResponsiveContainer width="100%" height={260}>
                             <LineChart data={engagementData}
-                            margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
-                                <XAxis dataKey="name" />
-                                <YAxis />
+                            margin={{ top: 40, right: 20, left: 10, bottom: 40 }}>
+                                <XAxis dataKey="name"
+                                label={{
+                                    value: "Date",
+                                    position: "insideBottom",
+                                    offset:-20
+                                }} 
+                                />
+                                <YAxis
+                                  allowDecimals={false}
+                                  domain={[0, "dataMax + 1"]}
+                                  tickCount={6}
+                                  tickFormatter={(value) => Math.floor(value)}
+                                  label={{
+                                    value: "# of Users",
+                                    angle: -90,
+                                    position: "insideLeft",
+                                    offset: 10
+                                }} 
+                                />
                                 <Tooltip />
                                 <Line
                                 type="monotone"
@@ -236,6 +254,7 @@ function AdminDashboard(){
             </section>
             </div>
         </div>
+
     )
 }
 

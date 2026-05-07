@@ -173,6 +173,12 @@ function CustomWorkout() {
       });
 
       const data = await res.json();
+      console.log("Backend response:", res.status, data);
+
+      if (!res.ok) {
+        alert("Failed to save: " + (data.error || data.message || "Unknown error"));
+        return;
+      }
 
       setWorkoutName("");
       setAddedExercises([]);

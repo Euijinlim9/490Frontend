@@ -7,7 +7,8 @@ function CoachApplication(){
     const [query, setQuery] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [filter, setFilter] = useState("");
-
+    const [resultModal, setResultModal] = useState(null);
+    
     useEffect(() => {
         const token = localStorage.getItem("token");
         const fetchData = async () => {
@@ -53,6 +54,14 @@ function CoachApplication(){
                 prev.filter((c) => c.user_id !== userId)
             );
             setSelectedCoach(null);
+
+            setResultModal({
+                type: approved ? "success" : "reject",
+                message: approved
+                ? "Coach approved successfully"
+                : "Coach rejected successfully",
+            });
+
         }catch (err) {
             console.error("Error updating coach approval:", err);
         }
@@ -121,8 +130,9 @@ function CoachApplication(){
         <button className="search-button" onClick={handleSearch}>
           Search
         </button>
-            </div>
         </div>
+        </div>
+        <div className="coach-container">
         {filterCoach.map((coach) => (
           <div
             key={coach.user_id}
@@ -131,6 +141,9 @@ function CoachApplication(){
             <h3>
               {coach.first_name} {coach.last_name}
             </h3>
+            <h4>
+                {coach.role}
+            </h4>
                     <button className="view-btn" onClick={() => setSelectedCoach(coach)}>
                         VIEW
                     </button>
@@ -144,9 +157,10 @@ function CoachApplication(){
             </div>
           </div>
           ))}
+          </div>
           {selectedCoach && (
-            <div className="modal-container" onClick={() => setSelectedCoach(null)}>
-                <div className="modal" onClick={(e)=> e.stopPropagation()}>
+            <div className="modal-overlay" onClick={() => setSelectedCoach(null)}>
+                <div className="report-modal" onClick={(e)=> e.stopPropagation()}>
                     <div className="modal-header2">
                         <h2>{selectedCoach.first_name} {selectedCoach.last_name}'s Application</h2>
                     </div>
@@ -167,7 +181,7 @@ function CoachApplication(){
                             </div>
                         ))}
                     </div>
-                    <div className="btn-footer">
+                    <div className="report-btn-footer">
                         <button className="accept-btn" onClick={() => handleApprove(selectedCoach.user_id, true)}>
                             ACCEPT
                         </button>
@@ -182,6 +196,24 @@ function CoachApplication(){
 
             </div>
           )}
+          {resultModal && (
+            <div className="modal-overlay" onClick={() => setResultModal(null)}>
+            <div className="report-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>
+                {resultModal.type === "success" ? "Approved" : "Rejected"}
+            </h2>   
+            <p>{resultModal.message}</p>
+            <div className="report-btn-footer">
+            <button
+            className="report-back-btn"
+            onClick={() => setResultModal(null)}
+            >
+                OK
+            </button>
+            </div>
+        </div>
+    </div>
+    )}
           </div>
     );
 }
