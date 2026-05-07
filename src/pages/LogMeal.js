@@ -11,7 +11,6 @@ function LogMeal() {
     fiber: "",
     carbs: "",
     fats: "",
-    sugars: "",
     mealTime: "",
   });
 
@@ -23,29 +22,49 @@ function LogMeal() {
     }));
   };
 
-  const handleMealSubmit = (e) => {
+  const handleMealSubmit = async (e) => {
     e.preventDefault();
 
-    const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || [];
+   const token = localStorage.getItem("token");
 
-    const newMeal = {
-      ...mealForm,
-      date: new Date().toLocaleDateString(),
-    };
+    try {
+      const res = await fetch("http://localhost:4000/api/logs/meal-log/custom", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: mealForm.mealName,
+          calories_per_serving: Number(mealForm.calories),
+          servings: Number(mealForm.servings || 1),
+          protein: Number(mealForm.protein),
+          carbs: Number(mealForm.carbs),
+          fat: Number(mealForm.fats),
+          fiber: Number(mealForm.fiber),
+          description: mealForm.mealTime || "custom meal",
+          date: new Date().toISOString().split("T")[0],
+        }),
+      });
 
-    localStorage.setItem("loggedMeals", JSON.stringify([...savedMeals, newMeal]));
+      if (!res.ok) throw new Error("Failed to log meal");
 
-    setMealForm({
-      mealName: "",
-      calories: "",
-      protein: "",
-      fiber: "",
-      carbs: "",
-      fats: "",
-      sugars: "",
-      mealTime: "",
-    }); 
-    navigate("/dashboard"); 
+      setMealForm({
+        mealName: "",
+        calories: "",
+        protein: "",
+        fiber: "",
+        carbs: "",
+        fats: "",
+        sugars: "",
+        mealTime: "",
+      });
+
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to log meal");
+    }
   };
 
   return (
