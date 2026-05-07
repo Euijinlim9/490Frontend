@@ -6,6 +6,8 @@
   box-sizing: border-box;
   align-items: flex-start;
   height: calc(100vh - 80px);
+  position: relative;
+  z-index: 1;
 }
 
 .calendar-events-panel {
@@ -136,6 +138,8 @@
   gap: 8px;
   flex: 1;
   overflow: hidden;
+  position: relative;
+  z-index: 0;
 }
 
 .cal-cell {

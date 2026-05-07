@@ -29,12 +29,74 @@
     border-bottom: 1px solid #f2f2f2;
 }
 
-.report-modal{
-    background: rgb(204, 204, 204);
-    width: 550px;
-    max-width: 100%;
-    border-radius: 5px;
+.report-modal {
+  background: #161920;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  width: 520px;
+  max-width: 95vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  color: #fff;
 }
+ 
+.report-modal h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+ 
+.report-modal p {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: #c8cdd4;
+  padding: 0 24px;
+}
+ 
+.report-modal p:first-of-type { padding-top: 20px; }
+ 
+.report-modal strong {
+  color: #fff;
+  font-weight: 600;
+}
+ 
+.report-modal a {
+  color: #6ca6ff;
+  font-size: 0.875rem;
+  text-decoration: none;
+  padding: 0 24px;
+  display: block;
+  margin-bottom: 6px;
+}
+ 
+.report-modal a:hover { text-decoration: underline; }
+ 
+/* ── Modal footer ── */
+.report-btn-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 16px;
+}
+ 
+.report-back-btn {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-family: inherit;
+}
+ 
+.report-back-btn:hover { background: rgba(255, 255, 255, 0.12); }
 
 .badge {
     padding: 4px 10px;
@@ -44,39 +106,39 @@
 }
 
 .severity-critical {
-    background: #ffe5e5;
+    background: #393939;
     color: #d10000;
 }
 
 .severity-high {
-    background: #fff3e0;
+    background: #393939;
     color: #ff8c00;
 }
 
 .severity-medium {
-    background: #fff3e0;
+    background: #393939;
     color: #1efb38;
 }
 
 .severity-low {
-    background: #eee;
+    background: #393939;
     color: #555;
 }
 
 .status-open {
-    background: #ffecec;
+    background: #393939;
 }
 
 .status-under_review {
-    background: #fff8dc;
+    background: #393939;
 }
 
 .status-resolved {
-    background: #e6ffe6;
+    background: #393939;
 }
 
 .status-dismissed {
-    background: #eee;
+    background: #393939;
 }
 
 .viewreport-btn{
@@ -101,9 +163,9 @@
 
 .report-back-btn{
     background-color:#747474;
-    font-size: 20px;
+    font-size: 15px;
     border:none;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .report-btn-footer{
@@ -118,4 +180,17 @@
     text-align: center;
     color:rgb(255, 255, 255);
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.report-textarea {
+    margin-left:10px;
+    width: 500px;
+    min-height: 120px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    font-size: 14px;
+    resize: none;
+    margin-top: 15px;
+    box-sizing: border-box;
 }

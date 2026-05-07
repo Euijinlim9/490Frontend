@@ -1,61 +1,77 @@
 .viewusers-page {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  padding: 40px;
-  max-width: 1400px;
-  margin: 0 auto;
+    min-height: 100vh;
+    background: #0d0f14;
+    padding: 32px 24px 80px;
+    color: #fff;
+}
+
+.viewusers-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .viewusers-card {
-  position: relative;
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.06) 0%,
-    rgba(255, 255, 255, 0.02) 100%
+    position: relative;
+    background: linear-gradient(
+     145deg,
+        rgba(255, 255, 255, 0.06) 0%,
+        rgba(255, 255, 255, 0.02) 100%
   );
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 24px;
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-}
-.viewusers-card h3{
-    display:flex;
-    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.viewusers-card h4{
-    color:rgb(255, 255, 255);
-    display:flex;
-    justify-content: center;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.viewusers-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(108, 166, 255, 0.4);
+    box-shadow: 0 12px 32px rgba(108, 166, 255, 0.15);
 }
 
-.btn-footer2{
-    display:flex;
-    border-top: 1px;
-    padding: 10px 10px;
-    gap:10px;
-    margin-left:300px;
-}
-
-p{
-    margin-left: 10px;
-}
-
-h5{
-    margin-left: 10px;;
-}
-
-a{
-    margin-left: 10px;
-}
-
-h2{
+.viewusers-card h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
     text-align: center;
+}
+
+.viewusers-card h4 {
+    margin: 6px 0 12px;
+    font-size: 0.8rem;
+    color: #6ca6ff;
+    letter-spacing: 0.5px;
+}
+
+.view-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(116, 116, 116, 0.6);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.view-btn:hover {
+    background: rgba(116, 116, 116, 0.9);
+}
+
+.report-back-btn.suspend{
+    background-color:rgb(255, 99, 99);
+}
+
+.modal-container {
+    backdrop-filter: blur(6px);
 }
