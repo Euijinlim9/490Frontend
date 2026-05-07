@@ -518,6 +518,9 @@ function Dashboard() {
       }`.trim();
       setFiredCoach(name);
 
+        const name = `${myCoach.coach?.first_name || ""} ${myCoach.coach?.last_name || ""}`.trim();
+        setFiredCoach(name);
+
       setMyCoach({ state: "none", coach: null });
       setShowFireConfirm(false);
       setShowFireSuccess(true);
@@ -1139,97 +1142,7 @@ function Dashboard() {
                             )}
                           </div>
                         </div>
-
-                        {activePurchases.length > 0 && (
-                          <>
-                            <div className="coach-hub-divider" />
-                            <div className="coach-hub-sessions-header">
-                              <span className="coach-hub-sessions-label">
-                                Your Sessions
-                              </span>
-                              <span className="coach-hub-sessions-pill">
-                                {activePurchases.reduce(
-                                  (sum, p) => sum + p.sessions_remaining,
-                                  0
-                                )}{" "}
-                                remaining
-                              </span>
-                            </div>
-                            <div className="coach-hub-sessions-list">
-                              {activePurchases.map((p) => (
-                                <div
-                                  key={p.coach_user_id}
-                                  className="coach-hub-session-row"
-                                >
-                                  <img
-                                    src={
-                                      p.coach?.profile_pic
-                                        ? p.coach.profile_pic.startsWith("http")
-                                          ? p.coach.profile_pic
-                                          : `http://localhost:4000${p.coach.profile_pic}`
-                                        : userimg
-                                    }
-                                    alt={p.coach?.first_name}
-                                    className="coach-hub-session-avatar"
-                                  />
-                                  <div className="coach-hub-session-info">
-                                    <div className="coach-hub-session-name">
-                                      {p.coach?.first_name} {p.coach?.last_name}
-                                    </div>
-                                    <div className="coach-hub-session-meta">
-                                      <strong>{p.sessions_remaining}</strong>{" "}
-                                      session
-                                      {p.sessions_remaining === 1
-                                        ? ""
-                                        : "s"}{" "}
-                                      remaining
-                                      {p.purchase_count > 1 && (
-                                        <span className="coach-hub-session-multi">
-                                          {" "}
-                                          · {p.purchase_count} packages
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="coach-hub-session-track-wrap">
-                                    <div className="coach-hub-session-track">
-                                      <div
-                                        className="coach-hub-session-fill"
-                                        style={{
-                                          width: `${Math.min(
-                                            (p.sessions_remaining /
-                                              p.total_sessions) *
-                                              100,
-                                            100
-                                          )}%`,
-                                        }}
-                                      />
-                                    </div>
-                                    <span className="coach-hub-session-track-lbl">
-                                      {p.sessions_remaining} /{" "}
-                                      {p.total_sessions}
-                                    </span>
-                                  </div>
-                                  <button
-                                    className="coach-hub-book-btn"
-                                    onClick={() =>
-                                      navigate(
-                                        `/book-session/${p.coach_user_id}`
-                                      )
-                                    }
-                                  >
-                                    Book →
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                      </>
-                    )}
-                </div>
-              </section>
-            )}
+.
 
             {upcomingBookings.length > 0 && (
               <section className="dashboard-section">
