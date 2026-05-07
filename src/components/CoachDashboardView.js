@@ -20,6 +20,7 @@ function CoachDashboardView({
   onReject,
   onDropClient,
   getTimeAgo,
+  upcomingBookings = [],
 }) {
   const { activeRole } = useContext(AuthContext);
   const [earnings, setEarnings] = useState(null);
@@ -287,6 +288,78 @@ function CoachDashboardView({
           </div>
         )}
       </section>
+
+      {/* Upcoming Sessions — booked sessions visible to coach */}
+      {upcomingBookings && upcomingBookings.length > 0 && (
+        <section className="coach-dash-section">
+          <div className="coach-section-head">
+            <h2>Upcoming Sessions</h2>
+            <span className="coach-badge-blue">{upcomingBookings.length}</span>
+          </div>
+
+          <div className="coach-upcoming-list">
+            {upcomingBookings.slice(0, 5).map((b) => {
+              const start = new Date(b.start_time);
+              const dateLabel = start.toLocaleDateString([], {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              });
+              const timeLabel = start.toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+              });
+              const isToday =
+                start.toDateString() === new Date().toDateString();
+              const isTomorrow =
+                start.toDateString() ===
+                new Date(Date.now() + 86400000).toDateString();
+
+              return (
+                <div key={b.booking_id} className="coach-upcoming-row">
+                  <div className="coach-upcoming-date">
+                    <div className="coach-upcoming-date-pill">
+                      {isToday ? "Today" : isTomorrow ? "Tomorrow" : dateLabel}
+                    </div>
+                    <div className="coach-upcoming-time">{timeLabel}</div>
+                  </div>
+                  <img
+                    src={b.client?.profile_pic || "/default-avatar.png"}
+                    alt={b.client?.first_name}
+                    className="coach-upcoming-avatar"
+                  />
+                  <div className="coach-upcoming-info">
+                    <div className="coach-upcoming-name">
+                      {b.client?.first_name} {b.client?.last_name}
+                    </div>
+                    <div className="coach-upcoming-meta">
+                      {b.duration_minutes} min session
+                      {b.client_notes && (
+                        <span className="coach-upcoming-note">
+                          {" "}
+                          · note: "{b.client_notes.slice(0, 60)}
+                          {b.client_notes.length > 60 ? "…" : ""}"
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <Link
+                    to={`/coach/client/${b.client?.user_id}`}
+                    className="coach-upcoming-view"
+                  >
+                    View →
+                  </Link>
+                </div>
+              );
+            })}
+            {upcomingBookings.length > 5 && (
+              <div className="coach-upcoming-more">
+                +{upcomingBookings.length - 5} more sessions
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       <section className="coach-dash-section">
         <div className="coach-section-head">

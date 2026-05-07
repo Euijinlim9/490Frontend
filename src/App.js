@@ -49,6 +49,7 @@ import Notifications from "./pages/Notifications";
 import ClientProgress from "./pages/ClientProgress";
 import AdminRole from "./components/AdminRole";
 import WorkoutPhotos from "./pages/WorkoutPhotos";
+import BookSession from "./pages/BookSession";
 
 function App() {
   const location = useLocation();
@@ -123,6 +124,7 @@ function App() {
             path="/coach/client/:clientUserId"
             element={<ClientProgress />}
           />
+          <Route path="/book-session/:coachId" element={<BookSession />} />
 
           {/*admin routes*/}
           <Route
@@ -170,7 +172,6 @@ function App() {
           <Route path="/log-workout" element={<LogWorkout />} />
           <Route path="/log-wellness" element={<LogWellness />} />
           <Route path="/premade-meals" element={<PremadeMeals />} />
-
         </Routes>
       </div>
     </div>

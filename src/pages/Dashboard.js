@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
 import CoachDashboardView from "../components/CoachDashboardView";
+import AdminDashboard from "./adminpages/AdminDashboard";
 import {
   LineChart,
   Line,
@@ -27,6 +28,9 @@ function Dashboard() {
   const [subscription, setSubscription] = useState(null);
   const [subLoading, setSubLoading] = useState(true);
   const navigate = useNavigate();
+  const [showFireConfirm, setShowFireConfirm] = useState(false);
+  const [showFireSuccess, setShowFireSuccess] = useState(false);
+  const [firedCoach, setFiredCoach] = useState("");
 
   const [myCoach, setMyCoach] = useState({ state: "loading", coach: null });
 
@@ -173,6 +177,33 @@ function Dashboard() {
 
   const [activePurchases, setActivePurchases] = useState([]);
 
+  const [upcomingBookings, setUpcomingBookings] = useState([]);
+
+  useEffect(() => {
+    if (activeRole !== "client" && activeRole !== "coach") return;
+
+    const fetchBookings = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch(
+          "http://localhost:4000/api/sessions/bookings/upcoming",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-Active-Role": activeRole,
+            },
+          }
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        setUpcomingBookings(data.bookings || []);
+      } catch (err) {
+        console.error("Failed to load bookings:", err);
+      }
+    };
+
+    fetchBookings();
+  }, [activeRole]);
   useEffect(() => {
     if (activeRole !== "client") return;
 
@@ -468,14 +499,6 @@ function Dashboard() {
   };
 
   const handleUnhireCoach = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to unhire your coach? This will end your coaching relationship."
-      )
-    ) {
-      return;
-    }
-
     const token = localStorage.getItem("token");
     try {
       const res = await fetch("http://localhost:4000/api/client/my-coach", {
@@ -490,10 +513,18 @@ function Dashboard() {
         throw new Error(data.error || "Failed to unhire coach");
       }
 
+      const name = `${myCoach.coach?.first_name || ""} ${
+        myCoach.coach?.last_name || ""
+      }`.trim();
+      setFiredCoach(name);
+
       setMyCoach({ state: "none", coach: null });
+      setShowFireConfirm(false);
+      setShowFireSuccess(true);
     } catch (err) {
       console.error(err);
       alert("Could not unhire coach. Try again.");
+      setShowFireConfirm(false);
     }
   };
 
@@ -1001,7 +1032,9 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-      {activeRole === "coach" ? (
+      {activeRole === "admin" ? (
+        <AdminDashboard />
+      ) : activeRole === "coach" ? (
         <CoachDashboardView
           user={user}
           pendingRequests={pendingRequests}
@@ -1011,6 +1044,7 @@ function Dashboard() {
           onReject={handleRejectRequest}
           onDropClient={handleDropClient}
           getTimeAgo={getTimeAgo}
+          upcomingBookings={upcomingBookings}
         />
       ) : (
         <div className="dashboard-layout">
@@ -1179,7 +1213,9 @@ function Dashboard() {
                                   <button
                                     className="coach-hub-book-btn"
                                     onClick={() =>
-                                      navigate(`/coach/${p.coach_user_id}`)
+                                      navigate(
+                                        `/book-session/${p.coach_user_id}`
+                                      )
                                     }
                                   >
                                     Book →
@@ -1195,6 +1231,69 @@ function Dashboard() {
               </section>
             )}
 
+            {upcomingBookings.length > 0 && (
+              <section className="dashboard-section">
+                <div className="section-title">Upcoming Sessions</div>
+                <div className="dashboard-card upcoming-sessions-card">
+                  {upcomingBookings.slice(0, 3).map((b) => {
+                    const start = new Date(b.start_time);
+                    const otherUser = b.coach;
+                    const dateLabel = start.toLocaleDateString([], {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    });
+                    const timeLabel = start.toLocaleTimeString([], {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    });
+                    const isToday =
+                      start.toDateString() === new Date().toDateString();
+                    const isTomorrow =
+                      start.toDateString() ===
+                      new Date(Date.now() + 86400000).toDateString();
+
+                    return (
+                      <div key={b.booking_id} className="upcoming-session-row">
+                        <div className="upcoming-session-date">
+                          <div className="upcoming-session-date-pill">
+                            {isToday
+                              ? "Today"
+                              : isTomorrow
+                              ? "Tomorrow"
+                              : dateLabel}
+                          </div>
+                          <div className="upcoming-session-time">
+                            {timeLabel}
+                          </div>
+                        </div>
+                        <div className="upcoming-session-info">
+                          <div className="upcoming-session-name">
+                            {otherUser?.first_name} {otherUser?.last_name}
+                          </div>
+                          <div className="upcoming-session-meta">
+                            {b.duration_minutes} min session
+                            {b.client_notes && (
+                              <span className="upcoming-session-note">
+                                {" "}
+                                · "{b.client_notes.slice(0, 40)}
+                                {b.client_notes.length > 40 ? "…" : ""}"
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {upcomingBookings.length > 3 && (
+                    <div className="upcoming-session-more">
+                      +{upcomingBookings.length - 3} more ·{" "}
+                      <Link to="/calendar">View calendar →</Link>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
             {activeRole === "client" && (
               <section className="dashboard-section">
                 <div className="section-title">My Subscription</div>
@@ -1923,6 +2022,67 @@ function Dashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {showFireConfirm && (
+        <div
+          className="cp-modal-overlay"
+          onClick={() => setShowFireConfirm(false)}
+        >
+          <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="cp-modal-close"
+              onClick={() => setShowFireConfirm(false)}
+            >
+              ✕
+            </button>
+            <h3 className="cp-modal-title">Fire Coach?</h3>
+            <p className="cp-modal-desc">
+              Are you sure you want to fire {firedCoach}? This will end your
+              coaching relationship and cancel all active payments.
+            </p>
+            <div className="cp-modal-actions">
+              <button
+                className="cp-modal-confirm-btn"
+                onClick={handleUnhireCoach}
+              >
+                Yes, Fire Coach
+              </button>
+              <button
+                className="cp-btn cp-btn-ghost"
+                onClick={() => setShowFireConfirm(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showFireSuccess && (
+        <div
+          className="cp-modal-overlay"
+          onClick={() => setShowFireSuccess(false)}
+        >
+          <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="cp-modal-close"
+              onClick={() => setShowFireSuccess(false)}
+            >
+              ✕
+            </button>
+            <h3 className="cp-modal-title">Termination Successful</h3>
+            <p className="cp-modal-desc">
+              Your coaching relationship with {firedCoach}
+              has been ended. All payments toward this coach have been canceled.
+            </p>
+            <button
+              className="cp-modal-confirm-btn"
+              onClick={() => setShowFireSuccess(false)}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}

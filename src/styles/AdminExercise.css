@@ -1,7 +1,8 @@
 .exercise-admin-page{
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+    min-height: 100vh;
+    background: #0d0f14;
+    padding: 32px 24px 80px;
+    color: #fff;
 }
 
 .exercise-admin-container{
@@ -124,12 +125,12 @@ h2{
     display:flex;
     padding: 10px 10px;
     gap:10px;
-    margin-left:330px;
+    margin-left:30px;
     padding: 12px 0;
 }
 
 .modal-btn2{
-    padding: 10px 16px;
+    padding: 10px 20px;
     font-size: 14px;
     border-radius: 12px;
     cursor: pointer;
@@ -174,4 +175,64 @@ h2{
   margin-bottom: 10px;
   width:535px;
   margin-left:5px;
+}
+
+.exercise-modal-input {
+    width: calc(100% - 48px);
+    margin: 0 24px 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.exercise-modal-input:focus {
+    outline: none;
+    border-color: rgba(108, 166, 255, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.exercise-modal-input::placeholder {
+    color: #777;
+}
+
+.row-deactivated {
+    opacity: 0.55;
+}
+
+.row-deactivated .exercise-badge {
+    background: #2a2a2a;
+    color: #888;
+}
+
+.deactivated-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #393939;
+    color: #ff6b6b;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.reactivate-exercise-btn {
+    background: #1efb38;
+    color: #161920;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 6px;
+    font-family: inherit;
+}
+
+.reactivate-exercise-btn:hover {
+    background: #18d930;
 }

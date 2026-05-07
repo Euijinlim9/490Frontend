@@ -1279,7 +1279,6 @@
   margin-top: 4px;
 }
 
-/* ── Unified Coach + Sessions Hub ─────────────────── */
 .coach-hub-card {
   padding: 24px;
 }
@@ -1558,4 +1557,283 @@
 }
 .coach-hub-book-btn:hover {
   opacity: 0.88;
+}
+
+.upcoming-sessions-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upcoming-session-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  transition: border-color 0.15s;
+}
+
+.upcoming-session-row:hover {
+  border-color: rgba(108, 166, 255, 0.4);
+}
+
+.upcoming-session-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.upcoming-session-date-pill {
+  background: rgba(108, 166, 255, 0.15);
+  color: #6ca6ff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.upcoming-session-time {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: white;
+}
+
+.upcoming-session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.upcoming-session-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.upcoming-session-meta {
+  font-size: 0.82rem;
+  color: #8a909a;
+}
+
+.upcoming-session-note {
+  font-style: italic;
+}
+
+.upcoming-session-more {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #8a909a;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+}
+
+.upcoming-session-more a {
+  color: #6ca6ff;
+  text-decoration: none;
+}
+
+.upcoming-session-more a:hover {
+  text-decoration: underline;
+}
+
+/* Coach upcoming sessions */
+.coach-badge-blue {
+  background: rgba(108, 166, 255, 0.18);
+  color: #6ca6ff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.coach-upcoming-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.coach-upcoming-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: rgba(20, 24, 32, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  transition: border-color 0.15s;
+}
+
+.coach-upcoming-row:hover {
+  border-color: rgba(108, 166, 255, 0.4);
+}
+
+.coach-upcoming-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.coach-upcoming-date-pill {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c4b5fd;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.coach-upcoming-time {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: white;
+}
+
+.coach-upcoming-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #0a0d12;
+  flex-shrink: 0;
+}
+
+.coach-upcoming-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.coach-upcoming-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+  color: white;
+}
+
+.coach-upcoming-meta {
+  font-size: 0.82rem;
+  color: #8a909a;
+}
+
+.coach-upcoming-note {
+  font-style: italic;
+}
+
+.coach-upcoming-view {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cfd6de;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.coach-upcoming-view:hover {
+  background: rgba(108, 166, 255, 0.15);
+  color: #6ca6ff;
+}
+
+.coach-upcoming-more {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #8a909a;
+  padding: 8px 0;
+}
+
+/* Client upcoming sessions card */
+.upcoming-sessions-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.upcoming-session-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  transition: border-color 0.15s;
+}
+
+.upcoming-session-row:hover {
+  border-color: rgba(108, 166, 255, 0.4);
+}
+
+.upcoming-session-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.upcoming-session-date-pill {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c4b5fd;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.upcoming-session-time {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: white;
+}
+
+.upcoming-session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.upcoming-session-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.upcoming-session-meta {
+  font-size: 0.82rem;
+  color: #8a909a;
+}
+
+.upcoming-session-note {
+  font-style: italic;
+}
+
+.upcoming-session-more {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #8a909a;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 4px;
+}
+
+.upcoming-session-more a {
+  color: #6ca6ff;
+  text-decoration: none;
+}
+
+.upcoming-session-more a:hover {
+  text-decoration: underline;
 }

@@ -7,6 +7,8 @@ function AdminExercise(){
     const [query, setQuery] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [filter, setFilter] = useState(""); 
+    const [pendingEditConfirm, setPendingEditConfirm] = useState(false);
+    const [editSuccessModal, setEditSuccessModal] = useState(false);
     const [newExercise, setNewExercise] = useState({
         name: "",
         category: "",
@@ -102,10 +104,13 @@ function AdminExercise(){
                 )
             );
 
+            setPendingEditConfirm(false);
             setEditExercise(null);
+            setEditSuccessModal(true);
 
         } catch (err) {
             console.error("Edit failed:", err);
+            setPendingEditConfirm(false);
         }
     };
 
@@ -126,10 +131,39 @@ function AdminExercise(){
             if (!res.ok) throw new Error("Delete failed");
 
             setExercise((prev) =>
-                prev.filter((e) => e.exercise_id !== id)
-            );
+                prev.map((e) =>
+                e.exercise_id === id ? { ...e, is_active: false } : e
+            ));
 
         } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleReactivate = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await fetch(
+                `http://localhost:4000/admin/exercises/${id}/reactivate`,
+                {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || "Reactivate failed");
+
+            setExercise((prev) =>
+                prev.map((e) =>
+                    e.exercise_id === id ? { ...e, is_active: true } : e
+                )
+            );
+            } catch (err) {
             console.error(err);
         }
     };
@@ -217,53 +251,68 @@ function AdminExercise(){
         <div className="admin-left-container">
             <h2>ADD EXERCISE</h2>
             <div className="add-exercise-group">
-                <label>Exercise ID</label>
-                <input
-                type="exerciseID"
-                name="exerciseID"
-                placeholder="Enter Exercise ID"
-                />
                 <label>Exercise Name</label>
                 <input
                 type="exerciseName"
                 name="exerciseName"
                 placeholder="Enter Exercise Name"
+                onChange={(e) =>
+                    setNewExercise({ ...newExercise, name: e.target.value })
+                }
                 />
                 <label>Category</label>
                 <input
                 type="exerciseCategory"
                 name="exerciseCategory"
                 placeholder="Enter Exercise Category"
+                onChange={(e) =>
+                    setNewExercise({ ...newExercise, category: e.target.value })
+                }
                 />
                 <label>Equipment</label>
                 <input
                 type="equipment"
                 name="equipment"
                 placeholder="Enter Equipment"
+                onChange={(e) =>
+                    setNewExercise({ ...newExercise, equipment: e.target.value })
+                }
                 />
                 <label>Primary Muscles</label>
                 <input
                 type="primaryMuscles"
                 name="primaryMuscles"
                 placeholder="Enter Primary Muscles"
+                onChange={(e) =>
+                    setNewExercise({ ...newExercise, pirmary_muscles: e.target.value })
+                }
                 />
                 <label>Instructions</label>
                 <input
                 type="instructions"
                 name="instructions"
                 placeholder="Enter Instructions"
+                onChange={(e) =>
+                    setNewExercise({ ...newExercise, instructions: e.target.value })
+                }
                 />
                 <label>Image Url</label>
                 <input
                 type="imageURL"
                 name="imageURL"
                 placeholder="Enter Image URL"
+                onChange={(e) =>
+                    setNewExercise({ ...newExercise, image_url: e.target.value })
+                }
                 />
                 <label>Video Url</label>
                 <input
                 type="videoURL"
                 name="videoURL"
                 placeholder="Enter Video URL"
+                onChange={(e) =>
+                    setNewExercise({ ...newExercise, video_url: e.target.value })
+                }
                 />
             </div>
 
@@ -295,6 +344,9 @@ function AdminExercise(){
                             <td>
                                 <span className="font-style">
                                 {e.name}
+                                {!e.is_active && (
+                                <span className="deactivated-badge">Deactivated</span>
+                                )}
                                 </span>
                             </td>
                             <td>
@@ -317,9 +369,19 @@ function AdminExercise(){
                                 <button className="edit-exercise-btn"onClick={() => setEditExercise(e)}>
                                     Edit
                                 </button>
-                                <button className="delete-exercise-btn"onClick={() => handleDelete(e.exercise_id)}>
-                                Delete
-                                </button>
+                                {e.is_active ? (
+                                    <button
+                                    className="delete-exercise-btn"
+                                    onClick={() => handleDelete(e.exercise_id)}>
+                                        Deactivate
+                                    </button>
+                                ) : (                                    
+                                    <button
+                                    className="reactivate-exercise-btn"
+                                    onClick={() => handleReactivate(e.exercise_id)}>
+                                        Reactivate
+                                    </button>
+                                )}
                             </td>
                         </tr>
                         ))}
@@ -327,36 +389,48 @@ function AdminExercise(){
             </table>
             {editExercise && (
                 <div className="modal-overlay" onClick={() => setEditExercise(null)}>
-                    <div className="modal" onClick={(e) => e.stopPropagation()}>
+                    <div className="report-modal" onClick={(e) => e.stopPropagation()}>
                         <h2>
                             Edit Exercise
                         </h2>
-                        <label>Exercise Name</label>
+                        <p>
+                            <strong>Exercise Name</strong>
+                        </p>
                         <input
+                        className="exercise-modal-input"
                         value={editExercise.name || ""}
                         onChange={(e) =>
                             setEditExercise({ ...editExercise, name: e.target.value })
                         }
                         placeholder="Name"
                         />
-                        <label>Category</label>
+                        <p>
+                            <strong>Category</strong>
+                        </p>
                         <input
+                        className="exercise-modal-input"
                         value={editExercise.category || ""}
                         onChange={(e) =>
                             setEditExercise({ ...editExercise, category: e.target.value })
                         }
                         placeholder="Category"
                         />
-                        <label>Equipment</label>
+                        <p>
+                            <strong>Equipment</strong>
+                        </p>
                         <input
+                        className="exercise-modal-input"
                         value={editExercise.equipment || ""}
                         onChange={(e) =>
                             setEditExercise({ ...editExercise, equipment: e.target.value })
                         }
                         placeholder="Equipment"
                         />
-                        <label>Primary Muscles</label>
+                        <p>
+                            <strong>Primary Muscles</strong>
+                        </p>
                         <input
+                        className="exercise-modal-input"
                         value={editExercise.pirmary_muscles || ""}
                         onChange={(e) =>
                             setEditExercise({...editExercise, pirmary_muscles: e.target.value,})
@@ -364,7 +438,7 @@ function AdminExercise(){
                         placeholder="Muscles"
                         />
                         <div className="edit-footer">
-                        <button className="modal-btn2 save-change-btn" onClick={handleEditExercise}>
+                        <button className="modal-btn2 save-change-btn" onClick={() => setPendingEditConfirm(true)}>
                             Save Changes
                         </button>
                         <button className="modal-btn2 cancel-btn" onClick={() => setEditExercise(null)}>
@@ -374,6 +448,46 @@ function AdminExercise(){
                     </div>
                 </div>
             )}
+            {pendingEditConfirm && (
+                <div
+                className="modal-overlay"
+                onClick={() => setPendingEditConfirm(false)}>
+                    <div className="report-modal" onClick={(e) => e.stopPropagation()}>
+                        <h2>Confirm Changes</h2>
+                        <p>Are you sure you want to save these changes?</p>
+                        <div className="report-btn-footer">
+                            <button
+                            className="report-back-btn"
+                            onClick={() => setPendingEditConfirm(false)}>
+                                Cancel
+                            </button>
+                            <button
+                            className="viewreport-btn"
+                            onClick={handleEditExercise}>
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {editSuccessModal && (
+                <div
+                className="modal-overlay"
+                onClick={() => setEditSuccessModal(false)}>
+                    <div className="report-modal" onClick={(e) => e.stopPropagation()}>
+                        <h2>Changes Saved</h2>
+                        <p>The exercise has been updated successfully.</p>
+                            <div className="report-btn-footer">
+                            <button
+                            className="viewreport-btn"
+                            onClick={() => setEditSuccessModal(false)}>
+                                OK
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
         </div>
         </div>
     </div>
