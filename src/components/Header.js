@@ -9,8 +9,6 @@ function Header() {
   const navigate = useNavigate();
 
   const [showDropdown, setShowDropdown] = useState(false);
-
-  //const effectiveRole = activeRole || user?.role || "client";
   const [notifications, setNotifications] = useState([]);
   const handleLogout = () => {
     logout();
@@ -34,12 +32,11 @@ function Header() {
         if (!cancelled)
           setNotifications(Array(data.count).fill({ read: false }));
       } catch (err) {
-        // silently ignore — bell badge isn't worth surfacing errors
       }
     };
 
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000); // poll every 30s
+    const interval = setInterval(fetchUnreadCount, 30000);
 
     return () => {
       cancelled = true;
@@ -115,6 +112,13 @@ function Header() {
             </Link>
             <Link to="/calendar" className="nav-btn">
               Schedule
+            </Link>
+          </>
+        )}
+        {activeRole === "nutritionist" && (
+          <>
+            <Link to="/nutritionist/plans" className="nav-btn">
+              Meal Plans
             </Link>
           </>
         )}

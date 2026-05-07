@@ -1,0 +1,413 @@
+.np-page {
+  padding: 24px 20px;
+  color: white;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+.np-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #7ed87e;
+  color: #1a2a1a;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 12px;
+  z-index: 9999;
+}
+
+.np-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.np-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.np-sidebar-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.np-client-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.np-client-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.np-client-card.active {
+  border-color: #6ca6ff;
+  background: rgba(108, 166, 255, 0.1);
+}
+
+.np-client-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.np-client-meta {
+  font-size: 12px;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+.np-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.np-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+}
+
+.np-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.np-empty-state h3 {
+  margin: 0 0 8px 0;
+  color: #ccc;
+  font-size: 18px;
+}
+
+.np-empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.np-empty {
+  font-size: 13px;
+  color: #aaa;
+  font-style: italic;
+}
+
+.np-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.np-main-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.np-client-goal {
+  margin: 0;
+  font-size: 13px;
+  color: #6ca6ff;
+}
+
+.np-plan-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.np-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.np-input::placeholder {
+  color: #888;
+}
+
+.np-input:focus {
+  border-color: #6ca6ff;
+}
+
+.np-schedule {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.np-schedule-grid {
+  display: grid;
+  grid-template-columns: 90px repeat(7, 1fr);
+  gap: 6px;
+  min-width: 700px;
+}
+
+.np-schedule-corner {
+  background: transparent;
+}
+
+.np-day-header {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6ca6ff;
+  text-transform: uppercase;
+  padding: 6px 0;
+}
+
+.np-time-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.np-cell {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.np-cell-filled {
+  background: rgba(108, 166, 255, 0.1);
+  border-color: rgba(108, 166, 255, 0.3);
+}
+
+.np-cell-meal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  width: 100%;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6ca6ff;
+}
+
+.np-cell-remove {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.np-cell-select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+  text-align: center;
+}
+
+.np-cell-select option {
+  background: #2b2f34;
+  color: white;
+}
+
+.np-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.np-btn-assign {
+  padding: 12px 24px;
+  background: #6ca6ff;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.np-btn-assign:hover {
+  background: #5590e8;
+}
+
+.np-btn-cancel {
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #ccc;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.np-meals-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.np-meals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.np-meals-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.np-meals-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.np-btn-new {
+  padding: 10px 16px;
+  background: #7ed87e;
+  border: none;
+  border-radius: 10px;
+  color: #1a2a1a;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.np-btn-new:hover {
+  background: #5ec45e;
+}
+
+.np-new-meal-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+}
+
+.np-new-meal-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+}
+
+.np-meals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.np-meal-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.np-meal-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.np-meal-desc {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.np-no-clients {
+  text-align: center;
+  padding: 20px 10px;
+  color: #aaa;
+}
+
+.np-no-clients-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.np-no-clients p {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ccc;
+}
+
+.np-no-clients span {
+  font-size: 12px;
+  color: #888;
+  line-height: 1.5;
+}
+
+.np-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.np-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #8a909a;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.np-tab:hover {
+  color: #fff;
+}
+
+.np-tab.active {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}

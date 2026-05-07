@@ -49,6 +49,7 @@ import Notifications from "./pages/Notifications";
 import ClientProgress from "./pages/ClientProgress";
 import AdminRole from "./components/AdminRole";
 import WorkoutPhotos from "./pages/WorkoutPhotos";
+import NutritionistMealPlanPage from "./pages/NutritionistMealPlanPage";
 
 function App() {
   const location = useLocation();
@@ -95,6 +96,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
+          <Route path="/nutritionist/plans" element={<NutritionistMealPlanPage />} />
           <Route path="/workout-photos" element={<WorkoutPhotos />} />
           <Route
             path="/test-survey"
@@ -124,7 +126,6 @@ function App() {
             element={<ClientProgress />}
           />
 
-          {/*admin routes*/}
           <Route
             path="/admin/coachapp"
             element={
