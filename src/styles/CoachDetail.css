@@ -985,3 +985,18 @@
   font-size: 0.9rem;
   white-space: nowrap;
 }
+
+.cp-assigned-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.cp-assigned-status.accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
