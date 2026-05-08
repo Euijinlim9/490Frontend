@@ -374,45 +374,48 @@ function CoachDetail() {
   };
 
   const handleReportSubmit = async (e) => {
-  e.preventDefault();
-  if (!reportReason || !reportDetails.trim()) {
-    alert("Please choose a reason and add details.");
-    return;
-  }
-
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(`http://localhost:4000/api/coaches/${coach.user_id}/report`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        category: reportReason,
-        title: reportReason,
-        description: reportDetails,
-        severity: "medium",
-      }),
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      alert(data.message || "Failed to submit report.");
+    e.preventDefault();
+    if (!reportReason || !reportDetails.trim()) {
+      alert("Please choose a reason and add details.");
       return;
     }
 
-    alert("Report submitted. Thank you for letting us know.");
-    setReportReason("");
-    setReportDetails("");
-    setShowReportForm(false);
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong. Try again.");
-  }
-};
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/coaches/${coach.user_id}/report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            category: reportReason,
+            title: reportReason,
+            description: reportDetails,
+            severity: "medium",
+          }),
+        }
+      );
 
-    const handleUnhireCoach = async () => {
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.message || "Failed to submit report.");
+        return;
+      }
+
+      alert("Report submitted. Thank you for letting us know.");
+      setReportReason("");
+      setReportDetails("");
+      setShowReportForm(false);
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Try again.");
+    }
+  };
+
+  const handleUnhireCoach = async () => {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch("http://localhost:4000/api/client/my-coach", {
@@ -423,9 +426,9 @@ function CoachDetail() {
         },
       });
       if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || "Failed to unhire coach");
-    }
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to unhire coach");
+      }
 
       setMyCoachState("none");
       setMyCoachId(null);
@@ -522,24 +525,24 @@ function CoachDetail() {
                   </p>
                 </div>
                 <div className="cp-btn-header">
-                {headerButton}
-                {canReview &&
-                <button
-                className="cp-fire-btn"
-                onClick={() => setShowFireConfirm(true)}
-                >
-                  Fire Coach
-                </button>
-                }
-                {canReview && (
-                  <button
-                    className="cp-report-btn"
-                    onClick={() => setShowReportForm((prev) => !prev)}
-                  >
-                    Report Coach
-                  </button>
-                )}
-              </div>
+                  {headerButton}
+                  {canReview && (
+                    <button
+                      className="cp-fire-btn"
+                      onClick={() => setShowFireConfirm(true)}
+                    >
+                      Fire Coach
+                    </button>
+                  )}
+                  {canReview && (
+                    <button
+                      className="cp-report-btn"
+                      onClick={() => setShowReportForm((prev) => !prev)}
+                    >
+                      Report Coach
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="cp-stats">
                 <div className="cp-stat">
@@ -588,10 +591,10 @@ function CoachDetail() {
                 <option value="unprofessional_behavior">
                   Unprofessional Behavior
                 </option>
-                <option value="non_compliance">
-                  Non Compliance
+                <option value="non_compliance">Non Compliance</option>
+                <option value="communication_issues">
+                  Communication Issues
                 </option>
-                <option value="communication_issues">Communication Issues</option>
                 <option value="quality_of_service">Quality of Service</option>
                 <option value="billing_dispute">Billing Dispute</option>
                 <option value="Other">Other</option>
@@ -1057,58 +1060,67 @@ function CoachDetail() {
       )}
       {showFireConfirm && (
         <div
-        className="cp-modal-overlay"
-        onClick={() => setShowFireConfirm(false)}>
+          className="cp-modal-overlay"
+          onClick={() => setShowFireConfirm(false)}
+        >
           <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
             <button
-            className="cp-modal-close"
-            onClick={() => setShowFireConfirm(false)}>
+              className="cp-modal-close"
+              onClick={() => setShowFireConfirm(false)}
+            >
               ✕
             </button>
             <h3 className="cp-modal-title">Fire Coach?</h3>
             <p className="cp-modal-desc">
-            Are you sure you want to fire {coach.first_name} {coach.last_name}?
-            This will end your coaching relationship and cancel all active payments.
+              Are you sure you want to fire {coach.first_name} {coach.last_name}
+              ? This will end your coaching relationship and cancel all active
+              payments.
             </p>
             <div className="cp-modal-actions">
               <button
-              className="cp-modal-confirm-btn"
-              onClick={handleUnhireCoach}>
-              Yes, Fire Coach
+                className="cp-modal-confirm-btn"
+                onClick={handleUnhireCoach}
+              >
+                Yes, Fire Coach
               </button>
               <button
-              className="cp-btn cp-btn-ghost"
-              onClick={() => setShowFireConfirm(false)}>
+                className="cp-btn cp-btn-ghost"
+                onClick={() => setShowFireConfirm(false)}
+              >
                 Cancel
               </button>
-              </div>
             </div>
           </div>
-          )}
-          
-          {showFireSuccess && (
-            <div
-            className="cp-modal-overlay"
-            onClick={() => setShowFireSuccess(false)}>
-              <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
-                <button
-                className="cp-modal-close"
-                onClick={() => setShowFireSuccess(false)}>
-                  ✕
-                </button>
-                <h3 className="cp-modal-title">Termination Successful</h3>
-                <p className="cp-modal-desc">
-                  Your coaching relationship with {coach.first_name} {coach.last_name}
-                  has been ended. All payments toward this coach have been canceled.
-                </p>
-                <button
-                className="cp-modal-confirm-btn"
-                onClick={() => setShowFireSuccess(false)}>
-                  OK
-                </button>
-            </div>
+        </div>
+      )}
+
+      {showFireSuccess && (
+        <div
+          className="cp-modal-overlay"
+          onClick={() => setShowFireSuccess(false)}
+        >
+          <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="cp-modal-close"
+              onClick={() => setShowFireSuccess(false)}
+            >
+              ✕
+            </button>
+            <h3 className="cp-modal-title">Termination Successful</h3>
+            <p className="cp-modal-desc">
+              Your coaching relationship with {coach.first_name}{" "}
+              {coach.last_name}
+              has been ended. All payments toward this coach have been canceled.
+            </p>
+            <button
+              className="cp-modal-confirm-btn"
+              onClick={() => setShowFireSuccess(false)}
+            >
+              OK
+            </button>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

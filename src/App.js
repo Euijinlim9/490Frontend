@@ -53,6 +53,7 @@ import NutritionistMealPlanPage from "./pages/NutritionistMealPlanPage";
 import NutritionistDetail from "./pages/NutritionistDetail";
 import NutritionistRequests from "./pages/NutritionistRequests";
 import NutritionistProfile from "./pages/NutritionistProfile";
+import BookSession from "./pages/BookSession";
 
 function App() {
   const location = useLocation();
@@ -131,6 +132,7 @@ function App() {
             path="/coach/client/:clientUserId"
             element={<ClientProgress />}
           />
+          <Route path="/book-session/:coachId" element={<BookSession />} />
 
           <Route
             path="/admin/coachapp"
@@ -177,7 +179,6 @@ function App() {
           <Route path="/log-workout" element={<LogWorkout />} />
           <Route path="/log-wellness" element={<LogWellness />} />
           <Route path="/premade-meals" element={<PremadeMeals />} />
-
         </Routes>
       </div>
     </div>

@@ -59,12 +59,12 @@
 }
 
 .event-group-header {
-  font-size: 12px;
-  font-weight: 700;
-  color: #9dccff;
-  margin-bottom: 4px;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #6ca6ff !important;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px !important;
 }
 
 .event-label {
@@ -394,11 +394,8 @@
 
 /* Upcoming workouts list */
 .cal-event-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  font-size: 13px;
+  padding: 4px 0;
+  border-bottom: none;
 }
 
 .cal-event-title {
@@ -465,4 +462,59 @@
   color: #dbe5f4;
   font-style: italic;
   border-radius: 0 4px 4px 0;
+}
+
+/* ── Session pills on the calendar grid ─────────────── */
+.cal-event-session {
+  background: rgba(108, 166, 255, 0.18) !important;
+  color: #a8c8ff !important;
+  border: 1px solid rgba(108, 166, 255, 0.3) !important;
+  font-weight: 600;
+}
+
+.cal-event-session-title {
+  color: #e0ecff !important;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.cal-event-session-badge {
+  background: rgba(108, 166, 255, 0.15) !important;
+  color: #6ca6ff !important;
+  border: 1px solid rgba(108, 166, 255, 0.25) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 3px 9px !important;
+  border-radius: 99px !important;
+  letter-spacing: 0.3px;
+}
+.cal-event-note {
+  width: 100%;
+  margin: 2px 0 0 !important;
+  padding: 6px 10px;
+  background: rgba(108, 166, 255, 0.06);
+  border-left: 2px solid rgba(108, 166, 255, 0.3);
+  border-radius: 0 6px 6px 0;
+  font-size: 12px !important;
+  color: #8da8c8 !important;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.cal-event-item:has(.cal-event-session-title) > .cal-event-session-title,
+.cal-event-item:has(.cal-event-session-title) > .cal-event-session-badge {
+  display: inline-flex;
+  align-items: center;
+}
+.cal-event-item:has(.cal-event-session-title) {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  background: rgba(108, 166, 255, 0.06);
+  border: 1px solid rgba(108, 166, 255, 0.14);
+  border-left: 3px solid #6ca6ff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 2px;
 }
