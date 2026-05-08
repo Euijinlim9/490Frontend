@@ -49,6 +49,10 @@ import Notifications from "./pages/Notifications";
 import ClientProgress from "./pages/ClientProgress";
 import AdminRole from "./components/AdminRole";
 import WorkoutPhotos from "./pages/WorkoutPhotos";
+import NutritionistMealPlanPage from "./pages/NutritionistMealPlanPage";
+import NutritionistDetail from "./pages/NutritionistDetail";
+import NutritionistRequests from "./pages/NutritionistRequests";
+import NutritionistProfile from "./pages/NutritionistProfile";
 import BookSession from "./pages/BookSession";
 
 function App() {
@@ -96,6 +100,10 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/recent-meals" element={<RecentMeals />} />
           <Route path="/recent-workouts" element={<RecentWorkouts />} />
+          <Route path="/nutritionist/plans" element={<NutritionistMealPlanPage />} />
+          <Route path="/nutritionist/requests" element={<NutritionistRequests />} />
+          <Route path="/nutritionist/profile" element={<NutritionistProfile />} />
+          <Route path="/nutritionist/:id" element={<NutritionistDetail />} />
           <Route path="/workout-photos" element={<WorkoutPhotos />} />
           <Route
             path="/test-survey"
@@ -126,7 +134,6 @@ function App() {
           />
           <Route path="/book-session/:coachId" element={<BookSession />} />
 
-          {/*admin routes*/}
           <Route
             path="/admin/coachapp"
             element={
