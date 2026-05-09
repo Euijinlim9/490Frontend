@@ -12,7 +12,8 @@ function NutritionistRequests() {
   const fetchRequests = async () => {
     try {
       const res = await fetch("http://localhost:4000/api/nutritionist/requests", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`,
+        "X-Active-Role": "nutritionist", }
       });
       if (!res.ok) return;
       const data = await res.json();
@@ -28,7 +29,8 @@ function NutritionistRequests() {
     try {
       const res = await fetch(`http://localhost:4000/api/nutritionist/requests/${clientUserId}/approve`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` ,
+        "X-Active-Role": "nutritionist",}
       });
       if (!res.ok) throw new Error();
       showToast("Request approved!");
@@ -40,7 +42,8 @@ function NutritionistRequests() {
     try {
       const res = await fetch(`http://localhost:4000/api/nutritionist/requests/${clientUserId}/reject`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`,
+        "X-Active-Role": "nutritionist",}
       });
       if (!res.ok) throw new Error();
       showToast("Request rejected.");
@@ -64,7 +67,8 @@ function NutritionistRequests() {
           </div>
         ) : (
           requests.map((r) => (
-            <div key={r.client_user_id} style={{
+            <div key={r.client_user_id} 
+            style={{
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: 12,
@@ -78,10 +82,10 @@ function NutritionistRequests() {
             }}>
               <div>
                 <p style={{ margin: 0, fontWeight: 600, color: "#fff", fontSize: 16 }}>
-                  {r.first_name} {r.last_name}
+                  {r.client.first_name} {r.client.last_name}
                 </p>
-                {r.goal && <p style={{ margin: "4px 0 0", color: "#aaa", fontSize: 13 }}>Goal: {r.goal}</p>}
-                {r.diet_preference && <p style={{ margin: "2px 0 0", color: "#aaa", fontSize: 13 }}>Diet: {r.diet_preference}</p>}
+                {r.client.goal && <p style={{ margin: "4px 0 0", color: "#aaa", fontSize: 13 }}>Goal: {r.goal}</p>}
+                {r.client.diet_preference && <p style={{ margin: "2px 0 0", color: "#aaa", fontSize: 13 }}>Diet: {r.diet_preference}</p>}
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 <button className="np-btn-assign" onClick={() => handleApprove(r.client_user_id)}>

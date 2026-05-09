@@ -5,6 +5,7 @@ import userimg from "../images/user.svg";
 
 function Coach() {
   const [coaches, setCoaches] = useState([]);
+  const [nutritionists, setNutritionists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,14 +19,24 @@ function Coach() {
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch("http://localhost:4000/api/coaches", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const [coachRes, nutRes] = await Promise.all([
+          fetch("http://localhost:4000/api/coaches", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("http://localhost:4000/api/nutritionist", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
-        if (!res.ok) throw new Error("Failed to load coaches");
+        if (coachRes.ok) {
+          const coachData = await coachRes.json();
+          setCoaches(coachData.data || []);
+        }
 
-        const data = await res.json();
-        setCoaches(data.data || []);
+        if (nutRes.ok) {
+          const nutData = await nutRes.json();
+          setNutritionists(nutData.data || []);
+        }
       } catch (err) {
         console.error(err);
         setError("Could not load coaches. Please try again.");
@@ -36,35 +47,6 @@ function Coach() {
 
     fetchCoaches();
   }, []);
-
-  const nutritionists = [
-    {
-      user_id: "nutritionist-1",
-      first_name: "Alex",
-      last_name: "Rivers",
-      profile_pic: null,
-      Coach: {
-        specialization: "Vegan",
-        bio: "Helps with plant-based diets and balanced meal planning.",
-        experience_years: 4,
-        price: 30,
-        is_verified: true,
-      },
-    },
-    {
-      user_id: "nutritionist-2",
-      first_name: "Maya",
-      last_name: "Chen",
-      profile_pic: null,
-      Coach: {
-        specialization: "Low Calorie",
-        bio: "Focuses on macros, performance meals, and recovery nutrition.",
-        experience_years: 6,
-        price: 45,
-        is_verified: true,
-      },
-    },
-  ];
 
   const handleSearch = () => {
     setSearchQuery(query);
@@ -168,7 +150,7 @@ function Coach() {
             key={coach.user_id}
             to={
               roleFilter === "nutritionist"
-                ? "/coach"
+                ? `/nutritionist/${coach.user_id}`
                 : `/coach/${coach.user_id}`
             }
             className="coach-card"
@@ -179,25 +161,31 @@ function Coach() {
               className="avatar"
             />
 
-            <h3>
-              {coach.first_name} {coach.last_name}
-              {coach.Coach?.is_verified && (
-                <span className="verified-badge">✓</span>
-              )}
-            </h3>
+            {(() => {
+              const profile = coach.Coach || coach.Nutritionist || {};
+              return (
+              <>
+              <h3>
+                {coach.first_name} {coach.last_name}
+                {profile.is_approved && <span className="verified-badge">✓</span>}
+              </h3>
+              
+              <p className="coach-specialty">
+                {profile.specialization ||
+                (roleFilter === "nutritionist"
+                ? "Nutritionist"
+                : "General Coaching")}
+              </p>
 
-            <p className="coach-specialty">
-              {coach.Coach?.specialization || "General Coaching"}
-            </p>
+              <p>{profile.bio || "No bio available yet."}</p>
 
-            <p>{coach.Coach?.bio || "No bio available yet."}</p>
-
-            <div className="coach-card-footer">
-              <span>{coach.Coach?.experience_years || 0} yrs</span>
-              <span className="coach-price">
-                ${coach.Coach?.price || "—"}/hr
-              </span>
-            </div>
+                <div className="coach-card-footer">
+                  <span>{profile.experience_years || 0} yrs</span>
+                  <span className="coach-price">${profile.price || "—"}/hr</span>
+                </div>
+                </>
+                );
+              })()}
           </Link>
         ))}
       </div>

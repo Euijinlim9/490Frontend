@@ -12,7 +12,7 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
 
   const token = localStorage.getItem("token");
 
-  /*useEffect(() => {
+  useEffect(() => {
     const fetchWorkouts = async () => {
       try {
         const res = await fetch("http://localhost:4000/api/workout/premade", {
@@ -29,33 +29,7 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
     };
     fetchWorkouts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); */
-
-  useEffect(() => {
-  const hardcodedWorkouts = [
-    {
-      workout_id: 1,
-      title: "Push Day",
-      estimated_minutes: 60,
-      description: "Chest, shoulders, and triceps focused workout",
-    },
-    {
-      workout_id: 2,
-      title: "Pull Day",
-      estimated_minutes: 55,
-      description: "Back and biceps focused workout",
-    },
-    {
-      workout_id: 3,
-      title: "Leg Day",
-      estimated_minutes: 65,
-      description: "Quads, hamstrings, glutes, and calves",
-    },
-  ];
-
-  setWorkouts(hardcodedWorkouts);
-  setLoading(false);
-}, []);
+  }, []);
 
   const handleSubmit = async () => {
     if (!selectedId) {

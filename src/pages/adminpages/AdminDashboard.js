@@ -12,7 +12,6 @@ import "../../styles/Dashboard.css";
 import "../../styles/AdminDashboard.css";
 
 function AdminDashboard(){
-    const [revenueData, setRevenueData] = useState([]);
     const [pendingCoaches, setPendingCoaches] = useState([]);
     const [users, setUsers] = useState([]);
     const [reports, setReports] = useState([]);
@@ -24,7 +23,7 @@ function AdminDashboard(){
 
         const fetchData = async () => {
             try {
-                const res1 = await fetch("http://localhost:4000/admin/pending?role=coach", {
+                const res1 = await fetch("http://localhost:4000/admin/pending", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const data1 = await res1.json();
@@ -86,35 +85,6 @@ function AdminDashboard(){
     fetchEngagement();
 }, [range]);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-
-        const fetchRevenue = async () => {
-        try {
-            const res = await fetch(
-                "http://localhost:4000/admin/stats/revenue/daily",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            const data = await res.json();
-            
-            const formatted = (data?.map ? data : []).map((item) => ({
-                name: item.date,
-                revenue: Number(item.revenue),
-            }));
-            
-            setRevenueData(formatted);
-        } catch (err) {
-            console.error("Revenue fetch failed:", err);
-            setRevenueData([]);
-        }
-    };
-    fetchRevenue();
-}, []);
-
     const isWithinLastWeek = (date) => {
         if (!date) return false;
         const now = new Date();
@@ -132,7 +102,7 @@ function AdminDashboard(){
     );
 
     const recentReports = reports.filter(r =>
-        isWithinLastWeek(r.createdAt)
+        isWithinLastWeek(r.created_at)
     );
 
     console.log(users[0])
@@ -192,14 +162,28 @@ function AdminDashboard(){
                     </button>
                     </div>
                     <div className="admin-dash-chart">
-                        <ResponsiveContainer width="100%" height={260}>
+                        <ResponsiveContainer width="100%" height={400}>
                             <LineChart data={engagementData}
                             margin={{ top: 40, right: 20, left: 10, bottom: 40 }}>
                                 <XAxis dataKey="name"
-                                label={{
-                                    value: "Date",
-                                    position: "insideBottom",
-                                    offset:-20
+                                ticks={
+                                    range === "daily"
+                                    ? engagementData
+                                    .filter((_, i) => i % 3 === 0).map((d) => d.name)
+                                    : undefined
+                                }
+                                tickFormatter={(value) => {
+                                    if (range === "daily") {
+                                    const d = new Date(value);
+                                    return d.toLocaleTimeString([], { hour: "numeric", hour12: true });
+                                }
+                                return value;
+                            }}
+                            interval={range === "daily" ? 0 : "preserveEnd"}
+                            label={{
+                                value: range === "daily" ? "Hour" : "Date",
+                                position: "insideBottom",
+                                offset:-20
                                 }} 
                                 />
                                 <YAxis
@@ -228,30 +212,6 @@ function AdminDashboard(){
                     </div>
                     </div>
                     </section>
-                    <section className="admin-dashboard-section">
-                    <div className="admin-dashboard-right">
-            <div className="widget-card">
-                <h4>Total Revenue Overview</h4>
-                <div className="admin-dash-paychart">
-                    <ResponsiveContainer width="100%" height={250}>
-                        <LineChart data={revenueData}>
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Line
-                            type="monotone"
-                            dataKey="revenue"
-                            stroke="#10b981"
-                            strokeWidth={2}
-                            dot={false}
-                            />
-                        </LineChart>
-                        </ResponsiveContainer> 
-
-                </div>
-            </div>
-            </div>
-            </section>
             </div>
         </div>
 

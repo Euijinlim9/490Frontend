@@ -52,6 +52,7 @@ function CoachDetail() {
   const [declineTarget, setDeclineTarget] = useState(null);
   const [declineReason, setDeclineReason] = useState("");
   const [responding, setResponding] = useState(false);
+  const [responseModal, setResponseModal] = useState(null); 
 
   useEffect(() => {
     const fetchCoach = async () => {
@@ -178,7 +179,7 @@ function CoachDetail() {
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
-          "http://localhost:4000/api/client/my-assigned-workouts?status=assigned",
+          "http://localhost:4000/api/client/my-assigned-workouts?status=assigned,accepted",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -188,8 +189,10 @@ function CoachDetail() {
         );
         const data = await res.json();
         setAssignedWorkouts(
-          (data.data || []).filter((w) => w.coach_user_id === parseInt(id))
-        );
+          (data.data || []).filter((w) => w.coach_user_id === parseInt(id) &&
+          w.status !== "declined"
+        )
+      );
       } catch (err) {
         console.error(err);
       } finally {
@@ -214,11 +217,20 @@ function CoachDetail() {
         }
       );
       if (!res.ok) throw new Error("Failed to accept");
-      setAssignedWorkouts((prev) =>
-        prev.filter((w) => w.assigned_workout_id !== assignmentId)
+      const accepted = assignedWorkouts.find(
+        (w) => w.assigned_workout_id === assignmentId
       );
-      alert("Workout accepted! Your coach has been notified.");
-      setActiveTab("about");
+      setAssignedWorkouts((prev) =>
+        prev.map((w) =>
+          w.assigned_workout_id === assignmentId
+            ? { ...w, status: "accepted" }
+            : w
+        )
+      );
+      setResponseModal({
+        type: "accepted",
+        title: accepted?.Workout?.title || "Workout",
+      });
     } catch (err) {
       alert("Something went wrong. Try again.");
     } finally {
@@ -231,8 +243,12 @@ function CoachDetail() {
     setResponding(true);
     const token = localStorage.getItem("token");
     try {
+      const declined = assignedWorkouts.find(
+        (w) => w.assigned_workout_id === assignmentId
+      );
+
       const res = await fetch(
-        `http://localhost:4000/api/client/assignment/${assignmentId}/decline`,
+        `http://localhost:4000/api/client/assignments/${assignmentId}/decline`,
         {
           method: "PATCH",
           headers: {
@@ -249,8 +265,10 @@ function CoachDetail() {
       );
       setDeclineTarget(null);
       setDeclineReason("");
-      alert("Workout declined. Your coach has been notified.");
-      setActiveTab("about");
+      setResponseModal({
+      type: "declined",
+      title: declined?.Workout?.title || "Workout",
+    });
     } catch (err) {
       alert("Something went wrong. Try again.");
     } finally {
@@ -919,11 +937,14 @@ function CoachDetail() {
                           </p>
                         )}
                       </div>
-                      <span className="cp-assigned-status">{w.status}</span>
+                      <span className={`cp-assigned-status ${w.status === "accepted" ? "accepted" : ""}`}>
+                        {w.status === "accepted" ? "✓ Accepted" : w.status}
+                      </span>
                     </div>
                     {w.coach_notes && (
                       <p className="cp-assigned-notes">📝 {w.coach_notes}</p>
                     )}
+                    {w.status !== "accepted" && (
                     <div className="cp-assigned-actions">
                       <button
                         className="cp-btn cp-btn-primary"
@@ -941,6 +962,7 @@ function CoachDetail() {
                         ✕ Decline
                       </button>
                     </div>
+                    )}
                   </div>
                 )
               )
@@ -1115,6 +1137,34 @@ function CoachDetail() {
             <button
               className="cp-modal-confirm-btn"
               onClick={() => setShowFireSuccess(false)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+      {responseModal && (
+        <div className="cp-modal-overlay" onClick={() => setResponseModal(null)}>
+          <div className="cp-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+            className="cp-modal-close"
+            onClick={() => setResponseModal(null)}
+          >
+            ✕
+            </button>
+            <h3 className="cp-modal-title">
+              {responseModal.type === "accepted"
+                ? "Workout Accepted ✓"
+                : "Workout Declined"}
+            </h3>
+            <p className="cp-modal-desc">
+              {responseModal.type === "accepted"
+                ? `"${responseModal.title}" has been added to your plan and your coach has been notified.`
+                : `"${responseModal.title}" was declined. Your coach has been notified with your feedback.`}
+            </p>
+            <button
+              className="cp-modal-confirm-btn"
+              onClick={() => setResponseModal(null)}
             >
               OK
             </button>
