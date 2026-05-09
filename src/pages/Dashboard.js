@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 import { AuthContext } from "../context/AuthContext";
 import CoachDashboardView from "../components/CoachDashboardView";
+import NutritionistDashboardView from "../components/NutritionistDashboard";
 import AdminDashboard from "./adminpages/AdminDashboard";
 import {
   LineChart,
@@ -347,16 +348,20 @@ function Dashboard() {
   const fetchCoachData = useCallback(async () => {
     setCoachDataLoading(true);
     const token = localStorage.getItem("token");
-    try {
-      const [requestsRes, clientsRes] = await Promise.all([
-        fetch("http://localhost:4000/api/coach/requests", {
-          headers: {
+    const baseUrl =
+    activeRole === "nutritionist"
+      ? "http://localhost:4000/api/nutritionist"
+      : "http://localhost:4000/api/coach";
+      try {
+        const [requestsRes, clientsRes] = await Promise.all([
+          fetch(`${baseUrl}/requests`, {
+            headers: {
             Authorization: `Bearer ${token}`,
             "X-Active-Role": activeRole,
-          },
-        }),
-        fetch("http://localhost:4000/api/coach/clients", {
-          headers: {
+            },
+          }),
+          fetch(`${baseUrl}/clients`, {
+            headers: {
             Authorization: `Bearer ${token}`,
             "X-Active-Role": activeRole,
           },
@@ -382,7 +387,7 @@ function Dashboard() {
   }, [activeRole]);
 
   useEffect(() => {
-    if (activeRole === "coach") {
+    if (activeRole === "coach" || activeRole === "nutritionist") {
       fetchCoachData();
     }
   }, [activeRole, fetchCoachData]);
@@ -390,19 +395,21 @@ function Dashboard() {
   const handleApproveRequest = async (clientUserId, clientName) => {
     if (!window.confirm(`Approve ${clientName} as a client?`)) return;
     const token = localStorage.getItem("token");
-    try {
+    const baseUrl = activeRole === "nutritionist"
+    ? "http://localhost:4000/api/nutritionist"
+    : "http://localhost:4000/api/coach";
+    try{
       const res = await fetch(
-        `http://localhost:4000/api/coach/requests/${clientUserId}/approve`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-Active-Role": activeRole,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Failed to approve");
-
+      `${baseUrl}/requests/${clientUserId}/approve`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-Active-Role": activeRole,
+        },
+    }
+  );
+  if (!res.ok) throw new Error("Failed to approve");
       fetchCoachData();
     } catch (err) {
       console.error(err);
@@ -443,10 +450,13 @@ function Dashboard() {
     }
 
     const token = localStorage.getItem("token");
-
+    const baseUrl =
+    activeRole === "nutritionist"
+      ? "http://localhost:4000/api/nutritionist"
+      : "http://localhost:4000/api/coach";
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/clients/${clientUserId}`,
+        `${baseUrl}/clients/${clientUserId}`,
         {
           method: "DELETE",
           headers: {
@@ -1064,6 +1074,18 @@ function Dashboard() {
           onDropClient={handleDropClient}
           getTimeAgo={getTimeAgo}
           upcomingBookings={upcomingBookings}
+        />
+      ) : activeRole === "nutritionist" ? (
+      <NutritionistDashboardView
+      user={user}
+      pendingRequests={pendingRequests}
+      activeClients={activeClients}
+      loading={coachDataLoading}
+      onApprove={handleApproveRequest}
+      onReject={handleRejectRequest}
+      onDropClient={handleDropClient}
+      getTimeAgo={getTimeAgo}
+      upcomingBookings={upcomingBookings}
         />
       ) : (
         <div className="dashboard-layout">
