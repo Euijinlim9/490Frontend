@@ -1606,52 +1606,6 @@ function Dashboard() {
                   </button>
                 </div>
 
-                <div className="health-card">
-                  <h4 className="health-title">Heart</h4>
-                  <div className="health-icon">
-                    <svg viewBox="0 0 24 24" className="health-svg">
-                      <path
-                        d="M20.8 4.6c-1.5-1.5-4-1.5-5.5 0L12 7.9 8.7 4.6c-1.5-1.5-4-1.5-5.5 0 -1.5 1.5-1.5 4 0 5.5L12 19l8.8-8.9c1.5-1.5 1.5-4 0-5.5z"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-
-                  {editingCard === "heartLog" ? (
-                    <input
-                      type="number"
-                      name="heartLog"
-                      value={wellnessInputs.heartLog}
-                      onChange={handleWellnessInputChange}
-                      onBlur={() => saveWellnessField("heartLog")}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          saveWellnessField("heartLog");
-                        }
-                      }}
-                      className="wellness-inline-input"
-                      autoFocus
-                    />
-                  ) : (
-                    <p
-                      className="health-value clickable-value"
-                      onClick={() => startEditing("heartLog")}
-                    >
-                      {wellness.heartLog} <span>bpm</span>
-                    </p>
-                  )}
-                  <button
-                    type="button"
-                    className="delete-metric-btn"
-                    onClick={() => deleteTodayMetric("heartLog")}
-                  >
-                    Delete Today
-                  </button>
-                </div>
 
                 <div className="health-card">
                   <h4 className="health-title">Steps</h4>
