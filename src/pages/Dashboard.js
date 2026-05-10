@@ -5,7 +5,6 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import userimg from "../assets/default-avatar.svg";
 import { WorkoutContext } from "../context/WorkoutContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -177,7 +176,6 @@ function Dashboard() {
     }
   }, [activeRole, fetchTodayAssignment]);
 
-  const [activePurchases, setActivePurchases] = useState([]);
 
   const [upcomingBookings, setUpcomingBookings] = useState([]);
 
@@ -205,52 +203,6 @@ function Dashboard() {
     };
 
     fetchBookings();
-  }, [activeRole]);
-  useEffect(() => {
-    if (activeRole !== "client") return;
-
-    const fetchPurchases = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const res = await fetch(
-          buildBackendUrl("/api/sessions/purchases"),
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-Active-Role": "client",
-            },
-          }
-        );
-        if (!res.ok) return;
-        const data = await res.json();
-        const active = (data.purchases || []).filter(
-          (p) => p.status === "active" && p.sessions_remaining > 0
-        );
-
-        // Aggregate per coach
-        const byCoach = {};
-        for (const p of active) {
-          const cid = p.coach_user_id;
-          if (!byCoach[cid]) {
-            byCoach[cid] = {
-              coach_user_id: cid,
-              coach: p.coach,
-              sessions_remaining: 0,
-              total_sessions: 0,
-              purchase_count: 0,
-            };
-          }
-          byCoach[cid].sessions_remaining += p.sessions_remaining;
-          byCoach[cid].total_sessions += p.total_sessions;
-          byCoach[cid].purchase_count += 1;
-        }
-        setActivePurchases(Object.values(byCoach));
-      } catch (err) {
-        console.error("Failed to load purchases:", err);
-      }
-    };
-
-    fetchPurchases();
   }, [activeRole]);
 
   const handleStartAssignedWorkout = (assignment) => {

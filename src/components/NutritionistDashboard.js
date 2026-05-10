@@ -1,15 +1,5 @@
 import { Link } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+
 
 function NutritionistDashboardView({
   user,
@@ -22,7 +12,6 @@ function NutritionistDashboardView({
   getTimeAgo,
   upcomingBookings = [],
 }) {
-  const { activeRole } = useContext(AuthContext);
 
   return (
     <div className="coach-dash">

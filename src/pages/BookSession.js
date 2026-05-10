@@ -5,14 +5,13 @@ import React, {
   useMemo,
   useContext,
 } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/BookSession.css";
 import { buildBackendUrl } from "../config/api";
 
 function BookSession() {
   const { coachId } = useParams();
-  const navigate = useNavigate();
   const { activeRole } = useContext(AuthContext);
 
   const [coach, setCoach] = useState(null);
