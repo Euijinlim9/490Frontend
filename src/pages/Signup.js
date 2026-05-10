@@ -4,6 +4,7 @@ import "../styles/Dashboard.css";
 import "../styles/Signup.css";
 import googleLogo from "../images/google.png";
 import { AuthContext } from "../context/AuthContext";
+import { buildBackendUrl } from "../config/api";
 
 function Signup() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function Signup() {
   const handleClientSignup = async () => {
     setError("");
     try {
-      const res = await fetch("http://localhost:4000/auth/register/client", {
+      const res = await fetch(buildBackendUrl("/auth/register/client"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(clientForm),
@@ -32,7 +33,7 @@ function Signup() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        const meRes = await fetch("http://localhost:4000/auth/me", { headers: { Authorization: `Bearer ${data.token}` } });
+        const meRes = await fetch(buildBackendUrl("/auth/me"), { headers: { Authorization: `Bearer ${data.token}` } });
         const meData = await meRes.json();
         if (meRes.ok) setUser(meData.user);
         setSuccess("Account created successfully! Redirecting...");
@@ -56,11 +57,11 @@ function Signup() {
       formData.append("phone", proForm.phone);
       coachCertification.forEach((file) => formData.append("certification", file));
 
-      const res = await fetch("http://localhost:4000/auth/register/coach", { method: "POST", body: formData });
+      const res = await fetch(buildBackendUrl("/auth/register/coach"), { method: "POST", body: formData });
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        const meRes = await fetch("http://localhost:4000/auth/me", { headers: { Authorization: `Bearer ${data.token}` } });
+        const meRes = await fetch(buildBackendUrl("/auth/me"), { headers: { Authorization: `Bearer ${data.token}` } });
         const meData = await meRes.json();
         if (meRes.ok) setUser(meData.user);
         setSuccess("Coach account created! Redirecting...");
@@ -76,7 +77,7 @@ function Signup() {
   const handleNutritionistSignup = async () => {
     setError("");
     try {
-      const res = await fetch("http://localhost:4000/auth/register/nutritionist", {
+      const res = await fetch(buildBackendUrl("/auth/register/nutritionist"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(proForm),
@@ -84,7 +85,7 @@ function Signup() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        const meRes = await fetch("http://localhost:4000/auth/me", { headers: { Authorization: `Bearer ${data.token}` } });
+        const meRes = await fetch(buildBackendUrl("/auth/me"), { headers: { Authorization: `Bearer ${data.token}` } });
         const meData = await meRes.json();
         if (meRes.ok) setUser(meData.user);
         setSuccess("Nutritionist account created! Redirecting...");
@@ -109,7 +110,7 @@ function Signup() {
     return "Apply as Coach & Nutritionist";
   };
 
-  const handleGoogleSignup = () => { window.location.href = "http://localhost:4000/auth/google"; };
+  const handleGoogleSignup = () => { window.location.href = buildBackendUrl("/auth/google"); };
 
   return (
     <div className="signup-page">

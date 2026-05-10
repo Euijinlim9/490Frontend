@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/CoachApplication.css";
+import { buildBackendUrl } from "../../config/api";
 
 function CoachApplication(){
     const[coaches, setCoaches] = useState([]);
@@ -14,7 +15,7 @@ function CoachApplication(){
         const fetchData = async () => {
             try{
                 const rest = await fetch(
-                    "http://localhost:4000/admin/pending?role",
+                    buildBackendUrl("/admin/pending?role"),
                     {
                         headers: {Authorization: `Bearer ${token}`},
                     }
@@ -35,7 +36,7 @@ function CoachApplication(){
         const token = localStorage.getItem("token");
         try{
             const res = await fetch(
-                `http://localhost:4000/admin/users/${userId}/approve`,
+                buildBackendUrl(`/admin/users/${userId}/approve`),
                 {
                     method: "PUT",
                     headers: {

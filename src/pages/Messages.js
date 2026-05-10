@@ -8,6 +8,7 @@ import {
   sendMessage,
 } from "../api/messages";
 import { io } from "socket.io-client";
+import { API_BASE_URL } from "../config/api";
 
 function formatMessageTime(isoString) {
   if (!isoString) return "";
@@ -99,7 +100,7 @@ function Messages() {
   useEffect(() => {
     if (!user) return;
 
-    const socket = io("http://localhost:4000", {
+    const socket = io(API_BASE_URL, {
       auth: { token: localStorage.getItem("token") },
     });
     socketRef.current = socket;

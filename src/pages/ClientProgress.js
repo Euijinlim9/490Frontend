@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import AssignWorkoutModal from "../components/AssignWorkoutModal";
 import "../styles/ClientProgress.css";
+import { buildBackendUrl } from "../config/api";
 import {
   LineChart,
   Line,
@@ -66,15 +67,15 @@ function ClientProgress() {
 
     try {
       const [clientRes, workoutRes, assignedRes] = await Promise.all([
-        fetch(`http://localhost:4000/api/coach/clients/${clientUserId}`, {
+        fetch(buildBackendUrl(`/api/coach/clients/${clientUserId}`), {
           headers,
         }),
         fetch(
-          `http://localhost:4000/api/coach/clients/${clientUserId}/workouts/logs`,
+          buildBackendUrl(`/api/coach/clients/${clientUserId}/workouts/logs`),
           { headers }
         ),
         fetch(
-          `http://localhost:4000/api/coach/clients/${clientUserId}/workouts/assigned`,
+          buildBackendUrl(`/api/coach/clients/${clientUserId}/workouts/assigned`),
           { headers }
         ),
       ]);
@@ -119,7 +120,7 @@ function ClientProgress() {
       if (photoFilter.to) params.set("to_date", photoFilter.to);
 
       const res = await fetch(
-        `http://localhost:4000/api/coach/clients/${clientUserId}/photos?${params}`,
+        buildBackendUrl(`/api/coach/clients/${clientUserId}/photos?${params}`),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -185,7 +186,7 @@ function ClientProgress() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/assignments/${assignmentId}`,
+        buildBackendUrl(`/api/coach/assignments/${assignmentId}`),
         {
           method: "DELETE",
           headers: {

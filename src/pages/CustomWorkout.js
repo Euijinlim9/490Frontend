@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/CustomWorkout.css";
 import { WorkoutContext } from "../context/WorkoutContext";
+import { buildBackendUrl } from "../config/api";
 
 const emptyForm = () => ({
   name: "",
@@ -56,7 +57,7 @@ function CustomWorkout() {
         });
 
         const res = await fetch(
-          `http://localhost:4000/api/workout/custom?${param.toString()}`
+          buildBackendUrl(`/api/workout/custom?${param.toString()}`)
         );
 
         const data = await res.json();
@@ -157,7 +158,7 @@ function CustomWorkout() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:4000/api/workout/custom", {
+      const res = await fetch(buildBackendUrl("/api/workout/custom"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -203,7 +204,7 @@ function CustomWorkout() {
         }
         await Promise.all(
           dates.map((dateStr) =>
-            fetch("http://localhost:4000/api/calendar", {
+            fetch(buildBackendUrl("/api/calendar"), {
               method: "POST",
               headers: { "Content-Type": "application/json", Authorization: `Bearer ${token2}` },
               body: JSON.stringify({ date: dateStr, text: workoutName, color: "#7ed87e" }),

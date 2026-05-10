@@ -1,6 +1,7 @@
         import "../styles/Logs.css"; 
         import React, { useState } from "react";
         import { useNavigate } from "react-router-dom";
+        import { buildBackendUrl } from "../config/api";
         
         function LogWellness(){
           const navigate = useNavigate();
@@ -33,7 +34,7 @@
             };
 
             try {
-              const res = await fetch("http://localhost:4000/api/logs/wellness-check", {
+              const res = await fetch(buildBackendUrl("/api/logs/wellness-check"), {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 import userimg from "../images/user.svg";
 import "../styles/Profile.css";
+import { buildBackendAssetUrl, buildBackendUrl } from "../config/api";
 
 function NutritionistProfile() {
   const { user, setUser } = useContext(AuthContext);
@@ -21,7 +22,7 @@ function NutritionistProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/profile/nutritionist", {
+        const res = await fetch(buildBackendUrl("/api/profile/nutritionist"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) return;
@@ -44,7 +45,7 @@ function NutritionistProfile() {
 
   const handleSave = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/profile/nutritionist", {
+      const res = await fetch(buildBackendUrl("/api/profile/nutritionist"), {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(form),
@@ -63,7 +64,7 @@ function NutritionistProfile() {
     const formData = new FormData();
     formData.append("profile_pic", file);
     try {
-      const res = await fetch("http://localhost:4000/api/profile/picture", {
+      const res = await fetch(buildBackendUrl("/api/profile/picture"), {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -85,7 +86,7 @@ function NutritionistProfile() {
         <div className="profile-text">Profile Settings</div>
         {user?.profile_pic ? (
           <img
-            src={user.profile_pic.startsWith("http") ? user.profile_pic : `http://localhost:4000${user.profile_pic}`}
+            src={user.profile_pic.startsWith("http") ? user.profile_pic : buildBackendAssetUrl(user.profile_pic)}
             alt="Profile"
             className="avatar"
           />

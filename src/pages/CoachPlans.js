@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/CoachPlans.css";
+import { buildBackendUrl } from "../config/api";
 
 function CoachPlans() {
   const [activeTab, setActiveTab] = useState("plans");
@@ -79,7 +80,7 @@ function PlansTab() {
   const fetchPlans = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/coach/plans", {
+      const res = await fetch(buildBackendUrl("/api/coach/plans"), {
         headers,
       });
       const data = await res.json();
@@ -99,7 +100,7 @@ function PlansTab() {
     e.preventDefault();
     setCreating(true);
     try {
-      const res = await fetch("http://localhost:4000/api/coach/plans", {
+      const res = await fetch(buildBackendUrl("/api/coach/plans"), {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -136,7 +137,7 @@ function PlansTab() {
     setSaving(true);
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/plans/${planId}`,
+        buildBackendUrl(`/api/coach/plans/${planId}`),
         {
           method: "PATCH",
           headers,
@@ -167,7 +168,7 @@ function PlansTab() {
       return;
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/plans/${planId}`,
+        buildBackendUrl(`/api/coach/plans/${planId}`),
         {
           method: "DELETE",
           headers,
@@ -398,7 +399,7 @@ function PackagesTab() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:4000/api/coach/packages", {
+      const res = await fetch(buildBackendUrl("/api/coach/packages"), {
         headers,
       });
       if (!res.ok) throw new Error("Could not load packages");
@@ -407,7 +408,7 @@ function PackagesTab() {
 
       if (user?.user_id) {
         const pubRes = await fetch(
-          `http://localhost:4000/api/coaches/${user.user_id}/packages`
+          buildBackendUrl(`/api/coaches/${user.user_id}/packages`)
         );
         if (pubRes.ok) {
           const pubData = await pubRes.json();
@@ -438,7 +439,7 @@ function PackagesTab() {
     }
     setCreating(true);
     try {
-      const res = await fetch("http://localhost:4000/api/coach/packages", {
+      const res = await fetch(buildBackendUrl("/api/coach/packages"), {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -470,7 +471,7 @@ function PackagesTab() {
   const handleSaveEdit = async (packageId) => {
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/packages/${packageId}`,
+        buildBackendUrl(`/api/coach/packages/${packageId}`),
         {
           method: "PATCH",
           headers,
@@ -499,7 +500,7 @@ function PackagesTab() {
       return;
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/packages/${packageId}`,
+        buildBackendUrl(`/api/coach/packages/${packageId}`),
         { method: "DELETE", headers }
       );
       if (!res.ok) throw new Error("Failed to deactivate");

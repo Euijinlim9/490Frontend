@@ -1,6 +1,7 @@
 import "../styles/Logs.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { buildBackendUrl } from "../config/api";
 
 function LogMeal() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ function LogMeal() {
    const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://localhost:4000/api/logs/meal-log/custom", {
+      const res = await fetch(buildBackendUrl("/api/logs/meal-log/custom"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

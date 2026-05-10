@@ -4,6 +4,7 @@ import "../styles/Login.css";
 import googleLogo from "../images/google.png";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { buildBackendUrl } from "../config/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function Login() {
   const handleLogin = async () => {
     setError("");
     try {
-      const res = await fetch("http://localhost:4000/auth/login", {
+      const res = await fetch(buildBackendUrl("/auth/login"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -42,7 +43,7 @@ function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:4000/auth/google";
+    window.location.href = buildBackendUrl("/auth/google");
   };
 
   return (

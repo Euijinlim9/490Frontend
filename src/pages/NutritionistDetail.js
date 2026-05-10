@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import userimg from "../images/user.svg";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/CoachDetail.css";
+import { buildBackendUrl } from "../config/api";
 
 function NutritionistDetail() {
   const { id } = useParams();
@@ -25,7 +26,7 @@ function NutritionistDetail() {
     const fetchNutritionist = async () => {
       try {
         const res = await fetch(
-          `http://localhost:4000/api/nutritionist/browse/${id}`,
+          buildBackendUrl(`/api/nutritionist/browse/${id}`),
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (res.status === 404) { setError("Nutritionist not found"); return; }
@@ -48,7 +49,7 @@ function NutritionistDetail() {
     const fetchMyNutritionist = async () => {
       try {
         const res = await fetch(
-          "http://localhost:4000/api/nutritionist/my-nutritionist",
+          buildBackendUrl("/api/nutritionist/my-nutritionist"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -70,7 +71,7 @@ function NutritionistDetail() {
     setRequesting(true);
     try {
       const res = await fetch(
-        `http://localhost:4000/api/nutritionist/request/${id}`,
+        buildBackendUrl(`/api/nutritionist/request/${id}`),
         {
           method: "POST",
           headers: {
@@ -97,7 +98,7 @@ function NutritionistDetail() {
   const handleUnhire = async () => {
     try {
       const res = await fetch(
-        "http://localhost:4000/api/nutritionist/my-nutritionist",
+        buildBackendUrl("/api/nutritionist/my-nutritionist"),
         {
           method: "DELETE",
           headers: {

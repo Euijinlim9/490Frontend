@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import "../styles/CheckIn.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { buildBackendUrl } from "../config/api";
 
 function DailyCheckIns() {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ function DailyCheckIns() {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://localhost:4000/api/logs/checkins/daily", {
+    const res = await fetch(buildBackendUrl("/api/logs/checkins/daily"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

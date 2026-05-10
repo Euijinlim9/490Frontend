@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { buildBackendUrl } from "../config/api";
 
 function AssignMealPlanModal({ clientUserId, onClose, onAssigned }) {
   const [meals, setMeals] = useState([]);
@@ -17,7 +18,7 @@ function AssignMealPlanModal({ clientUserId, onClose, onAssigned }) {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/meals/", {
+        const res = await fetch(buildBackendUrl("/api/meals/"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to load meals");
@@ -50,7 +51,7 @@ function AssignMealPlanModal({ clientUserId, onClose, onAssigned }) {
     setError(null);
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/clients/${clientUserId}/meal-plans/assign`,
+        buildBackendUrl(`/api/coach/clients/${clientUserId}/meal-plans/assign`),
         {
           method: "POST",
           headers: {

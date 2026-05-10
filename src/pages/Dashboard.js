@@ -14,6 +14,7 @@ import { AuthContext } from "../context/AuthContext";
 import CoachDashboardView from "../components/CoachDashboardView";
 import NutritionistDashboardView from "../components/NutritionistDashboard";
 import AdminDashboard from "./adminpages/AdminDashboard";
+import { buildBackendUrl } from "../config/api";
 import {
   LineChart,
   Line,
@@ -38,7 +39,7 @@ function Dashboard() {
   const fetchMyCoach = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/client/my-coach", {
+      const res = await fetch(buildBackendUrl("/api/client/my-coach"), {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-Active-Role": activeRole,
@@ -56,7 +57,7 @@ function Dashboard() {
   const fetchMySubscription = useCallback(async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/client/subscription", {
+      const res = await fetch(buildBackendUrl("/api/client/subscription"), {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-Active-Role": activeRole,
@@ -86,7 +87,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/subscriptions/${subscription.subscription_id}/cancel`,
+        buildBackendUrl(`/api/subscriptions/${subscription.subscription_id}/cancel`),
         {
           method: "PATCH",
           headers: {
@@ -118,7 +119,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        "http://localhost:4000/api/client/my-assigned-workouts",
+        buildBackendUrl("/api/client/my-assigned-workouts"),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -149,7 +150,7 @@ function Dashboard() {
         .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
       setWeekWorkouts(thisWeek);
 
-      const calRes = await fetch("http://localhost:4000/api/calendar", {
+      const calRes = await fetch(buildBackendUrl("/api/calendar"), {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (calRes.ok) {
@@ -187,7 +188,7 @@ function Dashboard() {
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
-          "http://localhost:4000/api/sessions/bookings/upcoming",
+          buildBackendUrl("/api/sessions/bookings/upcoming"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -212,7 +213,7 @@ function Dashboard() {
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
-          "http://localhost:4000/api/sessions/purchases",
+          buildBackendUrl("/api/sessions/purchases"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -283,7 +284,7 @@ function Dashboard() {
     if (!window.confirm("Cancel your request to this coach?")) return;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/coaches/request", {
+      const res = await fetch(buildBackendUrl("/api/coaches/request"), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -350,8 +351,8 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     const baseUrl =
     activeRole === "nutritionist"
-      ? "http://localhost:4000/api/nutritionist"
-      : "http://localhost:4000/api/coach";
+      ? buildBackendUrl("/api/nutritionist")
+      : buildBackendUrl("/api/coach");
       try {
         const [requestsRes, clientsRes] = await Promise.all([
           fetch(`${baseUrl}/requests`, {
@@ -396,8 +397,8 @@ function Dashboard() {
     if (!window.confirm(`Approve ${clientName} as a client?`)) return;
     const token = localStorage.getItem("token");
     const baseUrl = activeRole === "nutritionist"
-    ? "http://localhost:4000/api/nutritionist"
-    : "http://localhost:4000/api/coach";
+    ? buildBackendUrl("/api/nutritionist")
+    : buildBackendUrl("/api/coach");
     try{
       const res = await fetch(
       `${baseUrl}/requests/${clientUserId}/approve`,
@@ -422,7 +423,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/requests/${clientUserId}/reject`,
+        buildBackendUrl(`/api/coach/requests/${clientUserId}/reject`),
         {
           method: "POST",
           headers: {
@@ -452,8 +453,8 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     const baseUrl =
     activeRole === "nutritionist"
-      ? "http://localhost:4000/api/nutritionist"
-      : "http://localhost:4000/api/coach";
+      ? buildBackendUrl("/api/nutritionist")
+      : buildBackendUrl("/api/coach");
     try {
       const res = await fetch(
         `${baseUrl}/clients/${clientUserId}`,
@@ -511,7 +512,7 @@ function Dashboard() {
   const handleUnhireCoach = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/client/my-coach", {
+      const res = await fetch(buildBackendUrl("/api/client/my-coach"), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -555,7 +556,7 @@ function Dashboard() {
         const date = selectedMacroDate.toISOString().split("T")[0];
 
         const res = await fetch(
-          `http://localhost:4000/api/logs/meal-log?date=${date}`,
+          buildBackendUrl(`/api/logs/meal-log?date=${date}`),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -627,7 +628,7 @@ function Dashboard() {
 
       try {
         const res = await fetch(
-          "http://localhost:4000/api/logs/workouts/today",
+          buildBackendUrl("/api/logs/workouts/today"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -655,7 +656,7 @@ function Dashboard() {
 
       try {
         const res = await fetch(
-          "http://localhost:4000/api/logs/wellness-check/today",
+          buildBackendUrl("/api/logs/wellness-check/today"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -832,7 +833,7 @@ function Dashboard() {
     };
 
     try {
-      await fetch("http://localhost:4000/api/logs/wellness/upsert-today", {
+      await fetch(buildBackendUrl("/api/logs/wellness/upsert-today"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -870,19 +871,19 @@ function Dashboard() {
 
         const [stepsRes, mealsRes, workoutsRes] = await Promise.all([
           fetch(
-            `http://localhost:4000/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`,
+            buildBackendUrl(`/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            `http://localhost:4000/api/logs/graph?metric=calories&period=day&start=${start}&end=${end}`,
+            buildBackendUrl(`/api/logs/graph?metric=calories&period=day&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            `http://localhost:4000/api/logs/graph?metric=volume&period=day&start=${start}&end=${end}`,
+            buildBackendUrl(`/api/logs/graph?metric=volume&period=day&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -919,7 +920,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://localhost:4000/api/logs/wellness/clear", {
+      const res = await fetch(buildBackendUrl("/api/logs/wellness/clear"), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -963,7 +964,7 @@ function Dashboard() {
 
       try {
         const res = await fetch(
-          "http://localhost:4000/api/logs/checkins/today",
+          buildBackendUrl("/api/logs/checkins/today"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1020,19 +1021,19 @@ function Dashboard() {
 
         const [energyRes, stressRes, motivationRes] = await Promise.all([
           fetch(
-            `http://localhost:4000/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`,
+            buildBackendUrl(`/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            `http://localhost:4000/api/logs/graph?metric=stress&period=day&start=${start}&end=${end}`,
+            buildBackendUrl(`/api/logs/graph?metric=stress&period=day&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            `http://localhost:4000/api/logs/graph?metric=motivation&period=day&start=${start}&end=${end}`,
+            buildBackendUrl(`/api/logs/graph?metric=motivation&period=day&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }

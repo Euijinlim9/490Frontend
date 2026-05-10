@@ -1,6 +1,7 @@
 import React, { useState, useEffect }from "react";
 import "../../styles/UserReports.css"
 import "../../styles/Coach.css"
+import { buildBackendUrl } from "../../config/api";
 
 function UserReport(){
     const[reports, setReports]=useState([]);
@@ -16,7 +17,7 @@ function UserReport(){
         const fetchReports = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch ("http://localhost:4000/admin/reports/coach",
+                const res = await fetch (buildBackendUrl("/admin/reports/coach"),
                 {
                     headers: {Authorization: `Bearer ${token}`,},
                 }
@@ -76,7 +77,7 @@ function UserReport(){
 
     try {
         const res = await fetch(
-            `http://localhost:4000/admin/reports/coach/${reportId}/status`,
+            buildBackendUrl(`/admin/reports/coach/${reportId}/status`),
             {
                 method: "PUT",
                 headers: {

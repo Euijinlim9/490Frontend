@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { WorkoutContext } from "../context/WorkoutContext";
 import "../styles/ActiveWorkout.css";
 import { useMemo } from "react";
+import { buildBackendUrl } from "../config/api";
 
 function ActiveWorkout() {
   const submittedRef = useRef(false);
@@ -105,7 +106,7 @@ function ActiveWorkout() {
       const durationMinutes = Math.max(1, Math.round(elapsedMs / 60000));
 
       if (strengthLogs.length > 0 || cardioLogs.length > 0) {
-        const res = await fetch("http://localhost:4000/api/logs/workout-log", {
+        const res = await fetch(buildBackendUrl("/api/logs/workout-log"), {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -134,7 +135,7 @@ function ActiveWorkout() {
 
       if (activeWorkout.assignmentId) {
         await fetch(
-         `http://localhost:4000/api/client/assignments/${activeWorkout.assignmentId}/complete`,
+         buildBackendUrl(`/api/client/assignments/${activeWorkout.assignmentId}/complete`),
           {
             method: "PATCH",
             headers: { Authorization: `Bearer ${token}` },

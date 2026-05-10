@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/Logs.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { buildBackendUrl } from "../config/api";
 
 function Logs() {
   const [uploading, setUploading] = useState(false);
@@ -33,7 +34,7 @@ function Logs() {
       });
 
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:4000/api/photos", {
+      const res = await fetch(buildBackendUrl("/api/photos"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

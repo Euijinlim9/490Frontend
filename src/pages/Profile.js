@@ -3,6 +3,7 @@ import "../styles/Profile.css";
 import userimg from "../images/user.svg";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { buildBackendAssetUrl, buildBackendUrl } from "../config/api";
 
 function Profile() {
   const { activeRole } = useContext(AuthContext);
@@ -71,10 +72,10 @@ function Profile() {
   const fetchData = async () => {
     const token = localStorage.getItem("token");
     const [qRes, cRes] = await Promise.all([
-      fetch("http://localhost:4000/api/qualifications", {
+      fetch(buildBackendUrl("/api/qualifications"), {
         headers: { Authorization: `Bearer ${token}` },
       }),
-      fetch("http://localhost:4000/api/certifications", {
+      fetch(buildBackendUrl("/api/certifications"), {
         headers: { Authorization: `Bearer ${token}` },
       }),
     ]);
@@ -119,7 +120,7 @@ function Profile() {
       if (activeRole !== "coach") return;
 
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:4000/api/profile/coach", {
+      const res = await fetch(buildBackendUrl("/api/profile/coach"), {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -161,7 +162,7 @@ function Profile() {
           price: coachForm.price,
         };
 
-        const res = await fetch("http://localhost:4000/api/profile/coach", {
+        const res = await fetch(buildBackendUrl("/api/profile/coach"), {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -181,7 +182,7 @@ function Profile() {
         setTimeout(() => setMessage(""), 3000);
       } else {
         // Client mode: update via /api/profile
-        const res = await fetch("http://localhost:4000/api/profile", {
+        const res = await fetch(buildBackendUrl("/api/profile"), {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -214,7 +215,7 @@ function Profile() {
     try {
       const token = localStorage.getItem("token");
       if (!token) return; //delete
-      const res = await fetch("http://localhost:4000/auth/delete-account", {
+      const res = await fetch(buildBackendUrl("/auth/delete-account"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -242,7 +243,7 @@ function Profile() {
       const formData = new FormData();
       formData.append("document", file);
 
-      const res = await fetch("http://localhost:4000/api/certifications", {
+      const res = await fetch(buildBackendUrl("/api/certifications"), {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -252,7 +253,7 @@ function Profile() {
       console.log(data);
     }
     if (type === "qualification") {
-      const res = await fetch("http://localhost:4000/api/qualifications", {
+      const res = await fetch(buildBackendUrl("/api/qualifications"), {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -321,7 +322,7 @@ function Profile() {
     for (const day of activeDays) {
       try {
         const res = await fetch(
-          "http://localhost:4000/api/coach/availability",
+          buildBackendUrl("/api/coach/availability"),
           {
             method: "POST",
             headers,
@@ -401,7 +402,7 @@ function Profile() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          "http://localhost:4000/api/coach/availability",
+          buildBackendUrl("/api/coach/availability"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -451,7 +452,7 @@ function Profile() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/availability/${id}`,
+        buildBackendUrl(`/api/coach/availability/${id}`),
         {
           method: "DELETE",
           headers: {
@@ -479,7 +480,7 @@ function Profile() {
     formData.append("profile_pic", file);
 
     try {
-      const res = await fetch("http://localhost:4000/api/profile/picture", {
+      const res = await fetch(buildBackendUrl("/api/profile/picture"), {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -502,7 +503,7 @@ function Profile() {
 
     try {
       const res = await fetch(
-        `http://localhost:4000/api/qualifications/${id}`,
+        buildBackendUrl(`/api/qualifications/${id}`),
         {
           method: "DELETE",
           headers: {
@@ -531,7 +532,7 @@ function Profile() {
 
   try {
     const res = await fetch(
-      `http://localhost:4000/api/certifications/${id}`,
+      buildBackendUrl(`/api/certifications/${id}`),
       {
         method: "DELETE",
         headers: {
@@ -567,7 +568,7 @@ function Profile() {
         <div className="profile-text">Profile Settings</div>
         {user?.profile_pic ? (
           <img
-            src={user.profile_pic.startsWith("http") ? user.profile_pic : `http://localhost:4000${user.profile_pic}`}
+            src={user.profile_pic.startsWith("http") ? user.profile_pic : buildBackendAssetUrl(user.profile_pic)}
             alt="Profile"
             className="avatar"
           />

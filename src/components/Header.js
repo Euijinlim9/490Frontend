@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/Header.css";
+import { buildBackendAssetUrl, buildBackendUrl } from "../config/api";
 
 function Header() {
   const { user, logout, activeRole, setActiveRole } = useContext(AuthContext);
@@ -24,7 +25,7 @@ function Header() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `http://localhost:4000/api/notifications/unread-count?for_role=${activeRole}`,
+          buildBackendUrl(`/api/notifications/unread-count?for_role=${activeRole}`),
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) return;
@@ -199,8 +200,9 @@ function Header() {
             {user?.profile_pic ? (
               <img
                 src={
-                  user.profile_pic.startsWith("http") ? user.profile_pic:
-                  `http://localhost:4000${user.profile_pic}`
+                  user.profile_pic.startsWith("http")
+                    ? user.profile_pic
+                    : buildBackendAssetUrl(user.profile_pic)
                 }
                 alt="Profile"
                 className="circle-icon profile"

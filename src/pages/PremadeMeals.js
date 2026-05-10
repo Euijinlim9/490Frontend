@@ -1,5 +1,6 @@
 import "../styles/PremadeMeals.css"; 
 import React, { useState, useEffect } from "react";
+import { buildBackendUrl } from "../config/api";
 
 function PremadeMeals (){
  const [query, setQuery] = useState("");
@@ -17,7 +18,7 @@ function PremadeMeals (){
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:4000/api/meals", {
+        const res = await fetch(buildBackendUrl("/api/meals"), {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -39,7 +40,7 @@ function PremadeMeals (){
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:4000/api/logs/meal-log", {
+      const res = await fetch(buildBackendUrl("/api/logs/meal-log"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

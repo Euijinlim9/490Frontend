@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import "../styles/WorkoutPhotos.css";
+import { buildBackendUrl } from "../config/api";
 
 const PHOTOS_PER_PAGE = 12;
 
@@ -27,7 +28,7 @@ function WorkoutPhotos() {
       if (filter.from) params.set("from_date", filter.from);
       if (filter.to) params.set("to_date", filter.to);
 
-      const res = await fetch(`http://localhost:4000/api/photos?${params}`, {
+      const res = await fetch(buildBackendUrl(`/api/photos?${params}`), {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to load photos");
@@ -52,7 +53,7 @@ function WorkoutPhotos() {
     if (!window.confirm("Delete this photo?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:4000/api/photos/${photoId}`, {
+      const res = await fetch(buildBackendUrl(`/api/photos/${photoId}`), {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

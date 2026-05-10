@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { buildBackendUrl } from "../config/api";
 
 function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
   const [workouts, setWorkouts] = useState([]);
@@ -15,7 +16,7 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/workout/premade", {
+        const res = await fetch(buildBackendUrl("/api/workout/premade"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to load your workouts");
@@ -40,7 +41,7 @@ function AssignWorkoutModal({ clientUserId, onClose, onAssigned }) {
     setError(null);
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coach/clients/${clientUserId}/workouts/assign`,
+        buildBackendUrl(`/api/coach/clients/${clientUserId}/workouts/assign`),
         {
           method: "POST",
           headers: {

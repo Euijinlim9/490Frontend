@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/NutritionistPlans.css";
+import { buildBackendUrl } from "../config/api";
 
 function NutritionistRequests() {
   const token = localStorage.getItem("token");
@@ -11,7 +12,7 @@ function NutritionistRequests() {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/nutritionist/requests", {
+      const res = await fetch(buildBackendUrl("/api/nutritionist/requests"), {
         headers: { Authorization: `Bearer ${token}`,
         "X-Active-Role": "nutritionist", }
       });
@@ -27,7 +28,7 @@ function NutritionistRequests() {
 
   const handleApprove = async (clientUserId) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/nutritionist/requests/${clientUserId}/approve`, {
+      const res = await fetch(buildBackendUrl(`/api/nutritionist/requests/${clientUserId}/approve`), {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` ,
         "X-Active-Role": "nutritionist",}
@@ -40,7 +41,7 @@ function NutritionistRequests() {
 
   const handleReject = async (clientUserId) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/nutritionist/requests/${clientUserId}/reject`, {
+      const res = await fetch(buildBackendUrl(`/api/nutritionist/requests/${clientUserId}/reject`), {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`,
         "X-Active-Role": "nutritionist",}

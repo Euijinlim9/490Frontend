@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/Notifications.css";
+import { buildBackendUrl } from "../config/api";
 
 function Notifications() {
   const { user, activeRole } = useContext(AuthContext);
@@ -16,7 +17,7 @@ function Notifications() {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `http://localhost:4000/api/notifications?for_role=${activeRole}`,
+          buildBackendUrl(`/api/notifications?for_role=${activeRole}`),
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) throw new Error("Failed to load");
@@ -25,7 +26,7 @@ function Notifications() {
 
         // Mark all as read AFTER rendering so user still sees the dots this visit
         fetch(
-          `http://localhost:4000/api/notifications/read-all?for_role=${activeRole}`,
+          buildBackendUrl(`/api/notifications/read-all?for_role=${activeRole}`),
           {
             method: "PATCH",
             headers: { Authorization: `Bearer ${token}` },

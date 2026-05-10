@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Coach.css";
 import userimg from "../images/user.svg";
+import { buildBackendAssetUrl, buildBackendUrl } from "../config/api";
 
 function Coach() {
   const [coaches, setCoaches] = useState([]);
@@ -20,10 +21,10 @@ function Coach() {
 
       try {
         const [coachRes, nutRes] = await Promise.all([
-          fetch("http://localhost:4000/api/coaches", {
+          fetch(buildBackendUrl("/api/coaches"), {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:4000/api/nutritionist", {
+          fetch(buildBackendUrl("/api/nutritionist"), {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -156,7 +157,13 @@ function Coach() {
             className="coach-card"
           >
             <img
-              src={coach.profile_pic || userimg}
+              src={
+                coach.profile_pic
+                  ? coach.profile_pic.startsWith("http")
+                    ? coach.profile_pic
+                    : buildBackendAssetUrl(coach.profile_pic)
+                  : userimg
+              }
               alt={coach.first_name}
               className="avatar"
             />

@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import "../../styles/Dashboard.css";
 import "../../styles/AdminDashboard.css";
+import { buildBackendUrl } from "../../config/api";
 
 function AdminDashboard(){
     const [pendingCoaches, setPendingCoaches] = useState([]);
@@ -23,16 +24,16 @@ function AdminDashboard(){
 
         const fetchData = async () => {
             try {
-                const res1 = await fetch("http://localhost:4000/admin/pending", {
+                const res1 = await fetch(buildBackendUrl("/admin/pending"), {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const data1 = await res1.json();
                 
-                const res2 = await fetch("http://localhost:4000/admin/users", {
+                const res2 = await fetch(buildBackendUrl("/admin/users"), {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const data2 = await res2.json();
-                const res3 = await fetch("http://localhost:4000/admin/reports/coach", {
+                const res3 = await fetch(buildBackendUrl("/admin/reports/coach"), {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const data3 = await res3.json();
@@ -55,7 +56,7 @@ function AdminDashboard(){
                 const token = localStorage.getItem("token");
 
                 const res = await fetch(
-                    `http://localhost:4000/admin/stats/user-engagement?range=${range}`,
+                    buildBackendUrl(`/admin/stats/user-engagement?range=${range}`),
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

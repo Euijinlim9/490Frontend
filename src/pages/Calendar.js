@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import "../styles/Calendar.css";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { buildBackendUrl } from "../config/api";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
@@ -46,7 +47,7 @@ function Calendar() {
   const fetchAssignments = useCallback(async () => {
     try {
       const res = await fetch(
-        "http://localhost:4000/api/client/my-assigned-workouts",
+        buildBackendUrl("/api/client/my-assigned-workouts"),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -68,7 +69,7 @@ function Calendar() {
 
   const fetchPersonalEvents = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/calendar", {
+      const res = await fetch(buildBackendUrl("/api/calendar"), {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) return;
@@ -80,7 +81,7 @@ function Calendar() {
   const fetchBookings = useCallback(async () => {
     try {
       const res = await fetch(
-        "http://localhost:4000/api/sessions/bookings/upcoming",
+        buildBackendUrl("/api/sessions/bookings/upcoming"),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -169,7 +170,7 @@ function Calendar() {
   const handleAddEvent = async () => {
     if (!inputText.trim()) return;
     try {
-      const res = await fetch("http://localhost:4000/api/calendar", {
+      const res = await fetch(buildBackendUrl("/api/calendar"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -190,7 +191,7 @@ function Calendar() {
 
   const handleDeleteEvent = async (eventId) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/calendar/${eventId}`, {
+      const res = await fetch(buildBackendUrl(`/api/calendar/${eventId}`), {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

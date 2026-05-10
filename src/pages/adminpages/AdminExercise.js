@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/AdminExercise.css"
+import { buildBackendUrl } from "../../config/api";
 
 function AdminExercise(){
     const [exercise, setExercise]=useState([]);
@@ -23,7 +24,7 @@ function AdminExercise(){
             try {
                 const token = localStorage.getItem("token");
 
-                const res = await fetch("http://localhost:4000/admin/exercises", {
+                const res = await fetch(buildBackendUrl("/admin/exercises"), {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -46,7 +47,7 @@ function AdminExercise(){
         try {
             const token = localStorage.getItem("token");
 
-            const res = await fetch("http://localhost:4000/admin/exercises", {
+            const res = await fetch(buildBackendUrl("/admin/exercises"), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -83,7 +84,7 @@ function AdminExercise(){
             if (!editExercise) return;
 
             const res = await fetch(
-                `http://localhost:4000/admin/exercises/${editExercise.exercise_id}`,
+                buildBackendUrl(`/admin/exercises/${editExercise.exercise_id}`),
                 {
                     method: "PUT",
                     headers: {
@@ -119,7 +120,7 @@ function AdminExercise(){
             const token = localStorage.getItem("token");
 
             const res = await fetch(
-                `http://localhost:4000/admin/exercises/${id}`,
+                buildBackendUrl(`/admin/exercises/${id}`),
                 {
                     method: "DELETE",
                     headers: {
@@ -145,7 +146,7 @@ function AdminExercise(){
             const token = localStorage.getItem("token");
 
             const res = await fetch(
-                `http://localhost:4000/admin/exercises/${id}/reactivate`,
+                buildBackendUrl(`/admin/exercises/${id}/reactivate`),
                 {
                     method: "PUT",
                     headers: {

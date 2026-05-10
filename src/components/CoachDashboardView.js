@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { buildBackendUrl } from "../config/api";
 import {
   BarChart,
   Bar,
@@ -31,7 +32,7 @@ function CoachDashboardView({
 
       try {
         const res = await fetch(
-          "http://localhost:4000/api/coach/plans/earnings",
+          buildBackendUrl("/api/coach/plans/earnings"),
           {
             headers: {
               Authorization: `Bearer ${token}`,

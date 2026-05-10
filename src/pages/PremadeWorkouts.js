@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { WorkoutContext } from "../context/WorkoutContext";
+import { buildBackendUrl } from "../config/api";
 import "../styles/PremadeWorkouts.css";
 
 function PremadeWorkouts() {
@@ -15,7 +16,7 @@ function PremadeWorkouts() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch("http://localhost:4000/api/workout/premade", {
+        const res = await fetch(buildBackendUrl("/api/workout/premade"), {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -38,7 +39,7 @@ function PremadeWorkouts() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:4000/api/workout/premade/${id}`,
+        buildBackendUrl(`/api/workout/premade/${id}`),
         {
           method: "DELETE",
           headers: {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/ViewUsers.css"
 import "../../styles/CoachApplication.css"
+import { buildBackendUrl } from "../../config/api";
 
 function ViewUsers(){
     const [users, setUsers] = useState([]);
@@ -15,7 +16,7 @@ function ViewUsers(){
         const token = localStorage.getItem("token");
         const fetchData = async () => {
             try {
-                const res = await fetch("http://localhost:4000/admin/users", {
+                const res = await fetch(buildBackendUrl("/admin/users"), {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -36,7 +37,7 @@ function ViewUsers(){
             const token = localStorage.getItem("token");
             try {
                 const res = await fetch(
-                    `http://localhost:4000/admin/users/${userId}/status`,{
+                    buildBackendUrl(`/admin/users/${userId}/status`),{
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",

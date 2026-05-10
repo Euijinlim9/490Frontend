@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "../styles/NutritionistPlans.css";
+import { buildBackendUrl } from "../config/api";
 
 const MEAL_TIMES = ["breakfast", "lunch", "dinner", "snack"];
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -25,7 +26,7 @@ function NutritionistPlans() {
 
   const fetchClients = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/nutritionist/clients", { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(buildBackendUrl("/api/nutritionist/clients"), { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) return;
       const data = await res.json();
       setClients(data.data || []);
@@ -35,8 +36,8 @@ function NutritionistPlans() {
   const fetchMeals = useCallback(async () => {
     try {
       const url = mealSearch
-        ? `http://localhost:4000/api/nutritionist/meals?search=${encodeURIComponent(mealSearch)}`
-        : "http://localhost:4000/api/nutritionist/meals";
+        ? buildBackendUrl(`/api/nutritionist/meals?search=${encodeURIComponent(mealSearch)}`)
+        : buildBackendUrl("/api/nutritionist/meals");
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) return;
       const data = await res.json();
@@ -76,7 +77,7 @@ function NutritionistPlans() {
     });
 
     try {
-      const res = await fetch(`http://localhost:4000/api/nutritionist/clients/${selectedClient.client_user_id}/meal-plan`, {
+      const res = await fetch(buildBackendUrl(`/api/nutritionist/clients/${selectedClient.client_user_id}/meal-plan`), {
         method: "POST",
         headers,
         body: JSON.stringify({ name: planName, start_date: startDate, end_date: endDate || null, items }),
@@ -93,7 +94,7 @@ function NutritionistPlans() {
   const handleCreateMeal = async () => {
     if (!newMeal.name || !newMeal.calories_per_serving) { showToast("Name and calories are required."); return; }
     try {
-      const res = await fetch("http://localhost:4000/api/nutritionist/meals", {
+      const res = await fetch(buildBackendUrl("/api/nutritionist/meals"), {
         method: "POST",
         headers,
         body: JSON.stringify({

@@ -8,6 +8,7 @@ import React, {
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/BookSession.css";
+import { buildBackendUrl } from "../config/api";
 
 function BookSession() {
   const { coachId } = useParams();
@@ -40,12 +41,12 @@ function BookSession() {
 
     try {
       const [coachRes, slotsRes, purchaseRes] = await Promise.all([
-        fetch(`http://localhost:4000/api/coaches/${coachId}`, {
+        fetch(buildBackendUrl(`/api/coaches/${coachId}`), {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`http://localhost:4000/api/coaches/${coachId}/availability`),
+        fetch(buildBackendUrl(`/api/coaches/${coachId}/availability`)),
         fetch(
-          `http://localhost:4000/api/sessions/purchases/active-with/${coachId}`,
+          buildBackendUrl(`/api/sessions/purchases/active-with/${coachId}`),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -167,7 +168,7 @@ function BookSession() {
     setBooking(true);
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/sessions/bookings", {
+      const res = await fetch(buildBackendUrl("/api/sessions/bookings"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

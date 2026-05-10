@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import userimg from "../images/user.svg";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/CoachDetail.css";
+import { buildBackendUrl } from "../config/api";
 
 function CoachDetail() {
   const { id } = useParams();
@@ -58,7 +59,7 @@ function CoachDetail() {
     const fetchCoach = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await fetch(`http://localhost:4000/api/coaches/${id}`, {
+        const res = await fetch(buildBackendUrl(`/api/coaches/${id}`), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.status === 404) {
@@ -81,7 +82,7 @@ function CoachDetail() {
     const fetchPlans = async () => {
       try {
         const res = await fetch(
-          `http://localhost:4000/api/coaches/${id}/plans`
+          buildBackendUrl(`/api/coaches/${id}/plans`)
         );
         if (!res.ok) throw new Error();
         const data = await res.json();
@@ -99,7 +100,7 @@ function CoachDetail() {
     const fetchPackages = async () => {
       try {
         const res = await fetch(
-          `http://localhost:4000/api/coaches/${id}/packages`
+          buildBackendUrl(`/api/coaches/${id}/packages`)
         );
         if (!res.ok) throw new Error();
         const data = await res.json();
@@ -120,7 +121,7 @@ function CoachDetail() {
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
-          `http://localhost:4000/api/sessions/purchases/active-with/${id}`,
+          buildBackendUrl(`/api/sessions/purchases/active-with/${id}`),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -146,7 +147,7 @@ function CoachDetail() {
     const fetchMyCoach = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await fetch("http://localhost:4000/api/client/my-coach", {
+        const res = await fetch(buildBackendUrl("/api/client/my-coach"), {
           headers: {
             Authorization: `Bearer ${token}`,
             "X-Active-Role": activeRole,
@@ -179,7 +180,7 @@ function CoachDetail() {
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
-          "http://localhost:4000/api/client/my-assigned-workouts?status=assigned,accepted",
+          buildBackendUrl("/api/client/my-assigned-workouts?status=assigned,accepted"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -207,7 +208,7 @@ function CoachDetail() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/client/assignments/${assignmentId}/accept`,
+        buildBackendUrl(`/api/client/assignments/${assignmentId}/accept`),
         {
           method: "PATCH",
           headers: {
@@ -248,7 +249,7 @@ function CoachDetail() {
       );
 
       const res = await fetch(
-        `http://localhost:4000/api/client/assignments/${assignmentId}/decline`,
+        buildBackendUrl(`/api/client/assignments/${assignmentId}/decline`),
         {
           method: "PATCH",
           headers: {
@@ -283,7 +284,7 @@ function CoachDetail() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coaches/${id}/request`,
+        buildBackendUrl(`/api/coaches/${id}/request`),
         {
           method: "POST",
           headers: {
@@ -312,7 +313,7 @@ function CoachDetail() {
     setSubscribing(true);
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/subscriptions", {
+      const res = await fetch(buildBackendUrl("/api/subscriptions"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -340,7 +341,7 @@ function CoachDetail() {
     setPurchasing(true);
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/sessions/purchase", {
+      const res = await fetch(buildBackendUrl("/api/sessions/purchase"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -401,7 +402,7 @@ function CoachDetail() {
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(
-        `http://localhost:4000/api/coaches/${coach.user_id}/report`,
+        buildBackendUrl(`/api/coaches/${coach.user_id}/report`),
         {
           method: "POST",
           headers: {
@@ -436,7 +437,7 @@ function CoachDetail() {
   const handleUnhireCoach = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:4000/api/client/my-coach", {
+      const res = await fetch(buildBackendUrl("/api/client/my-coach"), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
+import { buildBackendUrl } from "../config/api";
 
 function GoogleAuthCallback() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function GoogleAuthCallback() {
         localStorage.setItem("token", token);
 
         // Fetch user data and set it in Context
-        const res = await fetch(`http://localhost:4000/auth/me`, {
+        const res = await fetch(buildBackendUrl("/auth/me"), {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {

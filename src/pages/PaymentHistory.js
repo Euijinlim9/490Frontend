@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/PaymentHistory.css";
+import { buildBackendUrl } from "../config/api";
 
 function PaymentHistory() {
   const { activeRole } = useContext(AuthContext);
@@ -13,7 +14,7 @@ function PaymentHistory() {
     const fetchPayments = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await fetch("http://localhost:4000/api/payments/history", {
+        const res = await fetch(buildBackendUrl("/api/payments/history"), {
           headers: {
             Authorization: `Bearer ${token}`,
             "X-Active-Role": activeRole,
