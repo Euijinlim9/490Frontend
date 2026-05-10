@@ -4,14 +4,6 @@ import "../styles/CustomWorkout.css";
 import { WorkoutContext } from "../context/WorkoutContext";
 import { buildBackendUrl } from "../config/api";
 
-const emptyForm = () => ({
-  name: "",
-  youtubeUrl: "",
-  sets: "",
-  reps: "",
-  notes: "",
-  breakTime: "",
-});
 
 function CustomWorkout() {
   const navigate = useNavigate();
@@ -20,7 +12,6 @@ function CustomWorkout() {
   const [workoutName, setWorkoutName] = useState("");
   const [description, setDescription] = useState("");
   const [estimatedMinutes, setEstimatedMinutes] = useState("");
-  const [form, setForm] = useState(emptyForm());
   const [addedExercises, setAddedExercises] = useState([]);
   const [nameError, setNameError] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
@@ -87,22 +78,7 @@ function CustomWorkout() {
     setAppliedFilter(filter);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
 
-  const handleAddCustom = () => {
-    if (!form.name || !form.sets || !form.reps || !form.breakTime) {
-      setFormError(true);
-      return;
-    }
-
-    setFormError(false);
-
-    setAddedExercises((prev) => [...prev, { ...form }]);
-    setForm(emptyForm());
-  };
 
   const handleAddCommon = (exercise) => {
     const alreadyAdded = addedExercises.some((ex) => ex.name === exercise.name);
@@ -486,74 +462,6 @@ function CustomWorkout() {
               disabled={currentPage === totalPages}
             >
               Next
-            </button>
-          </div>
-        </div>
-
-        <div className="cw-left">
-          <h3 className="cw-section-title">Add Exercise</h3>
-
-          <div className="cw-form">
-            <div className="cw-form-group">
-              <label>Exercise Name</label>
-              <input
-                name="name"
-                type="text"
-                placeholder="e.g. Cable Fly"
-                value={form.name}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="cw-form-group">
-              <label>YouTube Link</label>
-              <input
-                name="youtubeUrl"
-                type="text"
-                placeholder="https://youtube.com/..."
-                value={form.youtubeUrl}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="cw-form-row">
-              <div className="cw-form-group small">
-                <label>Sets</label>
-                <input
-                  name="sets"
-                  type="number"
-                  placeholder="3"
-                  min="1"
-                  value={form.sets}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="cw-form-group small">
-                <label>Reps</label>
-                <input
-                  name="reps"
-                  type="number"
-                  placeholder="10"
-                  min="1"
-                  value={form.reps}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="cw-form-group small">
-                <label>Rest (sec)</label>
-                <input
-                  name="breakTime"
-                  type="number"
-                  placeholder="60"
-                  min="0"
-                  value={form.breakTime}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <button className="cw-add-btn" onClick={handleAddCustom}>
-              Add Exercise
             </button>
           </div>
         </div>

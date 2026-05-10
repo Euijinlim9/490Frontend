@@ -871,19 +871,19 @@ function Dashboard() {
 
         const [stepsRes, mealsRes, workoutsRes] = await Promise.all([
           fetch(
-            buildBackendUrl(`/api/logs/graph?metric=steps&period=day&start=${start}&end=${end}`),
+            buildBackendUrl(`/api/logs/graph?metric=steps&period=${period}&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            buildBackendUrl(`/api/logs/graph?metric=calories&period=day&start=${start}&end=${end}`),
+            buildBackendUrl(`/api/logs/graph?metric=calories&period=${period}&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            buildBackendUrl(`/api/logs/graph?metric=volume&period=day&start=${start}&end=${end}`),
+            buildBackendUrl(`/api/logs/graph?metric=volume&period=${period}&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
@@ -1021,19 +1021,19 @@ function Dashboard() {
 
         const [energyRes, stressRes, motivationRes] = await Promise.all([
           fetch(
-            buildBackendUrl(`/api/logs/graph?metric=energy&period=day&start=${start}&end=${end}`),
+            buildBackendUrl(`/api/logs/graph?metric=energy&period=${period}&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            buildBackendUrl(`/api/logs/graph?metric=stress&period=day&start=${start}&end=${end}`),
+            buildBackendUrl(`/api/logs/graph?metric=stress&period=${period}&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }
           ),
           fetch(
-            buildBackendUrl(`/api/logs/graph?metric=motivation&period=day&start=${start}&end=${end}`),
+            buildBackendUrl(`/api/logs/graph?metric=motivation&period=${period}&start=${start}&end=${end}`),
             {
               headers: { Authorization: `Bearer ${token}` },
             }

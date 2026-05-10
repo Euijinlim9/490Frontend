@@ -1,19 +1,58 @@
 import React, { useEffect, useState } from "react"; 
 import "../styles/RecentMeals.css"; 
+import { buildBackendUrl } from "../config/api";
+
 
 function RecentMeals(){
     const [meals, setMeals] = useState([]); 
 
     useEffect(() => {
-        const savedMeals = JSON.parse(localStorage.getItem("loggedMeals")) || []; 
-        setMeals([...savedMeals].reverse()); 
-    }, []); 
+        const fetchMealLogs = async () => {
+            try {
+                const token = localStorage.getItem("token");
 
-    const handleDeleteMeal = (indexToDelete) => {
-      const updatedMeals = meals.filter((_, index) => index !== indexToDelete); 
-      setMeals(updatedMeals); 
-      localStorage.setItem("loggedMeals", JSON.stringify([...updatedMeals].reverse())); 
-    };
+                const log = await fetch(buildBackendUrl("/api/logs/meal-log"), {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = await log.json();
+
+                if (log.ok) {
+                    setMeals(data);
+                } else {
+                    console.error(data.error);
+                }
+            } catch (err) {
+                console.error("failed to fetch meal logs", err);
+            }
+        };
+
+        fetchMealLogs();
+    }, []);
+
+    const handleDeleteMeal = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(buildBackendUrl(`/api/logs/meal-log/${id}`), {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setMeals(prevMeals => prevMeals.filter(meal => meal.id !== id));
+            } else {
+                console.error(data.error);
+            }
+        } catch (err) {
+            console.error("Failed to delete meal log", err);
+        }
+    }
 
     return(
         <div>
@@ -24,15 +63,15 @@ function RecentMeals(){
                 <div className="details">No meals have been logged yet.</div>
             ) : ( 
                 meals.map((meal, index) => (
-                  <div className="meal-card" key={index}> 
+                  <div className="meal-card" key={meal.id}> 
                     <button 
                       className="delete-log-btn"
-                      onClick={() => handleDeleteMeal(index)}
+                      onClick={() => handleDeleteMeal(meal.id)}
                     >
                         Delete
                     </button>
                     
-                    <div className="food-name">{meal.mealName}</div>
+                    <div className="food-name">{meal.meal?.name}</div>
 
                     <div className="calories"> 
                         {meal.calories} Calories
