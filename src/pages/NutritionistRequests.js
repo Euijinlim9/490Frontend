@@ -10,8 +10,11 @@ function NutritionistRequests() {
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 3000); };
 
-  const fetchRequests = async () => {
-    try {
+
+
+  useEffect(() => { 
+      const fetchRequests = async () => {
+      try {
       const res = await fetch(buildBackendUrl("/api/nutritionist/requests"), {
         headers: { Authorization: `Bearer ${token}`,
         "X-Active-Role": "nutritionist", }
@@ -19,12 +22,12 @@ function NutritionistRequests() {
       if (!res.ok) return;
       const data = await res.json();
       setRequests(data.data || []);
-    } catch {} finally {
+      } catch {} finally {
       setLoading(false);
-    }
+      }
   };
-
-  useEffect(() => { fetchRequests(); }, []);
+    fetchRequests(); 
+  }, [token]);
 
   const handleApprove = async (clientUserId) => {
     try {
