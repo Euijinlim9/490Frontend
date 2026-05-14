@@ -268,3 +268,29 @@
   border-radius: 10px;
   width: fit-content;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  gap: 0.5rem;
+}
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pagination button:hover:not(:disabled) {
+  background: #f0f0f0;
+}
+
+.pagination span {
+  margin: 0 1rem;
+}

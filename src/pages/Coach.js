@@ -14,6 +14,10 @@ function Coach() {
   const [filter, setFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("coach");
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 12;
+
   useEffect(() => {
     const fetchCoaches = async () => {
       const token = localStorage.getItem("token");
@@ -121,6 +125,7 @@ function Coach() {
             setRoleFilter(e.target.value);
             setSearchQuery("");
             setQuery("");
+            setPage(1);
           }}
         >
           <option value="coach">Coach</option>
@@ -188,7 +193,20 @@ function Coach() {
               })()}
           </Link>
         ))}
-      </div>
+        </div>
+
+          <div className="pagination">
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+              ← Back
+            </button>
+            <span>
+              Page {page} of {totalPages}
+              </span>
+              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                Next →
+              </button>
+          </div>
+      
     </div>
   );
 }
